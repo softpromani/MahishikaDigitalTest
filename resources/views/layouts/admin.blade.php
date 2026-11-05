@@ -147,13 +147,34 @@
         </nav>
 
         <div class="p-3 border-top border-secondary border-opacity-25 small text-secondary">
-            <div class="d-flex align-items-center justify-content-between">
+            <!-- User Info & Logout -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2 overflow-hidden">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem; flex-shrink: 0;">
+                        {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                    </div>
+                    <div class="text-truncate">
+                        <div class="text-white fw-semibold text-truncate" style="font-size: 0.82rem;">{{ Auth::user()->name ?? 'Administrator' }}</div>
+                        <div class="text-secondary text-truncate" style="font-size: 0.72rem;">{{ Auth::user()->email ?? 'admin@mahishika.digital' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between mb-2">
                 <span>Theme</span>
                 <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" id="themeToggleBtn" aria-label="Toggle theme">
                     <i class="bi bi-moon-stars" id="themeIcon"></i>
                 </button>
             </div>
-            <div class="mt-2 text-muted" style="font-size: 0.75rem;">Mahishika Digital v1.0.0</div>
+
+            <form action="{{ route('logout') }}" method="POST" class="mt-2">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-1" style="font-size: 0.8rem;">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </button>
+            </form>
+
+            <div class="mt-2 text-center text-muted" style="font-size: 0.72rem;">Mahishika Digital v1.0.0</div>
         </div>
     </aside>
 
@@ -174,6 +195,12 @@
                 <a href="/api/menu" class="btn btn-sm btn-outline-secondary" target="_blank">
                     <i class="bi bi-code-square me-1"></i> API JSON
                 </a>
+                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Sign Out">
+                        <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                    </button>
+                </form>
             </div>
         </header>
 

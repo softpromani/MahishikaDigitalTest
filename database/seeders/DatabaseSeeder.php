@@ -6,7 +6,9 @@ use App\Models\Category;
 use App\Models\Consultation;
 use App\Models\PortfolioArticle;
 use App\Models\SubCategory;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,6 +17,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Seed Admin Users
+        User::firstOrCreate(
+            ['email' => 'admin@mahishika.digital'],
+            [
+                'name' => 'Jeetu Prajapati',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'admin@mahishika.com'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
         // Category 1: Services
         $services = Category::create([
             'name' => 'Services',

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Consultation;
 use App\Models\PortfolioArticle;
 use App\Models\SubCategory;
+use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,6 +19,9 @@ class AdminTest extends TestCase
     {
         parent::setUp();
         $this->seed(DatabaseSeeder::class);
+
+        $admin = User::where('email', 'admin@mahishika.digital')->first();
+        $this->actingAs($admin);
     }
 
     public function test_admin_dashboard_loads_with_statistics(): void

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,9 +13,15 @@ use Illuminate\Support\Facades\Route;
 
 // Public Services Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/storybook/frame', [HomeController::class, 'storybookFrame'])->name('storybook.frame');
 
-// Admin CMS Routes
-Route::prefix('admin')->name('admin.')->group(function () {
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Protected Admin CMS Routes
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
     // Categories Management
