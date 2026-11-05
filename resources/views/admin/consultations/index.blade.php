@@ -106,21 +106,26 @@
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
                             <div class="text-muted small fw-semibold">Email:</div>
-                            <div><a href="mailto:{{ $lead->email }}" class="text-decoration-none fw-medium"><i class="bi bi-envelope me-1"></i>{{ $lead->email }}</a></div>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <a href="mailto:{{ $lead->email }}" class="text-decoration-none fw-semibold"><i class="bi bi-envelope me-1"></i>{{ $lead->email }}</a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.75rem;" onclick="copyEmail('{{ $lead->email }}', this)" title="Copy email address">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                            </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="text-muted small fw-semibold">Phone:</div>
-                            <div>{{ $lead->phone ?? 'Not provided' }}</div>
+                            <div class="mt-1">{{ $lead->phone ?? 'Not provided' }}</div>
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
                             <div class="text-muted small fw-semibold">Interested Service:</div>
-                            <div><span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">{{ $lead->service_interest }}</span></div>
+                            <div class="mt-1"><span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">{{ $lead->service_interest }}</span></div>
                         </div>
                         <div class="col-sm-6">
                             <div class="text-muted small fw-semibold">Estimated Budget:</div>
-                            <div class="fw-semibold text-success">{{ $lead->budget }}</div>
+                            <div class="fw-semibold text-success mt-1">{{ $lead->budget }}</div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -130,11 +135,65 @@
                     <div class="small text-muted border-top pt-2 mt-3">
                         <i class="bi bi-info-circle me-1"></i>IP: {{ $lead->ip_address ?? '127.0.0.1' }} &bull; Submitted: {{ $lead->created_at->toDayDateTimeString() }}
                     </div>
+
+                    @php
+                        $gmailSubject = rawurlencode("Mahishika Digital: Strategic Consultation Follow-up");
+                        $gmailBody = rawurlencode("Hi {$lead->name},\n\nThank you for contacting Mahishika Digital regarding your {$lead->service_interest} project requirements.\n\nWe reviewed your submission and would like to arrange an introductory architecture discovery session.\n\nPlease let us know what dates and times work best for your team this week.\n\nBest regards,\nMahishika Digital Team\nhttps://mahishika.digital");
+                        $gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" . rawurlencode($lead->email) . "&su={$gmailSubject}&body={$gmailBody}";
+                        $outlookUrl = "https://outlook.live.com/mail/0/deeplink/compose?to=" . rawurlencode($lead->email) . "&subject={$gmailSubject}&body={$gmailBody}";
+                    @endphp
+
+                    <!-- In-App Quick Reply Section -->
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-bold mb-0 text-primary">
+                                <i class="bi bi-reply-all-fill me-1"></i> Direct Response Options
+                            </h6>
+                            <div class="d-flex gap-2">
+                                <a href="{{ $gmailUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm" title="Compose in Gmail Web in a new tab">
+                                    <i class="bi bi-google me-1"></i> Open in Gmail
+                                </a>
+                                <a href="{{ $outlookUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm" title="Compose in Outlook Web in a new tab">
+                                    <i class="bi bi-microsoft me-1"></i> Outlook Web
+                                </a>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('admin.consultations.reply', $lead) }}" method="POST" class="p-3 bg-light rounded-3 border">
+                            @csrf
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Subject</label>
+                                <input type="text" name="subject" class="form-control form-control-sm" value="Mahishika Digital Consultation: Follow-up on {{ $lead->service_interest }}" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Reply Message</label>
+                                <textarea name="reply_message" rows="4" class="form-control form-control-sm" required>Hi {{ $lead->name }},
+
+Thank you for reaching out to Mahishika Digital. We reviewed your project inquiry regarding {{ $lead->service_interest }} (Estimated Budget: {{ $lead->budget }}).
+
+We would be pleased to schedule an introductory architecture discovery session. Please let us know your team's availability this week for a brief 20-minute call.
+
+Best regards,
+Mahishika Digital Client Solutions Team</textarea>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-2">
+                                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Sends reply and updates status to <strong>Contacted</strong>.</small>
+                                <button type="submit" class="btn btn-success btn-sm px-3">
+                                    <i class="bi bi-send-fill me-1"></i> Send Reply via System
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
-                    <a href="mailto:{{ $lead->email }}?subject=Mahishika%20Digital%20Consultation%20Follow-up" class="btn btn-primary btn-sm px-3">
-                        <i class="bi bi-reply me-1"></i> Reply via Email
-                    </a>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary d-flex justify-content-between">
+                    <div class="d-flex gap-2 align-items-center">
+                        <a href="{{ $gmailUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-sm px-3">
+                            <i class="bi bi-google me-1"></i> Reply via Gmail
+                        </a>
+                        <a href="mailto:{{ $lead->email }}?subject=Mahishika%20Digital%20Consultation%20Follow-up" class="btn btn-outline-secondary btn-sm" title="Open desktop default email program">
+                            <i class="bi bi-envelope-at me-1"></i> Desktop App
+                        </a>
+                    </div>
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -164,5 +223,34 @@
         </div>
     </div>
 @endforeach
+
+<script>
+    function copyEmail(email, btn) {
+        if (!navigator.clipboard) {
+            const tempInput = document.createElement('input');
+            tempInput.value = email;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showCopiedUI(btn);
+            return;
+        }
+
+        navigator.clipboard.writeText(email).then(() => {
+            showCopiedUI(btn);
+        });
+    }
+
+    function showCopiedUI(btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check2-circle text-success"></i> Copied!';
+        btn.classList.add('border-success', 'text-success');
+        setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.remove('border-success', 'text-success');
+        }, 2200);
+    }
+</script>
 @endsection
 

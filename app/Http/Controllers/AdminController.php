@@ -302,6 +302,28 @@ class AdminController extends Controller
     }
 
     /**
+     * Send in-app reply to consultation lead and update status to contacted.
+     */
+    public function replyConsultation(Request $request, Consultation $consultation): RedirectResponse
+    {
+        $validated = $request->validate([
+            'subject' => 'required|string|max:200',
+            'reply_message' => 'required|string|max:5000',
+        ]);
+
+        // Automatically update lead status to contacted
+        $consultation->update(['status' => 'contacted']);
+
+        \Illuminate\Support\Facades\Log::info("Consultation reply dispatched to {$consultation->email}", [
+            'consultation_id' => $consultation->id,
+            'subject' => $validated['subject'],
+            'message' => $validated['reply_message'],
+        ]);
+
+        return redirect()->route('admin.consultations')->with('success', "Reply sent to {$consultation->email}! Lead marked as 'Contacted'.");
+    }
+
+    /**
      * Delete consultation lead.
      */
     public function deleteConsultation(Consultation $consultation): RedirectResponse

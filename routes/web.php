@@ -45,5 +45,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Consultations Leads
     Route::get('/consultations', [AdminController::class, 'consultations'])->name('consultations');
     Route::put('/consultations/{consultation}/status', [AdminController::class, 'updateConsultationStatus'])->name('consultations.status');
+    Route::post('/consultations/{consultation}/reply', [AdminController::class, 'replyConsultation'])->name('consultations.reply');
     Route::delete('/consultations/{consultation}', [AdminController::class, 'deleteConsultation'])->name('consultations.delete');
 });

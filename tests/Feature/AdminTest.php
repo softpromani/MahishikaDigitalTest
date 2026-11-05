@@ -121,5 +121,22 @@ class AdminTest extends TestCase
             'status' => 'scheduled',
         ]);
     }
+
+    public function test_admin_can_reply_to_consultation(): void
+    {
+        $lead = Consultation::where('status', 'new')->first();
+
+        $response = $this->post("/admin/consultations/{$lead->id}/reply", [
+            'subject' => 'Follow up on Cloud Project',
+            'reply_message' => 'We would love to schedule a call.',
+        ]);
+
+        $response->assertRedirect('/admin/consultations');
+
+        $this->assertDatabaseHas('consultations', [
+            'id' => $lead->id,
+            'status' => 'contacted',
+        ]);
+    }
 }
 
