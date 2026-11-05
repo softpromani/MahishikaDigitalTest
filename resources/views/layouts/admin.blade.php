@@ -589,20 +589,144 @@
             if (liveToast) liveToast.show();
         }
 
-        // Global Status Toggle AJAX Handler
-        document.addEventListener('change', async (e) => {
-            const toggle = e.target.closest('.admin-status-toggle');
+        // Global Status Toggle with Confirmation Modal
+        let pendingToggle = null;
+        let statusModal = null;
+
+        function getStatusModal() {
+            if (!statusModal) {
+                const el = document.getElementById('statusConfirmModal');
+                if (el) {
+                    statusModal = new bootstrap.Modal(el);
+                }
+            }
+            return statusModal;
+        }
+
+        document.addEventListener('click', (e) => {
+            let toggle = e.target.closest('.admin-status-toggle');
+
+            // Also capture clicks on companion label or its inner badge
+            if (!toggle) {
+                const label = e.target.closest('label[for]');
+                if (label) {
+                    const targetId = label.getAttribute('for');
+                    const targetInput = document.getElementById(targetId);
+                    if (targetInput && targetInput.classList.contains('admin-status-toggle')) {
+                        toggle = targetInput;
+                    }
+                }
+            }
+
             if (!toggle) return;
 
+            // Prevent default so checkbox does not flip until user confirms in modal
+            e.preventDefault();
+
+            if (toggle.disabled) return;
+
+            pendingToggle = toggle;
+
+            const itemName = toggle.dataset.itemName || 'this item';
+            const itemType = toggle.dataset.itemType || 'Item';
+            const toggleType = toggle.dataset.toggleType || 'status'; // 'status' or 'featured'
+            const isCurrentlyChecked = toggle.checked;
+            const willBeChecked = !isCurrentlyChecked;
+
+            const titleEl = document.getElementById('statusConfirmTitle');
+            const headingEl = document.getElementById('statusConfirmHeading');
+            const promptEl = document.getElementById('statusConfirmPrompt');
+            const itemNameEl = document.getElementById('statusConfirmItemName');
+            const itemTypeEl = document.getElementById('statusConfirmItemType');
+            const newStateEl = document.getElementById('statusConfirmNewState');
+            const avatarEl = document.getElementById('statusConfirmAvatar');
+            const okBtn = document.getElementById('statusConfirmOkBtn');
+            const okText = document.getElementById('statusConfirmOkText');
+
+            if (itemNameEl) itemNameEl.textContent = itemName;
+            if (itemTypeEl) itemTypeEl.textContent = itemType;
+
+            if (toggleType === 'featured') {
+                if (titleEl) titleEl.textContent = 'Confirm Featured Status';
+                if (willBeChecked) {
+                    if (headingEl) headingEl.textContent = `Feature this ${itemType.toLowerCase()}?`;
+                    if (promptEl) promptEl.textContent = `Are you sure you want to mark "${itemName}" as Featured? It will be highlighted across the mega menu and showcase.`;
+                    if (newStateEl) newStateEl.innerHTML = '<span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>';
+                    if (avatarEl) {
+                        avatarEl.className = 'mb-3 d-inline-flex p-3 rounded-circle bg-warning-subtle text-warning';
+                        avatarEl.innerHTML = '<i class="bi bi-star-fill fs-1"></i>';
+                    }
+                    if (okBtn) okBtn.className = 'btn btn-warning text-dark btn-sm px-3 fw-semibold';
+                    if (okText) okText.textContent = 'Yes, Mark as Featured';
+                } else {
+                    if (headingEl) headingEl.textContent = `Unfeature this ${itemType.toLowerCase()}?`;
+                    if (promptEl) promptEl.textContent = `Are you sure you want to revert "${itemName}" back to standard listing?`;
+                    if (newStateEl) newStateEl.innerHTML = '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Standard</span>';
+                    if (avatarEl) {
+                        avatarEl.className = 'mb-3 d-inline-flex p-3 rounded-circle bg-secondary-subtle text-secondary';
+                        avatarEl.innerHTML = '<i class="bi bi-star fs-1"></i>';
+                    }
+                    if (okBtn) okBtn.className = 'btn btn-secondary btn-sm px-3';
+                    if (okText) okText.textContent = 'Yes, Set Standard';
+                }
+            } else {
+                if (titleEl) titleEl.textContent = 'Confirm Status Change';
+                if (willBeChecked) {
+                    if (headingEl) headingEl.textContent = `Activate this ${itemType.toLowerCase()}?`;
+                    if (promptEl) promptEl.textContent = `Are you sure you want to activate "${itemName}"? It will become visible on the public website navigation.`;
+                    if (newStateEl) newStateEl.innerHTML = '<span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>';
+                    if (avatarEl) {
+                        avatarEl.className = 'mb-3 d-inline-flex p-3 rounded-circle bg-success-subtle text-success';
+                        avatarEl.innerHTML = '<i class="bi bi-check-circle-fill fs-1"></i>';
+                    }
+                    if (okBtn) okBtn.className = 'btn btn-success btn-sm px-3';
+                    if (okText) okText.textContent = 'Yes, Activate';
+                } else {
+                    if (headingEl) headingEl.textContent = `Disable this ${itemType.toLowerCase()}?`;
+                    if (promptEl) promptEl.textContent = `Are you sure you want to disable "${itemName}"? It will be hidden from the website navigation.`;
+                    if (newStateEl) newStateEl.innerHTML = '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Disabled</span>';
+                    if (avatarEl) {
+                        avatarEl.className = 'mb-3 d-inline-flex p-3 rounded-circle bg-danger-subtle text-danger';
+                        avatarEl.innerHTML = '<i class="bi bi-eye-slash-fill fs-1"></i>';
+                    }
+                    if (okBtn) okBtn.className = 'btn btn-danger btn-sm px-3';
+                    if (okText) okText.textContent = 'Yes, Disable';
+                }
+            }
+
+            const modal = getStatusModal();
+            modal?.show();
+        });
+
+        // When confirmation modal closes/cancels, reset pending toggle
+        const statusModalEl = document.getElementById('statusConfirmModal');
+        statusModalEl?.addEventListener('hidden.bs.modal', () => {
+            pendingToggle = null;
+            const spinner = document.getElementById('statusConfirmSpinner');
+            if (spinner) spinner.classList.add('d-none');
+            const okBtn = document.getElementById('statusConfirmOkBtn');
+            if (okBtn) okBtn.disabled = false;
+            const cancelBtn = document.getElementById('statusConfirmCancelBtn');
+            if (cancelBtn) cancelBtn.disabled = false;
+        });
+
+        // When confirmed, send AJAX PATCH request and update toggle
+        document.getElementById('statusConfirmOkBtn')?.addEventListener('click', async () => {
+            if (!pendingToggle) return;
+
+            const toggle = pendingToggle;
             const endpoint = toggle.dataset.endpoint;
             const labelEl = document.getElementById(toggle.dataset.labelId);
-            const toggleType = toggle.dataset.toggleType || 'status'; // 'status' or 'featured'
+            const toggleType = toggle.dataset.toggleType || 'status';
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            if (!endpoint) return;
+            const okBtn = document.getElementById('statusConfirmOkBtn');
+            const cancelBtn = document.getElementById('statusConfirmCancelBtn');
+            const spinner = document.getElementById('statusConfirmSpinner');
 
-            // Optimistic lock
-            toggle.disabled = true;
+            if (okBtn) okBtn.disabled = true;
+            if (cancelBtn) cancelBtn.disabled = true;
+            if (spinner) spinner.classList.remove('d-none');
 
             try {
                 const response = await fetch(endpoint, {
@@ -620,6 +744,9 @@
 
                 const data = await response.json();
 
+                // Officially toggle checked property
+                toggle.checked = !toggle.checked;
+
                 // Update label badge UI dynamically
                 if (labelEl) {
                     if (toggleType === 'featured') {
@@ -635,14 +762,20 @@
                     }
                 }
 
+                const modal = getStatusModal();
+                modal?.hide();
+
                 showAdminToast(data.message || 'Status updated successfully.', true);
             } catch (err) {
                 console.error('Status toggle failed:', err);
-                // Revert toggle state on error
-                toggle.checked = !toggle.checked;
+                const modal = getStatusModal();
+                modal?.hide();
                 showAdminToast('Failed to update status. Please try again.', false);
             } finally {
-                toggle.disabled = false;
+                if (okBtn) okBtn.disabled = false;
+                if (cancelBtn) cancelBtn.disabled = false;
+                if (spinner) spinner.classList.add('d-none');
+                pendingToggle = null;
             }
         });
 
@@ -692,6 +825,53 @@
             }
         });
     </script>
+
+    <!-- Universal Status Confirmation Modal -->
+    <div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-labelledby="statusConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+            <div class="modal-content shadow-lg border">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="statusConfirmModalLabel">
+                        <i class="bi bi-shield-exclamation text-primary fs-5" id="statusConfirmIcon"></i>
+                        <span id="statusConfirmTitle">Confirm Status Change</span>
+                    </h5>
+                    <button type="button" class="btn-close" id="statusConfirmCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3 d-inline-flex p-3 rounded-circle bg-warning-subtle text-warning" id="statusConfirmAvatar">
+                        <i class="bi bi-toggle2-on fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 fs-5" id="statusConfirmHeading">Change status?</h6>
+                    <p class="text-secondary small mb-3" id="statusConfirmPrompt">
+                        Are you sure you want to change the status of this item?
+                    </p>
+                    <div class="p-3 rounded-3 bg-body-tertiary border text-start small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Item Name:</span>
+                            <span class="fw-bold text-body text-truncate ms-2" style="max-width: 240px;" id="statusConfirmItemName">Item</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Module / Type:</span>
+                            <span class="text-body fw-medium" id="statusConfirmItemType">Category</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="text-secondary">New Status:</span>
+                            <span id="statusConfirmNewState">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" id="statusConfirmCancelBtn" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-2" id="statusConfirmOkBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="statusConfirmSpinner" role="status" aria-hidden="true"></span>
+                        <span id="statusConfirmOkText">Yes, Update Status</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notification Container -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">

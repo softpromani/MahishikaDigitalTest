@@ -85,6 +85,8 @@
                                        id="portFeat{{ $item->id }}"
                                        data-endpoint="{{ route('admin.portfolio.toggle-featured', $item) }}"
                                        data-label-id="portFeatLabel{{ $item->id }}"
+                                       data-item-name="{{ $item->title }}"
+                                       data-item-type="Portfolio Item"
                                        data-toggle-type="featured"
                                        title="Click to toggle featured status"
                                        {{ $item->is_featured ? 'checked' : '' }}>
@@ -105,6 +107,8 @@
                                        id="portStatus{{ $item->id }}"
                                        data-endpoint="{{ route('admin.portfolio.toggle-status', $item) }}"
                                        data-label-id="portStatusLabel{{ $item->id }}"
+                                       data-item-name="{{ $item->title }}"
+                                       data-item-type="Portfolio Item"
                                        data-toggle-type="status"
                                        title="Click to toggle active status"
                                        {{ $item->is_active ? 'checked' : '' }}>

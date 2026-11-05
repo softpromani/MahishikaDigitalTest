@@ -233,5 +233,17 @@ class AdminTest extends TestCase
         $this->assertStringNotContainsString('sm:hidden', $content);
         $this->assertStringNotContainsString('hidden sm:flex-1', $content);
     }
+
+    public function test_admin_pages_render_status_confirmation_modal(): void
+    {
+        $response = $this->get('/admin/categories');
+        $response->assertStatus(200);
+
+        $content = $response->getContent();
+        $this->assertStringContainsString('id="statusConfirmModal"', $content);
+        $this->assertStringContainsString('id="statusConfirmOkBtn"', $content);
+        $this->assertStringContainsString('id="statusConfirmCancelBtn"', $content);
+        $this->assertStringContainsString('admin-status-toggle', $content);
+    }
 }
 

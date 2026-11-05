@@ -65,6 +65,9 @@
                                        id="catStatus{{ $category->id }}"
                                        data-endpoint="{{ route('admin.categories.toggle-status', $category) }}"
                                        data-label-id="catStatusLabel{{ $category->id }}"
+                                       data-item-name="{{ $category->name }}"
+                                       data-item-type="Category"
+                                       data-toggle-type="status"
                                        title="Click to toggle status"
                                        {{ $category->is_active ? 'checked' : '' }}>
                                 <label class="form-check-label mb-0 cursor-pointer" id="catStatusLabel{{ $category->id }}" for="catStatus{{ $category->id }}">

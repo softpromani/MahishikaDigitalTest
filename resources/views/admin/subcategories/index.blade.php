@@ -69,6 +69,9 @@
                                        id="subStatus{{ $item->id }}"
                                        data-endpoint="{{ route('admin.subcategories.toggle-status', $item) }}"
                                        data-label-id="subStatusLabel{{ $item->id }}"
+                                       data-item-name="{{ $item->title }}"
+                                       data-item-type="Sub-Category"
+                                       data-toggle-type="status"
                                        title="Click to toggle status"
                                        {{ $item->is_active ? 'checked' : '' }}>
                                 <label class="form-check-label mb-0 cursor-pointer" id="subStatusLabel{{ $item->id }}" for="subStatus{{ $item->id }}">
