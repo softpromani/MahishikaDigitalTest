@@ -27,88 +27,13 @@
             margin: 0;
             padding: 0;
             font-family: var(--font-sans);
-        }
-        body.is-mobile-story {
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden !important;
-            min-height: auto;
+            overflow-x: hidden;
         }
         .story-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        body.is-mobile-story .story-container {
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
-            min-height: auto;
-        }
-
-        /* Simulated Mobile Device Container for Mobile Story */
-        .mobile-screen-wrapper {
-            background: var(--bg-surface);
-            height: 100vh;
-            max-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            overflow: hidden;
             position: relative;
-        }
-
-        .mobile-phone-status-bar {
-            height: 32px;
-            background: var(--bg-surface);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.25rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-phone-nav-header {
-            padding: 0.8rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-phone-body {
-            padding: 1rem 1.25rem;
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-
-        .mobile-phone-footer {
-            padding: 0.85rem 1rem;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-home-indicator {
-            width: 120px;
-            height: 4px;
-            background: var(--text-muted);
-            border-radius: 2px;
-            margin: 0.5rem auto 0;
-            opacity: 0.35;
         }
 
         .story-body-content {
@@ -119,116 +44,9 @@
         }
     </style>
 </head>
-<body class="{{ $story === 'mobile' ? 'is-mobile-story' : '' }}">
+<body>
     <div class="story-container">
-        @if($story === 'mobile')
-            <!-- Dedicated Clean Mobile Viewport Story -->
-            <div class="mobile-screen-wrapper">
-                <!-- Phone Status Bar -->
-                <div class="mobile-phone-status-bar">
-                    <span>9:41</span>
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-wifi"></i>
-                        <i class="bi bi-reception-4"></i>
-                        <i class="bi bi-battery-full"></i>
-                    </div>
-                </div>
-
-                <!-- Mobile Navbar Header -->
-                <div class="mobile-phone-nav-header">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                            <i class="bi bi-cpu-fill fs-6"></i>
-                        </span>
-                        <div>
-                            <span class="fw-bold" style="font-size: 0.95rem;">Mahishika</span>
-                            <span class="d-block text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Digital Agency</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center gap-1">
-                        <button type="button" class="action-btn" style="width: 36px; height: 36px;" onclick="toggleMobileSearch()">
-                            <i class="bi bi-search" style="font-size: 0.9rem;"></i>
-                        </button>
-                        <button type="button" class="action-btn" style="width: 36px; height: 36px;" onclick="window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'theme_toggle' } }, '*')">
-                            <i class="bi {{ $theme === 'dark' ? 'bi-sun-fill text-warning' : 'bi-moon-stars' }}" style="font-size: 0.9rem;"></i>
-                        </button>
-                        <button type="button" class="hamburger-btn" style="width: 36px; height: 36px;" aria-expanded="true">
-                            <i class="bi bi-x-lg text-primary" style="font-size: 1.1rem;"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Mobile Search Input Box -->
-                <div class="p-3 pb-0" id="mobileSearchBox" style="display: none;">
-                    <div class="input-group">
-                        <span class="input-group-text bg-body-tertiary border-end-0 text-muted">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="search" class="form-control border-start-0" placeholder="Search services...">
-                    </div>
-                </div>
-
-                <!-- Mobile Menu Accordion Body -->
-                <div class="mobile-phone-body">
-                    <ul class="mobile-menu-accordion">
-                        @foreach($categories as $category)
-                            <li class="mobile-menu-item">
-                                <button type="button" 
-                                        class="mobile-menu-trigger" 
-                                        aria-expanded="{{ $category->slug === 'services' ? 'true' : 'false' }}" 
-                                        onclick="toggleAccordion('mobile-sub-{{ $category->slug }}', this)">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi {{ $category->icon ?? 'bi-folder' }} text-primary"></i>
-                                        <span class="fw-bold" style="font-size: 0.98rem;">{{ $category->name }}</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse {{ $category->slug === 'services' ? 'is-open' : '' }}" id="mobile-sub-{{ $category->slug }}">
-                                    <ul class="mobile-sublink-list ps-2 pe-1">
-                                        @foreach($category->subCategories as $sub)
-                                            <li>
-                                                <a href="{{ $sub->url }}" class="mobile-sublink" onclick="window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: '{{ $sub->title }}' } }, '*')">
-                                                    <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                        <i class="bi {{ $sub->icon ?? 'bi-link' }} mobile-sublink__icon" style="flex-shrink: 0;"></i>
-                                                        <span style="font-size: 0.88rem;">{{ $sub->title }}</span>
-                                                    </div>
-                                                    @if($sub->badge)
-                                                        <span class="badge bg-primary-subtle text-primary ms-2" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
-                                                    @endif
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-
-                <!-- Mobile CTA Footer -->
-                <div class="mobile-phone-footer">
-                    <button type="button" class="btn-submit-consultation w-100" onclick="alert('Opening consultation booking modal...'); window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'consultation_modal_open' } }, '*')">
-                        <i class="bi bi-calendar2-check-fill me-2"></i>
-                        <span>Book a Consultation</span>
-                    </button>
-                    <div class="mobile-home-indicator"></div>
-                </div>
-            </div>
-
-            <script>
-                function toggleAccordion(id, btn) {
-                    const target = document.getElementById(id);
-                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-                    btn.setAttribute('aria-expanded', !isExpanded);
-                    target.classList.toggle('is-open');
-                }
-                function toggleMobileSearch() {
-                    const box = document.getElementById('mobileSearchBox');
-                    box.style.display = box.style.display === 'none' ? 'block' : 'none';
-                }
-            </script>
-
-        @elseif($story === 'login')
+        @if($story === 'login')
             <!-- Auth Login Screen Story -->
             <div class="d-flex align-items-center justify-content-center flex-grow-1 p-3">
                 <div class="card border-0 shadow-lg rounded-4 p-4 p-sm-5" style="max-width: 440px; width: 100%; background: var(--bg-surface);">
@@ -307,7 +125,7 @@
             </div>
 
         @else
-            <!-- Header & Mega Menu Desktop / Standard -->
+            <!-- Header & Mega Menu Desktop / Tablet / Mobile -->
             <header class="site-header" id="siteHeader">
                 <div class="header-container">
                     <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
@@ -440,7 +258,12 @@
                             <i class="bi bi-calendar2-check-fill"></i>
                             <span>Book a Consultation</span>
                         </button>
-                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation">
+                        <button type="button" 
+                                class="hamburger-btn" 
+                                id="hamburgerBtn" 
+                                aria-label="Toggle navigation drawer" 
+                                aria-expanded="{{ $story === 'mobile' ? 'true' : 'false' }}" 
+                                aria-controls="mobileDrawer">
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
@@ -486,6 +309,75 @@
                 </div>
             </header>
 
+            <!-- Mobile Navigation Drawer Backdrop -->
+            <div class="mobile-drawer-backdrop {{ $story === 'mobile' ? 'is-active' : '' }}" id="mobileBackdrop" aria-hidden="{{ $story === 'mobile' ? 'false' : 'true' }}"></div>
+
+            <!-- Mobile Navigation Drawer -->
+            <aside class="mobile-drawer {{ $story === 'mobile' ? 'is-active' : '' }}" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+                <div class="mobile-drawer__header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
+                            <i class="bi bi-cpu-fill fs-6" aria-hidden="true"></i>
+                        </span>
+                        <span class="fw-bold fs-6">Mahishika Digital</span>
+                    </div>
+                    <button type="button" class="action-btn" id="mobileCloseBtn" aria-label="Close mobile navigation">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="mobile-drawer__body">
+                    <ul class="mobile-menu-accordion">
+                        @foreach($categories as $category)
+                            @php
+                                $isAccordionExpanded = ($story === 'industries' && $category->slug === 'industries') || 
+                                                      ($story === 'services' && $category->slug === 'services') || 
+                                                      ($story === 'mobile' && $category->slug === 'services');
+                            @endphp
+                            <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="{{ $isAccordionExpanded ? 'true' : 'false' }}" 
+                                        aria-controls="mobile-sub-{{ $category->slug }}">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi {{ $category->icon ?? 'bi-folder' }} text-primary" aria-hidden="true"></i>
+                                        <span>{{ $category->name }}</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse {{ $isAccordionExpanded ? 'is-open' : '' }}" id="mobile-sub-{{ $category->slug }}">
+                                    <ul class="mobile-sublink-list">
+                                        @foreach($category->subCategories as $sub)
+                                            <li>
+                                                <a href="{{ $sub->url }}" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: '{{ $sub->title }}' } }, '*')">
+                                                    <i class="bi {{ $sub->icon ?? 'bi-link' }} mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>{{ $sub->title }}</span>
+                                                    @if($sub->badge)
+                                                        <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
+                                                    @endif
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <div class="mobile-drawer__footer">
+                    <button type="button" class="btn-submit-consultation w-100" data-open-consultation>
+                        <i class="bi bi-calendar2-check-fill me-2" aria-hidden="true"></i>
+                        <span>Book a Consultation</span>
+                    </button>
+                    <div class="mt-3 text-center">
+                        <a href="{{ route('admin.dashboard') }}" class="small text-secondary text-decoration-none" target="_blank">
+                            <i class="bi bi-gear-fill me-1" aria-hidden="true"></i> Admin CMS Portal
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
             <!-- Story Body Content -->
             <div class="story-body-content flex-grow-1">
                 <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">
@@ -495,9 +387,66 @@
                 <p class="text-secondary small">
                     This frame runs in an isolated context where CSS media queries match the viewport width exactly.
                     Interact with the header, toggle dropdowns, or test keyboard keys (<kbd>Tab</kbd>, <kbd>Esc</kbd>, <kbd>Enter</kbd>, <kbd>&larr;</kbd>, <kbd>&rarr;</kbd>).
+                    In Tablet or Mobile mode, click the hamburger button <i class="bi bi-list"></i> to open the full slide-in drawer.
                 </p>
             </div>
         @endif
+    </div>
+
+    <!-- Consultation Modal for Storybook Frame -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg border">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="consultationModalLabel">
+                        <i class="bi bi-calendar2-check-fill text-primary me-2"></i>Schedule a Strategic Architecture Consultation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-secondary small mb-4">Connect directly with our Principal Architects and Engineering Directors.</p>
+                    <form id="consultationForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Your Full Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" placeholder="e.g. Elena Rostova" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Work Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" placeholder="e.g. elena@enterprise.com" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Company / Organization</label>
+                                <input type="text" name="company" class="form-control" placeholder="e.g. FinTech Global">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Service Area of Interest</label>
+                                <select name="service_interest" class="form-select">
+                                    <option value="Cloud Architecture & DevOps">Cloud Architecture & DevOps</option>
+                                    <option value="Custom Web & Full-Stack Apps">Custom Web & Full-Stack Apps</option>
+                                    <option value="Mobile & Cross-Platform Apps">Mobile & Cross-Platform Apps</option>
+                                    <option value="AI Engineering & Intelligent Agents">AI Engineering & Intelligent Agents</option>
+                                    <option value="Product UI/UX & Design Systems">Product UI/UX & Design Systems</option>
+                                    <option value="Cybersecurity & DevSecOps">Cybersecurity & DevSecOps</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Briefly describe your project or objectives <span class="text-danger">*</span></label>
+                            <textarea name="message" class="form-control" rows="3" placeholder="Timeline, scale, current tech stack..." required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm px-4" id="consultationSubmitBtn">
+                                Submit Consultation Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap 5 Bundle JS -->

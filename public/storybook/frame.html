@@ -27,88 +27,13 @@
             margin: 0;
             padding: 0;
             font-family: var(--font-sans);
-        }
-        body.is-mobile-story {
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden !important;
-            min-height: auto;
+            overflow-x: hidden;
         }
         .story-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-        body.is-mobile-story .story-container {
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
-            min-height: auto;
-        }
-
-        /* Simulated Mobile Device Container for Mobile Story */
-        .mobile-screen-wrapper {
-            background: var(--bg-surface);
-            height: 100vh;
-            max-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            overflow: hidden;
             position: relative;
-        }
-
-        .mobile-phone-status-bar {
-            height: 32px;
-            background: var(--bg-surface);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.25rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-phone-nav-header {
-            padding: 0.8rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-phone-body {
-            padding: 1rem 1.25rem;
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-
-        .mobile-phone-footer {
-            padding: 0.85rem 1rem;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg-surface);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .mobile-home-indicator {
-            width: 120px;
-            height: 4px;
-            background: var(--text-muted);
-            border-radius: 2px;
-            margin: 0.5rem auto 0;
-            opacity: 0.35;
         }
 
         .story-body-content {
@@ -119,9 +44,9 @@
         }
     </style>
 </head>
-<body class="">
+<body>
     <div class="story-container">
-                    <!-- Header & Mega Menu Desktop / Standard -->
+                    <!-- Header & Mega Menu Desktop / Tablet / Mobile -->
             <header class="site-header" id="siteHeader">
                 <div class="header-container">
                     <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
@@ -803,7 +728,12 @@
                             <i class="bi bi-calendar2-check-fill"></i>
                             <span>Book a Consultation</span>
                         </button>
-                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation">
+                        <button type="button" 
+                                class="hamburger-btn" 
+                                id="hamburgerBtn" 
+                                aria-label="Toggle navigation drawer" 
+                                aria-expanded="false" 
+                                aria-controls="mobileDrawer">
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
@@ -827,6 +757,279 @@
                 </div>
             </header>
 
+            <!-- Mobile Navigation Drawer Backdrop -->
+            <div class="mobile-drawer-backdrop " id="mobileBackdrop" aria-hidden="true"></div>
+
+            <!-- Mobile Navigation Drawer -->
+            <aside class="mobile-drawer " id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+                <div class="mobile-drawer__header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
+                            <i class="bi bi-cpu-fill fs-6" aria-hidden="true"></i>
+                        </span>
+                        <span class="fw-bold fs-6">Mahishika Digital</span>
+                    </div>
+                    <button type="button" class="action-btn" id="mobileCloseBtn" aria-label="Close mobile navigation">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="mobile-drawer__body">
+                    <ul class="mobile-menu-accordion">
+                                                                                <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="false" 
+                                        aria-controls="mobile-sub-services">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-layers-half text-primary" aria-hidden="true"></i>
+                                        <span>Services</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse " id="mobile-sub-services">
+                                    <ul class="mobile-sublink-list">
+                                                                                    <li>
+                                                <a href="#services-cloud" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Cloud Architecture &amp; DevOps' } }, '*')">
+                                                    <i class="bi bi-cloud-check mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Cloud Architecture &amp; DevOps</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Popular</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#services-web" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Custom Web &amp; Full-Stack Apps' } }, '*')">
+                                                    <i class="bi bi-code-slash mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Custom Web &amp; Full-Stack Apps</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Core</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#services-mobile" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Mobile &amp; Cross-Platform Apps' } }, '*')">
+                                                    <i class="bi bi-phone mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Mobile &amp; Cross-Platform Apps</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#services-ai" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'AI Engineering &amp; Intelligent Agents' } }, '*')">
+                                                    <i class="bi bi-cpu mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>AI Engineering &amp; Intelligent Agents</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">New</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#services-design" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Product UI/UX &amp; Design Systems' } }, '*')">
+                                                    <i class="bi bi-palette mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Product UI/UX &amp; Design Systems</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#services-security" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Cybersecurity &amp; DevSecOps' } }, '*')">
+                                                    <i class="bi bi-shield-check mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Cybersecurity &amp; DevSecOps</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Enterprise</span>
+                                                                                                    </a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </li>
+                                                                                <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="false" 
+                                        aria-controls="mobile-sub-industries">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-buildings text-primary" aria-hidden="true"></i>
+                                        <span>Industries</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse " id="mobile-sub-industries">
+                                    <ul class="mobile-sublink-list">
+                                                                                    <li>
+                                                <a href="#industry-fintech" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Financial Services &amp; FinTech' } }, '*')">
+                                                    <i class="bi bi-cash-coin mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Financial Services &amp; FinTech</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Regulated</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#industry-healthtech" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Healthcare &amp; HealthTech' } }, '*')">
+                                                    <i class="bi bi-heart-pulse mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Healthcare &amp; HealthTech</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">HIPAA</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#industry-ecommerce" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'E-Commerce &amp; Omnichannel Retail' } }, '*')">
+                                                    <i class="bi bi-bag-check mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>E-Commerce &amp; Omnichannel Retail</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">High Scale</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#industry-saas" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Enterprise SaaS &amp; B2B Platforms' } }, '*')">
+                                                    <i class="bi bi-diagram-3 mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Enterprise SaaS &amp; B2B Platforms</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#industry-logistics" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Logistics &amp; Smart Supply Chain' } }, '*')">
+                                                    <i class="bi bi-truck mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Logistics &amp; Smart Supply Chain</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#industry-edtech" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Media, Entertainment &amp; EdTech' } }, '*')">
+                                                    <i class="bi bi-play-circle mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Media, Entertainment &amp; EdTech</span>
+                                                                                                    </a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </li>
+                                                                                <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="false" 
+                                        aria-controls="mobile-sub-work">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-briefcase text-primary" aria-hidden="true"></i>
+                                        <span>Work</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse " id="mobile-sub-work">
+                                    <ul class="mobile-sublink-list">
+                                                                                    <li>
+                                                <a href="#work-cases" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Enterprise Case Studies' } }, '*')">
+                                                    <i class="bi bi-journal-code mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Enterprise Case Studies</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Featured</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#work-clients" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Client Roster &amp; Partnerships' } }, '*')">
+                                                    <i class="bi bi-star mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Client Roster &amp; Partnerships</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#work-oss" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Open Source &amp; Developer Labs' } }, '*')">
+                                                    <i class="bi bi-github mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Open Source &amp; Developer Labs</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">OSS</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#work-design-systems" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Design Systems &amp; Tokens' } }, '*')">
+                                                    <i class="bi bi-brush mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Design Systems &amp; Tokens</span>
+                                                                                                    </a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </li>
+                                                                                <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="false" 
+                                        aria-controls="mobile-sub-approach">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-compass text-primary" aria-hidden="true"></i>
+                                        <span>Approach</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse " id="mobile-sub-approach">
+                                    <ul class="mobile-sublink-list">
+                                                                                    <li>
+                                                <a href="#approach-architecture" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Architecture-First Engineering' } }, '*')">
+                                                    <i class="bi bi-diagram-2 mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Architecture-First Engineering</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Philosophy</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#approach-agile" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Agile 2-Week Sprint Cadence' } }, '*')">
+                                                    <i class="bi bi-stopwatch mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Agile 2-Week Sprint Cadence</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#approach-ux" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Human-Centered UX &amp; Usability' } }, '*')">
+                                                    <i class="bi bi-eye mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Human-Centered UX &amp; Usability</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#approach-sre" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Observability &amp; SRE Reliability' } }, '*')">
+                                                    <i class="bi bi-speedometer2 mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Observability &amp; SRE Reliability</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">99.99%</span>
+                                                                                                    </a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </li>
+                                                                                <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="false" 
+                                        aria-controls="mobile-sub-about">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-people text-primary" aria-hidden="true"></i>
+                                        <span>About</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse " id="mobile-sub-about">
+                                    <ul class="mobile-sublink-list">
+                                                                                    <li>
+                                                <a href="#about-story" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Our Story &amp; Purpose' } }, '*')">
+                                                    <i class="bi bi-book mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Our Story &amp; Purpose</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#about-team" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Global Team &amp; Leadership' } }, '*')">
+                                                    <i class="bi bi-person-badge mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Global Team &amp; Leadership</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">12 Countries</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#about-careers" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Careers &amp; Open Roles' } }, '*')">
+                                                    <i class="bi bi-lightning-charge mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Careers &amp; Open Roles</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">We&#039;re Hiring</span>
+                                                                                                    </a>
+                                            </li>
+                                                                                    <li>
+                                                <a href="#about-awards" class="mobile-sublink" onclick="window.parent?.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: 'Recognition, Press &amp; Awards' } }, '*')">
+                                                    <i class="bi bi-trophy mobile-sublink__icon" aria-hidden="true"></i>
+                                                    <span>Recognition, Press &amp; Awards</span>
+                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Awwwards</span>
+                                                                                                    </a>
+                                            </li>
+                                                                            </ul>
+                                </div>
+                            </li>
+                                            </ul>
+                </div>
+
+                <div class="mobile-drawer__footer">
+                    <button type="button" class="btn-submit-consultation w-100" data-open-consultation>
+                        <i class="bi bi-calendar2-check-fill me-2" aria-hidden="true"></i>
+                        <span>Book a Consultation</span>
+                    </button>
+                    <div class="mt-3 text-center">
+                        <a href="http://localhost/admin" class="small text-secondary text-decoration-none" target="_blank">
+                            <i class="bi bi-gear-fill me-1" aria-hidden="true"></i> Admin CMS Portal
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
             <!-- Story Body Content -->
             <div class="story-body-content flex-grow-1">
                 <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">
@@ -836,9 +1039,66 @@
                 <p class="text-secondary small">
                     This frame runs in an isolated context where CSS media queries match the viewport width exactly.
                     Interact with the header, toggle dropdowns, or test keyboard keys (<kbd>Tab</kbd>, <kbd>Esc</kbd>, <kbd>Enter</kbd>, <kbd>&larr;</kbd>, <kbd>&rarr;</kbd>).
+                    In Tablet or Mobile mode, click the hamburger button <i class="bi bi-list"></i> to open the full slide-in drawer.
                 </p>
             </div>
             </div>
+
+    <!-- Consultation Modal for Storybook Frame -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg border">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="consultationModalLabel">
+                        <i class="bi bi-calendar2-check-fill text-primary me-2"></i>Schedule a Strategic Architecture Consultation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-secondary small mb-4">Connect directly with our Principal Architects and Engineering Directors.</p>
+                    <form id="consultationForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Your Full Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" placeholder="e.g. Elena Rostova" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Work Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" placeholder="e.g. elena@enterprise.com" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Company / Organization</label>
+                                <input type="text" name="company" class="form-control" placeholder="e.g. FinTech Global">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Service Area of Interest</label>
+                                <select name="service_interest" class="form-select">
+                                    <option value="Cloud Architecture & DevOps">Cloud Architecture & DevOps</option>
+                                    <option value="Custom Web & Full-Stack Apps">Custom Web & Full-Stack Apps</option>
+                                    <option value="Mobile & Cross-Platform Apps">Mobile & Cross-Platform Apps</option>
+                                    <option value="AI Engineering & Intelligent Agents">AI Engineering & Intelligent Agents</option>
+                                    <option value="Product UI/UX & Design Systems">Product UI/UX & Design Systems</option>
+                                    <option value="Cybersecurity & DevSecOps">Cybersecurity & DevSecOps</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Briefly describe your project or objectives <span class="text-danger">*</span></label>
+                            <textarea name="message" class="form-control" rows="3" placeholder="Timeline, scale, current tech stack..." required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm px-4" id="consultationSubmitBtn">
+                                Submit Consultation Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

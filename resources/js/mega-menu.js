@@ -198,7 +198,13 @@ export class MegaMenu {
     initMobileDrawer() {
         if (!this.hamburgerBtn || !this.mobileDrawer) return;
 
-        this.hamburgerBtn.addEventListener('click', () => {
+        // Synchronize initial expanded state
+        if (this.mobileDrawer.classList.contains('is-active')) {
+            this.hamburgerBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        this.hamburgerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             const isOpen = this.hamburgerBtn.getAttribute('aria-expanded') === 'true';
             if (isOpen) {
                 this.closeMobileDrawer();
@@ -207,8 +213,14 @@ export class MegaMenu {
             }
         });
 
-        this.mobileCloseBtn?.addEventListener('click', () => this.closeMobileDrawer());
-        this.mobileBackdrop?.addEventListener('click', () => this.closeMobileDrawer());
+        this.mobileCloseBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeMobileDrawer();
+        });
+        this.mobileBackdrop?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeMobileDrawer();
+        });
 
         // Accordion sublevels
         this.mobileAccordionTriggers.forEach((accordionTrigger) => {
