@@ -215,13 +215,17 @@ The backend provides a complete administrative CMS and RESTful API:
 - `GET /api/portfolio`: Returns all case studies and published insights.
 - `POST /api/consultations`: Validates client lead submissions and returns HTTP 201 with reference ID (or HTTP 422 with granular validation errors).
 
-### Admin Management CMS (`/admin`)
-Visit `/admin` in your browser to access the management portal:
+### Admin Management CMS & Authentication (`/login` & `/admin`)
+- **Admin Login Screen** (`/login`): Clean authentication portal with password toggle, demo credentials 1-click fill, and dark/light mode.
+- **Seeded Admin Credentials**:
+  - **Email**: `admin@mahishika.digital` (or `admin@mahishika.com`)
+  - **Password**: `password123`
 - **Dashboard**: Overview statistics, recent leads, and live menu hierarchy preview.
 - **Categories CMS** (`/admin/categories`): Create, edit, reorder, toggle, and delete top-level menu items.
 - **Sub-Categories CMS** (`/admin/subcategories`): Filter by parent category, add sub-links with badges, descriptions, and custom icons.
 - **Portfolio CMS** (`/admin/portfolio`): Create and manage featured case studies, assign them to mega-panel slots, and specify key metric callouts.
 - **Consultation Leads** (`/admin/consultations`): View incoming client requests, update lead status (`New`, `Contacted`, `Scheduled`, `Completed`), and reply via email.
+- **Sign Out**: Secure session invalidation and CSRF-protected logout.
 
 ---
 
