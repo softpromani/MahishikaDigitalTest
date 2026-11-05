@@ -138,5 +138,100 @@ class AdminTest extends TestCase
             'status' => 'contacted',
         ]);
     }
+
+    public function test_admin_can_toggle_category_status(): void
+    {
+        $category = Category::first();
+        $initialStatus = $category->is_active;
+
+        $response = $this->patch("/admin/categories/{$category->id}/toggle-status");
+        $response->assertRedirect('/admin/categories');
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'is_active' => !$initialStatus,
+        ]);
+    }
+
+    public function test_admin_can_toggle_category_status_via_ajax(): void
+    {
+        $category = Category::first();
+        $initialStatus = $category->is_active;
+
+        $response = $this->patchJson("/admin/categories/{$category->id}/toggle-status");
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'is_active' => !$initialStatus,
+            ]);
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'is_active' => !$initialStatus,
+        ]);
+    }
+
+    public function test_admin_can_toggle_subcategory_status(): void
+    {
+        $sub = SubCategory::first();
+        $initialStatus = $sub->is_active;
+
+        $response = $this->patchJson("/admin/subcategories/{$sub->id}/toggle-status");
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'is_active' => !$initialStatus,
+            ]);
+
+        $this->assertDatabaseHas('sub_categories', [
+            'id' => $sub->id,
+            'is_active' => !$initialStatus,
+        ]);
+    }
+
+    public function test_admin_can_toggle_portfolio_status_and_featured(): void
+    {
+        $item = PortfolioArticle::first();
+        $initialStatus = $item->is_active;
+        $initialFeatured = $item->is_featured;
+
+        // Toggle active status
+        $responseStatus = $this->patchJson("/admin/portfolio/{$item->id}/toggle-status");
+        $responseStatus->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'is_active' => !$initialStatus,
+            ]);
+
+        // Toggle featured
+        $responseFeat = $this->patchJson("/admin/portfolio/{$item->id}/toggle-featured");
+        $responseFeat->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'is_featured' => !$initialFeatured,
+            ]);
+
+        $this->assertDatabaseHas('portfolio_articles', [
+            'id' => $item->id,
+            'is_active' => !$initialStatus,
+            'is_featured' => !$initialFeatured,
+        ]);
+    }
+
+    public function test_subcategories_pagination_renders_bootstrap_without_giant_svg(): void
+    {
+        $response = $this->get('/admin/subcategories');
+        $response->assertStatus(200);
+
+        // Subcategories has 24 seeded items with paginate(15) -> 2 pages
+        // Must contain standard Bootstrap 5 pagination classes and no unstyled tailwind classes
+        $content = $response->getContent();
+        $this->assertStringContainsString('pagination', $content);
+        $this->assertStringContainsString('page-item', $content);
+        $this->assertStringContainsString('page-link', $content);
+        // Ensure no unstyled Tailwind flex-1 or svg without dimensions
+        $this->assertStringNotContainsString('sm:hidden', $content);
+        $this->assertStringNotContainsString('hidden sm:flex-1', $content);
+    }
 }
 

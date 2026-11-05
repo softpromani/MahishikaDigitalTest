@@ -31,6 +31,7 @@
                     <th scope="col">Key Metric</th>
                     <th scope="col">Type</th>
                     <th scope="col">Featured</th>
+                    <th scope="col">Status</th>
                     <th scope="col" class="text-end" style="width: 140px;">Actions</th>
                 </tr>
             </thead>
@@ -77,11 +78,44 @@
                             </span>
                         </td>
                         <td>
-                            @if($item->is_featured)
-                                <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
-                            @else
-                                <span class="text-muted small">Standard</span>
-                            @endif
+                            <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input admin-status-toggle toggle-featured" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="portFeat{{ $item->id }}"
+                                       data-endpoint="{{ route('admin.portfolio.toggle-featured', $item) }}"
+                                       data-label-id="portFeatLabel{{ $item->id }}"
+                                       data-toggle-type="featured"
+                                       title="Click to toggle featured status"
+                                       {{ $item->is_featured ? 'checked' : '' }}>
+                                <label class="form-check-label mb-0 cursor-pointer" id="portFeatLabel{{ $item->id }}" for="portFeat{{ $item->id }}">
+                                    @if($item->is_featured)
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Standard</span>
+                                    @endif
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input admin-status-toggle" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="portStatus{{ $item->id }}"
+                                       data-endpoint="{{ route('admin.portfolio.toggle-status', $item) }}"
+                                       data-label-id="portStatusLabel{{ $item->id }}"
+                                       data-toggle-type="status"
+                                       title="Click to toggle active status"
+                                       {{ $item->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label mb-0 cursor-pointer" id="portStatusLabel{{ $item->id }}" for="portStatus{{ $item->id }}">
+                                    @if($item->is_active)
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Disabled</span>
+                                    @endif
+                                </label>
+                            </div>
                         </td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm">
@@ -96,7 +130,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center py-4 text-muted">No portfolio items found.</td>
+                        <td colspan="9" class="text-center py-4 text-muted">No portfolio items found.</td>
                     </tr>
                 @endforelse
             </tbody>

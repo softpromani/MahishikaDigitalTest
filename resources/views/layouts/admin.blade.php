@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') | Mahishika Digital CMS</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -197,6 +198,84 @@
         }
         .modal-header, .modal-footer {
             background-color: inherit;
+        }
+
+        /* Universal Pagination styling and SVG containment */
+        .pagination {
+            margin-bottom: 0;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .pagination .page-item:first-child .page-link,
+        .pagination .page-item:last-child .page-link {
+            border-radius: 8px !important;
+        }
+        .pagination .page-link {
+            border-radius: 8px !important;
+            padding: 0.38rem 0.75rem;
+            color: #334155;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-color: rgba(0, 0, 0, 0.1);
+            transition: all 0.15s ease;
+        }
+        .pagination .page-link:hover {
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #2563eb !important;
+            border-color: #2563eb !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+        .pagination svg {
+            width: 1rem !important;
+            height: 1rem !important;
+            max-width: 1rem !important;
+            max-height: 1rem !important;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        [data-bs-theme="dark"] .pagination .page-link {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+        [data-bs-theme="dark"] .pagination .page-link:hover {
+            background-color: #334155;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .pagination .page-item.active .page-link {
+            background-color: #3b82f6 !important;
+            border-color: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+
+        /* Status Toggle Switches */
+        .admin-status-toggle {
+            cursor: pointer;
+            width: 2.35rem !important;
+            height: 1.25rem !important;
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .admin-status-toggle:focus {
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.2);
+        }
+        .admin-status-toggle:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        .admin-status-toggle.toggle-featured:checked {
+            background-color: #f59e0b;
+            border-color: #f59e0b;
+        }
+        .admin-status-toggle:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+        .cursor-pointer {
+            cursor: pointer;
         }
     </style>
     @stack('styles')
@@ -494,7 +573,138 @@
 
         closeBtn?.addEventListener('click', closeMobileSidebar);
         backdrop?.addEventListener('click', closeMobileSidebar);
+
+        // Global Toast Notification Helper
+        const liveToastEl = document.getElementById('adminLiveToast');
+        const liveToast = liveToastEl ? new bootstrap.Toast(liveToastEl, { delay: 3500 }) : null;
+        function showAdminToast(message, isSuccess = true) {
+            const toastText = document.getElementById('adminToastText');
+            const toastIcon = document.getElementById('adminToastIcon');
+            if (toastText) toastText.textContent = message;
+            if (toastIcon) {
+                toastIcon.className = isSuccess 
+                    ? 'bi bi-check-circle-fill text-success fs-5' 
+                    : 'bi bi-exclamation-triangle-fill text-danger fs-5';
+            }
+            if (liveToast) liveToast.show();
+        }
+
+        // Global Status Toggle AJAX Handler
+        document.addEventListener('change', async (e) => {
+            const toggle = e.target.closest('.admin-status-toggle');
+            if (!toggle) return;
+
+            const endpoint = toggle.dataset.endpoint;
+            const labelEl = document.getElementById(toggle.dataset.labelId);
+            const toggleType = toggle.dataset.toggleType || 'status'; // 'status' or 'featured'
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            if (!endpoint) return;
+
+            // Optimistic lock
+            toggle.disabled = true;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Failed to update status`);
+                }
+
+                const data = await response.json();
+
+                // Update label badge UI dynamically
+                if (labelEl) {
+                    if (toggleType === 'featured') {
+                        const isFeatured = !!data.is_featured;
+                        labelEl.innerHTML = isFeatured
+                            ? '<span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>Featured</span>'
+                            : '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Standard</span>';
+                    } else {
+                        const isActive = !!data.is_active;
+                        labelEl.innerHTML = isActive
+                            ? '<span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>'
+                            : '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Disabled</span>';
+                    }
+                }
+
+                showAdminToast(data.message || 'Status updated successfully.', true);
+            } catch (err) {
+                console.error('Status toggle failed:', err);
+                // Revert toggle state on error
+                toggle.checked = !toggle.checked;
+                showAdminToast('Failed to update status. Please try again.', false);
+            } finally {
+                toggle.disabled = false;
+            }
+        });
+
+        // Consultation Status Select AJAX Handler
+        document.addEventListener('change', async (e) => {
+            const select = e.target.closest('.consultation-status-select');
+            if (!select) return;
+
+            const endpoint = select.dataset.endpoint;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!endpoint) return;
+
+            select.disabled = true;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ status: select.value })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Failed to update status`);
+                }
+
+                const data = await response.json();
+
+                // Update styling
+                select.classList.remove('border-danger', 'text-danger', 'fw-bold', 'border-success', 'text-success');
+                if (select.value === 'new') {
+                    select.classList.add('border-danger', 'text-danger', 'fw-bold');
+                } else if (select.value === 'completed') {
+                    select.classList.add('border-success', 'text-success');
+                }
+
+                showAdminToast(data.message || 'Consultation status updated.', true);
+            } catch (err) {
+                console.error('Consultation status update failed:', err);
+                // Fallback to traditional form submit
+                select.form?.submit();
+            } finally {
+                select.disabled = false;
+            }
+        });
     </script>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        <div id="adminLiveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2" id="adminToastMessage">
+                    <i class="bi bi-check-circle-fill text-success fs-5" id="adminToastIcon"></i>
+                    <span id="adminToastText">Status updated successfully.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     @stack('scripts')
 </body>
 </html>

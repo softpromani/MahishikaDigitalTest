@@ -48,7 +48,7 @@
                             <form action="{{ route('admin.consultations.status', $lead) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
-                                <select name="status" class="form-select form-select-sm {{ $lead->status === 'new' ? 'border-danger text-danger fw-bold' : ($lead->status === 'completed' ? 'border-success text-success' : '') }}" onchange="this.form.submit()">
+                                <select name="status" class="form-select form-select-sm consultation-status-select {{ $lead->status === 'new' ? 'border-danger text-danger fw-bold' : ($lead->status === 'completed' ? 'border-success text-success' : '') }}" data-endpoint="{{ route('admin.consultations.status', $lead) }}" title="Change lead status">
                                     <option value="new" {{ $lead->status === 'new' ? 'selected' : '' }}>🔴 New</option>
                                     <option value="contacted" {{ $lead->status === 'contacted' ? 'selected' : '' }}>🟡 Contacted</option>
                                     <option value="scheduled" {{ $lead->status === 'scheduled' ? 'selected' : '' }}>🔵 Scheduled</option>

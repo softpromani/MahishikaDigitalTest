@@ -28,18 +28,22 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/categories', [AdminController::class, 'categories'])->name('categories');
     Route::post('/categories', [AdminController::class, 'storeCategory'])->name('categories.store');
     Route::put('/categories/{category}', [AdminController::class, 'updateCategory'])->name('categories.update');
+    Route::match(['post', 'patch'], '/categories/{category}/toggle-status', [AdminController::class, 'toggleCategoryStatus'])->name('categories.toggle-status');
     Route::delete('/categories/{category}', [AdminController::class, 'deleteCategory'])->name('categories.delete');
 
     // Subcategories Management
     Route::get('/subcategories', [AdminController::class, 'subcategories'])->name('subcategories');
     Route::post('/subcategories', [AdminController::class, 'storeSubCategory'])->name('subcategories.store');
     Route::put('/subcategories/{subCategory}', [AdminController::class, 'updateSubCategory'])->name('subcategories.update');
+    Route::match(['post', 'patch'], '/subcategories/{subCategory}/toggle-status', [AdminController::class, 'toggleSubCategoryStatus'])->name('subcategories.toggle-status');
     Route::delete('/subcategories/{subCategory}', [AdminController::class, 'deleteSubCategory'])->name('subcategories.delete');
 
     // Portfolio / Articles Management
     Route::get('/portfolio', [AdminController::class, 'portfolio'])->name('portfolio');
     Route::post('/portfolio', [AdminController::class, 'storePortfolio'])->name('portfolio.store');
     Route::put('/portfolio/{portfolioArticle}', [AdminController::class, 'updatePortfolio'])->name('portfolio.update');
+    Route::match(['post', 'patch'], '/portfolio/{portfolioArticle}/toggle-status', [AdminController::class, 'togglePortfolioStatus'])->name('portfolio.toggle-status');
+    Route::match(['post', 'patch'], '/portfolio/{portfolioArticle}/toggle-featured', [AdminController::class, 'togglePortfolioFeatured'])->name('portfolio.toggle-featured');
     Route::delete('/portfolio/{portfolioArticle}', [AdminController::class, 'deletePortfolio'])->name('portfolio.delete');
 
     // Consultations Leads

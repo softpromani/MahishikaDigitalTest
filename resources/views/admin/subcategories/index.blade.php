@@ -62,11 +62,23 @@
                             @endif
                         </td>
                         <td>
-                            @if($item->is_active)
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
-                            @else
-                                <span class="badge bg-secondary">Disabled</span>
-                            @endif
+                            <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input admin-status-toggle" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="subStatus{{ $item->id }}"
+                                       data-endpoint="{{ route('admin.subcategories.toggle-status', $item) }}"
+                                       data-label-id="subStatusLabel{{ $item->id }}"
+                                       title="Click to toggle status"
+                                       {{ $item->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label mb-0 cursor-pointer" id="subStatusLabel{{ $item->id }}" for="subStatus{{ $item->id }}">
+                                    @if($item->is_active)
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Disabled</span>
+                                    @endif
+                                </label>
+                            </div>
                         </td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm">

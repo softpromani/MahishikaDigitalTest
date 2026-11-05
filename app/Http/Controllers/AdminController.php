@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Consultation;
 use App\Models\PortfolioArticle;
 use App\Models\SubCategory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -109,6 +110,29 @@ class AdminController extends Controller
     }
 
     /**
+     * Toggle active status of a category.
+     */
+    public function toggleCategoryStatus(Request $request, Category $category): JsonResponse|RedirectResponse
+    {
+        $category->is_active = !$category->is_active;
+        $category->save();
+
+        $state = $category->is_active ? 'Active' : 'Disabled';
+        $message = "Category '{$category->name}' status updated to {$state}.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => (bool)$category->is_active,
+                'state_text' => $state,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('admin.categories')->with('success', $message);
+    }
+
+    /**
      * Subcategories management list.
      */
     public function subcategories(Request $request): View
@@ -188,6 +212,30 @@ class AdminController extends Controller
 
         return redirect()->route('admin.subcategories', ['category_id' => $catId])
             ->with('success', "Subcategory '{$title}' deleted successfully.");
+    }
+
+    /**
+     * Toggle active status of a subcategory.
+     */
+    public function toggleSubCategoryStatus(Request $request, SubCategory $subCategory): JsonResponse|RedirectResponse
+    {
+        $subCategory->is_active = !$subCategory->is_active;
+        $subCategory->save();
+
+        $state = $subCategory->is_active ? 'Active' : 'Disabled';
+        $message = "Subcategory '{$subCategory->title}' status updated to {$state}.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => (bool)$subCategory->is_active,
+                'state_text' => $state,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('admin.subcategories', ['category_id' => $subCategory->category_id])
+            ->with('success', $message);
     }
 
     /**
@@ -278,6 +326,52 @@ class AdminController extends Controller
     }
 
     /**
+     * Toggle active status of a portfolio article.
+     */
+    public function togglePortfolioStatus(Request $request, PortfolioArticle $portfolioArticle): JsonResponse|RedirectResponse
+    {
+        $portfolioArticle->is_active = !$portfolioArticle->is_active;
+        $portfolioArticle->save();
+
+        $state = $portfolioArticle->is_active ? 'Active' : 'Disabled';
+        $message = "Portfolio item '{$portfolioArticle->title}' status updated to {$state}.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => (bool)$portfolioArticle->is_active,
+                'state_text' => $state,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('admin.portfolio')->with('success', $message);
+    }
+
+    /**
+     * Toggle featured status of a portfolio article.
+     */
+    public function togglePortfolioFeatured(Request $request, PortfolioArticle $portfolioArticle): JsonResponse|RedirectResponse
+    {
+        $portfolioArticle->is_featured = !$portfolioArticle->is_featured;
+        $portfolioArticle->save();
+
+        $state = $portfolioArticle->is_featured ? 'Featured' : 'Standard';
+        $message = "Portfolio item '{$portfolioArticle->title}' is now {$state}.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_featured' => (bool)$portfolioArticle->is_featured,
+                'state_text' => $state,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('admin.portfolio')->with('success', $message);
+    }
+
+    /**
      * Consultations leads list.
      */
     public function consultations(): View
@@ -290,7 +384,7 @@ class AdminController extends Controller
     /**
      * Update consultation status.
      */
-    public function updateConsultationStatus(Request $request, Consultation $consultation): RedirectResponse
+    public function updateConsultationStatus(Request $request, Consultation $consultation): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
             'status' => 'required|in:new,contacted,scheduled,completed,archived',
@@ -298,7 +392,17 @@ class AdminController extends Controller
 
         $consultation->update($validated);
 
-        return redirect()->route('admin.consultations')->with('success', "Status updated to '{$validated['status']}'.");
+        $message = "Status updated to '" . ucfirst($validated['status']) . "'.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'status' => $validated['status'],
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('admin.consultations')->with('success', $message);
     }
 
     /**

@@ -58,11 +58,23 @@
                             <span class="badge bg-light text-dark border">{{ $category->portfolio_articles_count }}</span>
                         </td>
                         <td>
-                            @if($category->is_active)
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
-                            @else
-                                <span class="badge bg-secondary">Disabled</span>
-                            @endif
+                            <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input admin-status-toggle" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="catStatus{{ $category->id }}"
+                                       data-endpoint="{{ route('admin.categories.toggle-status', $category) }}"
+                                       data-label-id="catStatusLabel{{ $category->id }}"
+                                       title="Click to toggle status"
+                                       {{ $category->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label mb-0 cursor-pointer" id="catStatusLabel{{ $category->id }}" for="catStatus{{ $category->id }}">
+                                    @if($category->is_active)
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Disabled</span>
+                                    @endif
+                                </label>
+                            </div>
                         </td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm">
