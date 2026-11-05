@@ -65,4 +65,28 @@ class HomeController extends Controller
             'stats'
         ));
     }
+
+    /**
+     * Isolated component frame for Storybook preview canvas.
+     */
+    public function storybookFrame(Request $request): View
+    {
+        $story = $request->query('story', 'default');
+        $theme = $request->query('theme', 'light');
+
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->with([
+                'subCategories' => function ($query) {
+                    $query->where('is_active', true)->orderBy('sort_order', 'asc');
+                },
+                'portfolioArticles' => function ($query) {
+                    $query->where('is_active', true)->orderBy('sort_order', 'asc');
+                },
+            ])
+            ->get();
+
+        return view('storybook.frame', compact('story', 'theme', 'categories'));
+    }
 }

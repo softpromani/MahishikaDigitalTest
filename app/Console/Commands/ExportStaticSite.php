@@ -45,6 +45,14 @@ class ExportStaticSite extends Command
         file_put_contents(public_path('api/menu.json'), json_encode($menuData, JSON_PRETTY_PRINT));
         $this->info('Saved public/api/menu.json.');
 
+        // Export static Storybook frame
+        $frameView = $controller->storybookFrame(new \Illuminate\Http\Request());
+        $frameHtml = $frameView->render();
+        $frameHtml = str_replace('{{ csrf_token() }}', 'static-demo-token', $frameHtml);
+        @mkdir(public_path('storybook'), 0755, true);
+        file_put_contents(public_path('storybook/frame.html'), $frameHtml);
+        $this->info('Saved public/storybook/frame.html.');
+
         $this->info('Static export completed successfully!');
 
         return Command::SUCCESS;
