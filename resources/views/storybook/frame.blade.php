@@ -246,7 +246,10 @@
                                                         @endphp
                                                         <div class="mega-featured-item-panel {{ $isActive ? 'd-flex' : 'd-none' }} flex-column" id="featured-vertical-{{ $vCat->slug }}">
                                                             <div class="featured-case-box">
-                                                                <div class="featured-case-inner">[Case image]</div>
+                                                                <div class="featured-case-visual">
+                                                                    <i class="bi bi-window-split fs-4 opacity-75 mb-1"></i>
+                                                                    <span>[Case image]</span>
+                                                                </div>
                                                             </div>
                                                             <div class="featured-case-desc">
                                                                 <strong>[{{ $featArt->client_name ?? 'Client' }}]:</strong>

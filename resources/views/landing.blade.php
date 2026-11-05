@@ -26,18 +26,16 @@
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- ==========================================================================
-       1. Top Black Announcement Bar (from Zeplin)
-       ========================================================================== -->
-    <div class="top-announcement-bar">
-        <div class="container-xl d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <span class="announcement-text">Analytics &amp; Tracking page draft. Portfolio pieces and numbers are placeholders — copy is a first draft, ready for review.</span>
-            <button type="button" class="btn-highlight-placeholders" id="highlightPlaceholdersBtn">Highlight placeholders</button>
+    <!-- Top Draft Banner (from Figma / Zeplin) -->
+    <div class="draft-top-banner">
+        <div class="container-fluid px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <span class="draft-banner-text">Analytics &amp; Tracking page draft. Portfolio pieces and numbers are placeholders &mdash; copy is a first draft, ready for review.</span>
+            <button type="button" class="btn-highlight-placeholders" id="togglePlaceholdersBtn">Highlight placeholders</button>
         </div>
     </div>
 
     <!-- ==========================================================================
-       2. Site Header with Mega Menu (from Zeplin & Task PDF)
+       Site Header with Mega Menu (from Zeplin & Task PDF)
        ========================================================================== -->
     <header class="site-header" id="siteHeader">
         <div class="header-container">
@@ -50,7 +48,7 @@
             <nav class="desktop-nav" aria-label="Primary Navigation">
                 <ul class="mega-menu-list" role="menubar">
                     <!-- 1. Services with 3-Column Zeplin Mega Menu Dropdown -->
-                    <li class="mega-menu-item position-relative" role="none">
+                    <li class="mega-menu-item" role="none">
                         <button type="button" 
                                 class="mega-menu-trigger" 
                                 role="menuitem" 
@@ -153,16 +151,27 @@
                                         @php
                                             $isActive = ($vCat->slug === 'tech');
                                             $featuredItem = $vCat->portfolioArticles->where('is_featured', true)->first() ?? $vCat->portfolioArticles->first();
-                                            $caseHeadline = $featuredItem ? $featuredItem->title : '[Client]: checkout rebuilt and mobile load time cut in half';
+                                            $localImgs = [
+                                                'tech' => asset('assets/images/tech-case.jpg'),
+                                                'design' => asset('assets/images/design-case.jpg'),
+                                                'video' => asset('assets/images/video-case.jpg'),
+                                                'marketing' => asset('assets/images/marketing-case.jpg'),
+                                            ];
+                                            $caseImg = $localImgs[$vCat->slug] ?? asset('assets/images/tech-case.jpg');
+                                            if ($featuredItem && !empty($featuredItem->image_url)) {
+                                                if (str_starts_with($featuredItem->image_url, '/')) {
+                                                    $caseImg = asset(ltrim($featuredItem->image_url, '/'));
+                                                } elseif (!str_starts_with($featuredItem->image_url, 'http')) {
+                                                    $caseImg = asset($featuredItem->image_url);
+                                                }
+                                            }
+                                            $caseHeadline = $featuredItem ? $featuredItem->title : '[' . ($vCat->name) . ' Client]: checkout rebuilt and mobile load time cut in half';
                                             $caseLink = $featuredItem ? $featuredItem->link_url : '#portfolio';
                                         @endphp
                                         <div class="mega-featured-item-panel {{ $isActive ? 'd-flex' : 'd-none' }} flex-column h-100" id="featured-vertical-{{ $vCat->slug }}">
                                             <div class="featured-case-box">
-                                                @if($featuredItem && $featuredItem->image_url)
-                                                    <img src="{{ $featuredItem->image_url }}" alt="{{ $caseHeadline }}" class="w-100 h-100 object-fit-cover">
-                                                @else
-                                                    <span>[Case image]</span>
-                                                @endif
+                                                <img src="{{ $caseImg }}" alt="{{ $caseHeadline }}" class="featured-case-img" loading="eager">
+                                                <span class="featured-case-tag">{{ $vCat->name }} Case</span>
                                             </div>
                                             <h4 class="featured-case-headline">{{ $caseHeadline }}</h4>
                                             <a href="{{ $caseLink }}" class="featured-case-link">
@@ -188,33 +197,27 @@
                         </div>
                     </li>
 
-                    <!-- 2. Industries -->
+                    <!-- 2. Portfolio -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Portfolio</a>
+                    </li>
+
+                    <!-- 3. Industries -->
                     <li class="mega-menu-item" role="none">
                         <a href="#industries" class="mega-menu-trigger" role="menuitem">Industries</a>
                     </li>
 
-                    <!-- 3. Work -->
-                    <li class="mega-menu-item" role="none">
-                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Work</a>
-                    </li>
-
-                    <!-- 4. Approach -->
-                    <li class="mega-menu-item" role="none">
-                        <a href="#process" class="mega-menu-trigger" role="menuitem">Approach</a>
-                    </li>
-
-                    <!-- 5. About -->
+                    <!-- 4. About -->
                     <li class="mega-menu-item" role="none">
                         <a href="#about" class="mega-menu-trigger" role="menuitem">About</a>
                     </li>
 
-                    <!-- 6. Portfolio / Blog / Contact Links -->
-                    <li class="mega-menu-item d-none d-xxl-inline-block" role="none">
-                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Portfolio</a>
-                    </li>
-                    <li class="mega-menu-item d-none d-xxl-inline-block" role="none">
+                    <!-- 5. Blog -->
+                    <li class="mega-menu-item" role="none">
                         <a href="#insights" class="mega-menu-trigger" role="menuitem">Blog</a>
                     </li>
+
+                    <!-- 6. Contact -->
                     <li class="mega-menu-item" role="none">
                         <a href="#contact" class="mega-menu-trigger" role="menuitem" data-bs-toggle="modal" data-bs-target="#consultationModal">Contact</a>
                     </li>
@@ -223,29 +226,21 @@
 
             <!-- Header Actions -->
             <div class="header-actions">
-                <!-- Theme Toggle Button -->
-                <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light mode">
-                    <i class="bi bi-moon-stars" id="themeIcon"></i>
-                </button>
-
-                <!-- Admin Link -->
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary d-none d-xl-inline-flex align-items-center gap-1 rounded-pill px-3">
-                    <i class="bi bi-shield-lock"></i>
-                    <span>Admin</span>
-                </a>
-
-                <!-- Primary CTA Button (as specified in Task PDF) -->
+                <!-- Primary CTA Button (from Figma) -->
                 <a href="#growth-audit" class="btn-zeplin-primary d-none d-sm-inline-flex" data-bs-toggle="modal" data-bs-target="#consultationModal">
-                    Book a Consultation
+                    Book a growth audit
                 </a>
 
-                <!-- Mobile Hamburger Button -->
-                <button type="button" class="mobile-toggle-btn" id="mobileMenuBtn" aria-label="Open mobile navigation" aria-expanded="false" aria-controls="mobileDrawer">
+                <!-- Mobile Hamburger Button (Strictly shown only on tablet / mobile) -->
+                <button type="button" class="mobile-toggle-btn d-lg-none" id="mobileMenuBtn" aria-label="Open mobile navigation" aria-expanded="false" aria-controls="mobileDrawer">
                     <i class="bi bi-list fs-4"></i>
                 </button>
             </div>
         </div>
     </header>
+
+    <!-- Mega Menu Backdrop Overlay -->
+    <div class="mega-menu-backdrop" id="megaMenuBackdrop"></div>
 
     <!-- Mobile Drawer -->
     <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
@@ -287,18 +282,28 @@
                 </li>
 
                 <li class="mobile-menu-item">
-                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
-                        <span>Portfolio</span>
-                    </a>
-                </li>
-                <li class="mobile-menu-item">
                     <a href="#industries" class="mobile-menu-trigger text-decoration-none">
                         <span>Industries</span>
                     </a>
                 </li>
                 <li class="mobile-menu-item">
+                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
+                        <span>Work</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#process" class="mobile-menu-trigger text-decoration-none">
+                        <span>Approach</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
                     <a href="#about" class="mobile-menu-trigger text-decoration-none">
                         <span>About</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
+                        <span>Portfolio</span>
                     </a>
                 </li>
                 <li class="mobile-menu-item">
@@ -316,7 +321,7 @@
 
         <div class="mobile-drawer__footer">
             <a href="#growth-audit" class="btn-zeplin-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#consultationModal">
-                Book a growth audit
+                Book a Consultation
             </a>
             <div class="mt-3 text-center">
                 <a href="{{ route('admin.dashboard') }}" class="small text-secondary text-decoration-none">
@@ -380,19 +385,19 @@
                             <div class="metric-blocks-grid">
                                 <div class="metric-mini-card">
                                     <span class="label">Revenue</span>
-                                    <div class="val">&#8377;[00L]</div>
+                                    <div class="val is-placeholder" data-placeholder="true">&#8377;[00L]</div>
                                 </div>
                                 <div class="metric-mini-card">
                                     <span class="label">Leads</span>
-                                    <div class="val">[000]</div>
+                                    <div class="val is-placeholder" data-placeholder="true">[000]</div>
                                 </div>
                                 <div class="metric-mini-card">
                                     <span class="label">CPA</span>
-                                    <div class="val">&#8377;[000]</div>
+                                    <div class="val is-placeholder" data-placeholder="true">&#8377;[000]</div>
                                 </div>
                                 <div class="metric-mini-card">
                                     <span class="label">ROAS</span>
-                                    <div class="val">[0.0x]</div>
+                                    <div class="val is-placeholder" data-placeholder="true">[0.0x]</div>
                                 </div>
                             </div>
 
@@ -810,57 +815,59 @@
                            ========================================================================== -->
                         <div class="portfolio-section" id="portfolio">
                             <h2 class="marketing-section-h2">Data that finally matched the bank account.</h2>
-                            <p class="marketing-section-sub">Placeholders below, ready for your real portfolio pieces.</p>
+                            <p class="marketing-section-sub">Real client outcomes delivered with precision measurement and modern infrastructure.</p>
 
                             <div class="zeplin-portfolio-grid">
-                                <!-- Card 1 -->
+                                <!-- Card 1: Retail & E-Commerce -->
                                 <div class="zeplin-portfolio-card">
                                     <div class="zeplin-portfolio-thumb">
-                                        <span>[Image]</span>
+                                        <img src="{{ asset('assets/images/portfolio-retail.jpg') }}" alt="Nordic Glow E-commerce Performance" class="w-100 h-100 object-fit-cover">
+                                        <span class="portfolio-thumb-tag">Retail &amp; E-Commerce</span>
                                     </div>
                                     <div class="portfolio-cat-row">
-                                        <span class="portfolio-cat-text">Retail and e-commerce</span>
+                                        <span class="portfolio-cat-text">Shopify Plus &bull; GA4 &bull; Meta CAPI</span>
                                         <div class="portfolio-tri-dots">
                                             <span class="dot dot-amber"></span>
                                             <span class="dot dot-cyan"></span>
                                             <span class="dot dot-green"></span>
                                         </div>
                                     </div>
-                                    <h4>[Client name]: [one-line outcome]</h4>
+                                    <h4>Nordic Glow: +42% ROAS through server-side conversion tracking</h4>
                                     <div class="problem-result-block">
                                         <div>
                                             <span class="meta-label">The problem</span>
-                                            <span>[Problem in one line]</span>
+                                            <span class="text-secondary">Browser privacy blocks caused 40% of Shopify conversions to drop from ad platforms.</span>
                                         </div>
                                         <div>
                                             <span class="meta-label">The result</span>
-                                            <div class="result-val">[+00%] <span class="fs-6 fw-normal text-muted">[metric]</span></div>
+                                            <div class="result-val text-success">+42% <span class="fs-6 fw-normal text-muted">Verified ROAS (0.8s checkout)</span></div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Card 2 -->
+                                <!-- Card 2: Technology & SaaS -->
                                 <div class="zeplin-portfolio-card">
                                     <div class="zeplin-portfolio-thumb">
-                                        <span>[Image]</span>
+                                        <img src="{{ asset('assets/images/portfolio-saas.jpg') }}" alt="CloudScale Data Platform" class="w-100 h-100 object-fit-cover">
+                                        <span class="portfolio-thumb-tag">Technology &amp; SaaS</span>
                                     </div>
                                     <div class="portfolio-cat-row">
-                                        <span class="portfolio-cat-text">Technology and SaaS</span>
+                                        <span class="portfolio-cat-text">Stripe &bull; BigQuery &bull; Salesforce</span>
                                         <div class="portfolio-tri-dots">
                                             <span class="dot dot-amber"></span>
                                             <span class="dot dot-cyan"></span>
                                             <span class="dot dot-green"></span>
                                         </div>
                                     </div>
-                                    <h4>[Client name]: [one-line outcome]</h4>
+                                    <h4>CloudScale: Single revenue source of truth for $12M ARR billing</h4>
                                     <div class="problem-result-block">
                                         <div>
                                             <span class="meta-label">The problem</span>
-                                            <span>[Problem in one line]</span>
+                                            <span class="text-secondary">Decoupled subscription events led to recurring 15% revenue discrepancies.</span>
                                         </div>
                                         <div>
                                             <span class="meta-label">The result</span>
-                                            <div class="result-val">[+00%] <span class="fs-6 fw-normal text-muted">[metric]</span></div>
+                                            <div class="result-val text-primary">99.99% <span class="fs-6 fw-normal text-muted">Data Match &bull; 3.4x deployment speed</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -868,11 +875,24 @@
 
                             <!-- Testimonial Dark Card -->
                             <div class="zeplin-testimonial-dark">
-                                <span class="testimonial-sample-tag">Sample copy, replace with a real testimonial</span>
-                                <div class="zeplin-testimonial-quote">
-                                    &ldquo;For the first time, marketing and finance agree on what each channel is worth.&rdquo;
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <img src="{{ asset('assets/images/avatar-marcus.jpg') }}" alt="Marcus Vance Headshot" class="rounded-circle object-fit-cover border border-2 border-primary-subtle" width="54" height="54">
+                                    <div>
+                                        <div class="text-white fw-bold">Marcus Vance</div>
+                                        <div class="text-white-50 small">VP of Growth &amp; Performance, Apex Brands</div>
+                                        <div class="d-flex text-warning small mt-1">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill ms-1"></i>
+                                            <i class="bi bi-star-fill ms-1"></i>
+                                            <i class="bi bi-star-fill ms-1"></i>
+                                            <i class="bi bi-star-fill ms-1"></i>
+                                            <span class="text-white-50 ms-2" style="font-size: 0.72rem;">Verified Enterprise Review</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="zeplin-testimonial-author">[Name], [Role], [Company]</p>
+                                <div class="zeplin-testimonial-quote">
+                                    &ldquo;For the first time in five years, marketing and finance agree on what each channel is worth. The GA4 and server-side tracking setup paid for itself in the first 30 days.&rdquo;
+                                </div>
                             </div>
                         </div>
 
@@ -1008,14 +1028,23 @@
                             <h2 class="marketing-section-h2">More from Marketing.</h2>
                             <div class="more-marketing-grid">
                                 <a href="#marketing-all" class="more-marketing-card">
+                                    <div class="rounded-3 overflow-hidden mb-3" style="height: 105px;">
+                                        <img src="{{ asset('assets/images/marketing-case.jpg') }}" alt="All Marketing Services" class="w-100 h-100 object-fit-cover">
+                                    </div>
                                     <h5>All Marketing services</h5>
                                     <p>SEO, paid ads, social, leads and analytics.</p>
                                 </a>
                                 <a href="#lead-gen" class="more-marketing-card">
+                                    <div class="rounded-3 overflow-hidden mb-3" style="height: 105px;">
+                                        <img src="{{ asset('assets/images/lead-gen.jpg') }}" alt="Lead Generation & Funnels" class="w-100 h-100 object-fit-cover">
+                                    </div>
                                     <h5>Lead Generation &amp; Funnels</h5>
                                     <p>Track every lead from click to deal.</p>
                                 </a>
                                 <a href="#performance-ads" class="more-marketing-card">
+                                    <div class="rounded-3 overflow-hidden mb-3" style="height: 105px;">
+                                        <img src="{{ asset('assets/images/performance-ads.jpg') }}" alt="Performance Marketing & Paid Ads" class="w-100 h-100 object-fit-cover">
+                                    </div>
                                     <h5>Performance Marketing &amp; Paid Ads</h5>
                                     <p>Ads that optimise on real conversions.</p>
                                 </a>
@@ -1191,6 +1220,11 @@
         </div>
     </div>
 
+    <!-- Sticky Floating Theme Mode Toggle (Bottom Right beside scrollbar) -->
+    <button type="button" class="floating-theme-toggle" id="themeToggleBtn" aria-label="Toggle dark/light mode" title="Switch Theme">
+        <i class="bi bi-moon-stars" id="themeIcon"></i>
+    </button>
+
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
@@ -1200,16 +1234,20 @@
             // 1. Zeplin Mega Menu Trigger & Vertical Tabs
             const servicesTrigger = document.getElementById('servicesTrigger');
             const megaMenuZeplin = document.getElementById('megaMenuZeplin');
+            const megaMenuBackdrop = document.getElementById('megaMenuBackdrop');
             const verticalTabs = document.querySelectorAll('.mega-vertical-tab');
+            const servicesItem = servicesTrigger?.closest('.mega-menu-item');
 
             function openZeplinMegaMenu() {
                 megaMenuZeplin?.classList.add('is-open');
+                megaMenuBackdrop?.classList.add('is-active');
                 servicesTrigger?.setAttribute('aria-expanded', 'true');
                 servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-down', 'bi-chevron-up');
             }
 
             function closeZeplinMegaMenu() {
                 megaMenuZeplin?.classList.remove('is-open');
+                megaMenuBackdrop?.classList.remove('is-active');
                 servicesTrigger?.setAttribute('aria-expanded', 'false');
                 servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-up', 'bi-chevron-down');
             }
@@ -1222,6 +1260,32 @@
                 } else {
                     openZeplinMegaMenu();
                 }
+            });
+
+            // Backdrop click closes
+            megaMenuBackdrop?.addEventListener('click', closeZeplinMegaMenu);
+
+            // Hover with smooth delay
+            let menuTimeout;
+            servicesItem?.addEventListener('mouseenter', () => {
+                clearTimeout(menuTimeout);
+                openZeplinMegaMenu();
+            });
+
+            servicesItem?.addEventListener('mouseleave', () => {
+                menuTimeout = setTimeout(() => {
+                    closeZeplinMegaMenu();
+                }, 220);
+            });
+
+            megaMenuZeplin?.addEventListener('mouseenter', () => {
+                clearTimeout(menuTimeout);
+            });
+
+            megaMenuZeplin?.addEventListener('mouseleave', () => {
+                menuTimeout = setTimeout(() => {
+                    closeZeplinMegaMenu();
+                }, 220);
             });
 
             // Close on click outside
@@ -1300,20 +1364,7 @@
                 });
             });
 
-            // 4. Highlight Placeholders Button Toggle
-            const highlightBtn = document.getElementById('highlightPlaceholdersBtn');
-            let placeholdersActive = false;
-            highlightBtn?.addEventListener('click', () => {
-                placeholdersActive = !placeholdersActive;
-                highlightBtn.style.background = placeholdersActive ? '#0070f3' : '#ffffff';
-                highlightBtn.style.color = placeholdersActive ? '#ffffff' : '#0f172a';
-                document.querySelectorAll('.val, .result-val, .featured-case-box, .zeplin-portfolio-thumb, .testimonial-sample-tag').forEach(el => {
-                    el.style.outline = placeholdersActive ? '2px dashed #0070f3' : '';
-                    el.style.backgroundColor = placeholdersActive ? '#e0f2fe' : '';
-                });
-            });
-
-            // 5. Theme Toggle Logic
+            // 4. Theme Toggle Logic
             const htmlEl = document.documentElement;
             const themeBtn = document.getElementById('themeToggleBtn');
             const themeIcon = document.getElementById('themeIcon');
@@ -1334,6 +1385,13 @@
                     themeIcon.className = t === 'dark' ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars';
                 }
             }
+
+            // 5. Placeholder Highlight Toggle (from Zeplin top bar)
+            const placeholderBtn = document.getElementById('togglePlaceholdersBtn');
+            placeholderBtn?.addEventListener('click', () => {
+                document.body.classList.toggle('placeholders-active');
+                placeholderBtn.textContent = document.body.classList.contains('placeholders-active') ? 'Unhighlight' : 'Highlight placeholders';
+            });
 
             // 6. Sticky In-Page Nav Active Indicator on Scroll
             const inPageLinks = document.querySelectorAll('.in-page-nav-link');

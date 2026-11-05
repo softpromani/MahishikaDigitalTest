@@ -961,24 +961,107 @@
     transform: scale(1.02);
 }
 
+/* Mobile Hamburger Button (Strictly hidden on desktop, visible on tablet & mobile) */
+.mobile-toggle-btn {
+    display: none !important;
+}
+@media (max-width: 991.98px) {
+    .mobile-toggle-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: 1px solid var(--border-color, rgba(0, 0, 0, 0.12));
+        border-radius: 8px;
+        padding: 0.4rem 0.6rem;
+        color: var(--text-primary, #0f172a);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .mobile-toggle-btn:hover {
+        background: var(--bg-surface-subtle, #f1f5f9);
+        color: #0070f3;
+    }
+}
+
+/* Sticky Floating Theme Mode Toggle (Bottom-Right beside scrollbar) */
+.floating-theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    z-index: 1040;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.floating-theme-toggle:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: #0070f3;
+}
+.floating-theme-toggle:active {
+    transform: translateY(0) scale(0.96);
+}
+[data-theme="dark"] .floating-theme-toggle {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #facc15;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .floating-theme-toggle:hover {
+    background: #334155;
+    color: #fde047;
+}
+
+/* Mega Menu Backdrop Overlay */
+.mega-menu-backdrop {
+    position: fixed;
+    top: var(--header-height, 68px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 1045;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+.mega-menu-backdrop.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Zeplin Mega Menu Floating Card */
 .mega-menu-panel--zeplin {
     position: absolute;
-    top: calc(100% + 4px);
+    top: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%) translateY(-6px);
-    width: min(1040px, 96vw);
+    width: 1040px;
+    max-width: calc(100vw - 32px);
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 18px;
-    box-shadow: 0 24px 50px -12px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.22), 0 0 1px 1px rgba(0, 0, 0, 0.05);
     padding: 0;
     overflow: hidden;
     display: none;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-    z-index: 1045;
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s ease;
+    z-index: 1060;
 }
 .mega-menu-panel--zeplin.is-open {
     display: block;
@@ -989,14 +1072,19 @@
 [data-theme="dark"] .mega-menu-panel--zeplin {
     background: #0f172a;
     border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 24px 50px -12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
 }
 
 /* 3-Column Body inside Mega Menu */
 .mega-zeplin-body {
     display: grid;
-    grid-template-columns: 210px 1fr 240px;
+    grid-template-columns: 215px 1fr 255px;
     min-height: 380px;
+}
+@media (max-width: 1100px) {
+    .mega-zeplin-body {
+        grid-template-columns: 195px 1fr 225px;
+    }
 }
 
 /* Column 1: Left Categories Sidebar */
@@ -1230,24 +1318,66 @@
     margin-bottom: 0.85rem;
 }
 .featured-case-box {
-    height: 105px;
+    height: 115px;
     border-radius: 12px;
-    background: #e6f7fa;
+    background: linear-gradient(135deg, #e0f2fe 0%, #e6f7fa 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0891b2;
-    font-size: 0.85rem;
+    color: #0284c7;
+    font-size: 0.88rem;
     font-weight: 600;
     margin-bottom: 0.85rem;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(8, 145, 178, 0.1);
+    border: 1px solid rgba(8, 145, 178, 0.12);
+}
+.featured-case-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #0284c7;
+    font-size: 0.82rem;
+    font-weight: 600;
+    user-select: none;
+}
+.featured-case-box img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+    z-index: 2;
+}
+.mega-featured-item-panel:hover .featured-case-box img {
+    transform: scale(1.06);
+}
+.featured-case-tag {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.18rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    z-index: 3;
 }
 [data-theme="dark"] .featured-case-box {
-    background: rgba(8, 145, 178, 0.15);
-    color: #67e8f9;
-    border-color: rgba(8, 145, 178, 0.25);
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(8, 145, 178, 0.2) 100%);
+    color: #38bdf8;
+    border-color: rgba(14, 165, 233, 0.25);
+}
+[data-theme="dark"] .featured-case-visual {
+    color: #38bdf8;
 }
 .featured-case-headline {
     font-weight: 700;
@@ -1327,6 +1457,44 @@
    Zeplin Marketing Page Components
    ========================================================================== */
 
+/* Top Draft Notification Bar (from Figma / Zeplin) */
+.draft-top-banner {
+    background-color: #0b0f19;
+    color: #e2e8f0;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.84rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 1040;
+}
+.draft-banner-text {
+    font-size: 0.82rem;
+    letter-spacing: 0.01em;
+    color: #cbd5e1;
+}
+.btn-highlight-placeholders {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+.btn-highlight-placeholders:hover {
+    background: #f1f5f9;
+    color: #000000;
+}
+.placeholders-active [data-placeholder="true"],
+.placeholders-active .is-placeholder {
+    outline: 2px dashed #10b981 !important;
+    outline-offset: 3px !important;
+    background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
 /* Hero Breadcrumbs */
 .marketing-breadcrumb {
     font-size: 0.85rem;
@@ -1352,20 +1520,20 @@
 .marketing-h1 {
     font-size: clamp(2.4rem, 4vw, 3.25rem);
     font-weight: 800;
-    color: #0f172a;
+    color: #1e295d !important;
     line-height: 1.15;
     letter-spacing: -0.025em;
     margin-bottom: 1.25rem;
 }
 [data-theme="dark"] .marketing-h1 {
-    color: #ffffff;
+    color: #ffffff !important;
 }
 .marketing-subhead {
-    font-size: 1.12rem;
+    font-size: 1.1rem;
     color: #475569;
     line-height: 1.6;
     margin-bottom: 1.75rem;
-    max-width: 580px;
+    max-width: 540px;
 }
 [data-theme="dark"] .marketing-subhead {
     color: #94a3b8;
@@ -1373,34 +1541,32 @@
 
 /* Hero Action Buttons */
 .btn-zeplin-primary {
-    background-color: #0070f3;
-    color: #ffffff;
+    background-color: #0070f3 !important;
+    color: #ffffff !important;
     font-weight: 600;
     font-size: 0.95rem;
-    padding: 0.7rem 1.6rem;
-    border-radius: 8px;
+    padding: 0.72rem 1.6rem;
+    border-radius: 10px;
     border: none;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     transition: all 0.15s ease;
-    box-shadow: 0 4px 14px rgba(0, 112, 243, 0.3);
 }
 .btn-zeplin-primary:hover {
-    background-color: #0060df;
-    color: #ffffff;
+    background-color: #0060df !important;
+    color: #ffffff !important;
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0, 112, 243, 0.4);
 }
 .btn-zeplin-outline {
-    background: transparent;
-    color: #0f172a;
+    background: #ffffff !important;
+    color: #1e295d !important;
     font-weight: 600;
     font-size: 0.95rem;
-    padding: 0.7rem 1.6rem;
-    border-radius: 8px;
-    border: 1.5px solid #0f172a;
+    padding: 0.72rem 1.6rem;
+    border-radius: 10px;
+    border: 1.5px solid #1e295d !important;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -1408,69 +1574,70 @@
     transition: all 0.15s ease;
 }
 [data-theme="dark"] .btn-zeplin-outline {
-    color: #f8fafc;
-    border-color: #f8fafc;
+    background: transparent !important;
+    color: #f8fafc !important;
+    border-color: #f8fafc !important;
 }
 .btn-zeplin-outline:hover {
-    background: #0f172a;
-    color: #ffffff;
+    background: #f8fafc !important;
+    color: #16205b !important;
 }
 [data-theme="dark"] .btn-zeplin-outline:hover {
-    background: #ffffff;
-    color: #0f172a;
+    background: #ffffff !important;
+    color: #0f172a !important;
 }
 
 /* Pills below buttons */
 .hero-pill-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    gap: 0.75rem;
     margin-top: 1.5rem;
     margin-bottom: 2rem;
 }
 .hero-pill-badge {
-    background: #ecfdf5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background: #a7f3d0 !important;
+    color: #0f172a !important;
+    border: 1.5px solid #10b981 !important;
     border-radius: 999px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.8rem;
+    padding: 0.45rem 1.15rem;
+    font-size: 0.85rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.55rem;
 }
 .hero-pill-badge::before {
     content: '';
     display: inline-block;
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background-color: #10b981;
+    background-color: #059669;
 }
 
 /* Revenue Dashboard Preview Graphic */
 .revenue-dashboard-preview {
-    background: #d1fae5;
+    background: #a7f3d0 !important;
     border-radius: 20px;
     padding: 1.5rem;
     margin-top: 1.5rem;
-    border: 1px solid #a7f3d0;
+    border: 1px solid #6ee7b7 !important;
 }
 [data-theme="dark"] .revenue-dashboard-preview {
-    background: rgba(16, 185, 129, 0.12);
-    border-color: rgba(16, 185, 129, 0.25);
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
 }
 .revenue-dashboard-header {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: #065f46;
+    color: #065f46 !important;
     text-transform: uppercase;
     margin-bottom: 1rem;
 }
 [data-theme="dark"] .revenue-dashboard-header {
-    color: #6ee7b7;
+    color: #6ee7b7 !important;
 }
 .metric-blocks-grid {
     display: grid;
@@ -1479,14 +1646,14 @@
     margin-bottom: 1.25rem;
 }
 .metric-mini-card {
-    background: #ffffff;
+    background: #ffffff !important;
     border-radius: 12px;
-    padding: 0.75rem 0.65rem;
+    padding: 0.85rem 0.75rem;
     border: 1px solid rgba(0, 0, 0, 0.04);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 [data-theme="dark"] .metric-mini-card {
-    background: #111827;
+    background: #111827 !important;
     border-color: rgba(255, 255, 255, 0.06);
 }
 .metric-mini-card .label {
@@ -1496,18 +1663,18 @@
     margin-bottom: 0.2rem;
 }
 .metric-mini-card .val {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 800;
-    color: #0f172a;
+    color: #1e295d !important;
     line-height: 1;
 }
 [data-theme="dark"] .metric-mini-card .val {
-    color: #f8fafc;
+    color: #f8fafc !important;
 }
 
 /* Bar Chart Graphic */
 .dashboard-bar-chart-card {
-    background: #ffffff;
+    background: #ffffff !important;
     border-radius: 14px;
     padding: 1.5rem 1rem 1rem 1rem;
     display: flex;
@@ -1517,7 +1684,7 @@
     border: 1px solid rgba(0, 0, 0, 0.04);
 }
 [data-theme="dark"] .dashboard-bar-chart-card {
-    background: #111827;
+    background: #111827 !important;
     border-color: rgba(255, 255, 255, 0.06);
 }
 .bar-chart-column {
@@ -1531,7 +1698,7 @@
 .bar-chart-pillar {
     width: 44px;
     border-radius: 6px;
-    background: #10b981;
+    background: #10b981 !important;
     transition: transform 0.2s ease, background 0.2s ease;
     position: relative;
 }
@@ -2248,20 +2415,38 @@
     border-color: rgba(255, 255, 255, 0.08);
 }
 .zeplin-portfolio-thumb {
-    height: 160px;
+    height: 190px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #065f46;
-    font-weight: 600;
-    font-size: 0.95rem;
+    overflow: hidden;
+    position: relative;
     margin-bottom: 1.25rem;
+    background: #e2e8f0;
+}
+.zeplin-portfolio-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.zeplin-portfolio-card:hover .zeplin-portfolio-thumb img {
+    transform: scale(1.05);
+}
+.portfolio-thumb-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
 }
 [data-theme="dark"] .zeplin-portfolio-thumb {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.2) 100%);
-    color: #6ee7b7;
+    background: #1e293b;
 }
 .portfolio-cat-row {
     display: flex;
