@@ -129,13 +129,7 @@
             <header class="site-header" id="siteHeader">
                 <div class="header-container">
                     <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
-                        <span class="brand-logo__mark">
-                            <i class="bi bi-cpu-fill fs-5" aria-hidden="true"></i>
-                        </span>
-                        <div>
-                            <span class="brand-logo__name">Mahishika</span>
-                            <span class="brand-logo__tag">Digital Agency</span>
-                        </div>
+                        <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="36">
                     </a>
 
                     <!-- Desktop Nav -->
@@ -315,12 +309,9 @@
             <!-- Mobile Navigation Drawer -->
             <aside class="mobile-drawer {{ $story === 'mobile' ? 'is-active' : '' }}" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
                 <div class="mobile-drawer__header">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                            <i class="bi bi-cpu-fill fs-6" aria-hidden="true"></i>
-                        </span>
-                        <span class="fw-bold fs-6">Mahishika Digital</span>
-                    </div>
+                    <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
+                        <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="30">
+                    </a>
                     <button type="button" class="action-btn" id="mobileCloseBtn" aria-label="Close mobile navigation">
                         <i class="bi bi-x-lg" aria-hidden="true"></i>
                     </button>

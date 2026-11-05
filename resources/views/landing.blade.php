@@ -44,13 +44,7 @@
         <div class="header-container">
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="brand-logo" aria-label="Mahishika Digital Home">
-                <span class="brand-logo__mark">
-                    <i class="bi bi-cpu-fill fs-5" aria-hidden="true"></i>
-                </span>
-                <div>
-                    <span class="brand-logo__name">Mahishika</span>
-                    <span class="brand-logo__tag">Digital Agency</span>
-                </div>
+                <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="36">
             </a>
 
             <!-- Desktop Navigation Menu -->
@@ -235,12 +229,9 @@
 
     <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
         <div class="mobile-drawer__header">
-            <div class="d-flex align-items-center gap-2">
-                <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                    <i class="bi bi-cpu-fill fs-6" aria-hidden="true"></i>
-                </span>
-                <span class="fw-bold fs-6">Mahishika Digital</span>
-            </div>
+            <a href="{{ route('home') }}" class="brand-logo" aria-label="Mahishika Digital Home">
+                <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="30">
+            </a>
             <button type="button" class="action-btn" id="mobileCloseBtn" aria-label="Close mobile navigation">
                 <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
@@ -657,10 +648,7 @@
             <div class="row g-4">
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                            <i class="bi bi-cpu-fill fs-6" aria-hidden="true"></i>
-                        </span>
-                        <span class="fw-bold fs-5 text-primary">Mahishika Digital</span>
+                        <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="34">
                     </div>
                     <p class="text-secondary small mb-3">
                         A world-class digital agency engineering resilient cloud architectures, scalable web applications, and accessible design systems.
