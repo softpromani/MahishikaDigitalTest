@@ -279,16 +279,16 @@
             font-weight: 600;
         }
 
-        /* Canvas Stage: align-items: flex-start prevents vertical clipping! */
+        /* Canvas Stage */
         .sb-stage {
             flex: 1;
             background: var(--sb-canvas-bg);
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
             overflow-y: auto;
             overflow-x: auto;
-            padding: 1.5rem;
+            padding: 1.25rem;
             position: relative;
         }
 
@@ -313,13 +313,15 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            margin: 0 auto;
+            margin: auto;
+            max-height: 100%;
         }
 
         .sb-frame-wrapper.is-device {
             border: 10px solid #1e293b;
-            border-radius: 36px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            border-radius: 38px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-height: 100%;
         }
 
         .sb-iframe {
@@ -621,6 +623,12 @@
         function selectStory(story, element) {
             currentStory = story;
 
+            const stage = document.getElementById('sbStage');
+            if (stage) {
+                stage.scrollTop = 0;
+                stage.scrollLeft = 0;
+            }
+
             document.querySelectorAll('.sb-tree-item').forEach(el => el.classList.remove('is-active'));
             if (element) {
                 element.classList.add('is-active');
@@ -655,9 +663,27 @@
         }
 
         function setViewport(w, h, isDevice, btn) {
+            const stage = document.getElementById('sbStage');
             const wrapper = document.getElementById('frameWrapper');
-            wrapper.style.width = w;
-            wrapper.style.height = h;
+
+            if (stage) {
+                stage.scrollTop = 0;
+                stage.scrollLeft = 0;
+            }
+
+            if (w === '100%') {
+                wrapper.style.width = '100%';
+                wrapper.style.height = '100%';
+            } else if (isDevice) {
+                wrapper.style.width = w;
+                // Ensure device fits within available canvas height without clipping the top
+                const availableHeight = stage ? (stage.clientHeight - 40) : 580;
+                const targetH = Math.min(parseInt(h) || 640, Math.max(availableHeight, 460));
+                wrapper.style.height = `${targetH}px`;
+            } else {
+                wrapper.style.width = w;
+                wrapper.style.height = h;
+            }
 
             if (isDevice) {
                 wrapper.classList.add('is-device');
@@ -670,7 +696,7 @@
                 btn.classList.add('is-active');
             }
 
-            logAction('viewport_resize', { width: w, height: h, deviceFrame: isDevice });
+            logAction('viewport_resize', { width: w, height: wrapper.style.height, deviceFrame: isDevice });
         }
 
         function toggleTheme() {

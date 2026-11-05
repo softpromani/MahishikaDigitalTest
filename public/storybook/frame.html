@@ -28,55 +28,78 @@
             padding: 0;
             font-family: var(--font-sans);
         }
+        body.is-mobile-story {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden !important;
+            min-height: auto;
+        }
         .story-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
+        body.is-mobile-story .story-container {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            min-height: auto;
+        }
 
         /* Simulated Mobile Device Container for Mobile Story */
         .mobile-screen-wrapper {
             background: var(--bg-surface);
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
             width: 100%;
-            overflow-x: hidden;
+            overflow: hidden;
+            position: relative;
         }
 
         .mobile-phone-status-bar {
-            height: 24px;
+            height: 32px;
             background: var(--bg-surface);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
+            padding: 0 1.25rem;
             font-size: 0.72rem;
-            font-weight: 600;
-            color: var(--text-secondary);
+            font-weight: 700;
+            color: var(--text-primary);
             border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+            z-index: 20;
         }
 
         .mobile-phone-nav-header {
-            padding: 0.85rem 1rem;
+            padding: 0.8rem 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
-            background: var(--bg-glass);
-            backdrop-filter: blur(8px);
+            background: var(--bg-surface);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            flex-shrink: 0;
+            z-index: 20;
         }
 
         .mobile-phone-body {
-            padding: 1.25rem 1rem;
+            padding: 1rem 1.25rem;
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
 
         .mobile-phone-footer {
-            padding: 1rem;
+            padding: 0.85rem 1rem;
             border-top: 1px solid var(--border-color);
-            background: var(--bg-surface-subtle);
+            background: var(--bg-surface);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+            flex-shrink: 0;
+            z-index: 20;
         }
 
         .mobile-home-indicator {
@@ -85,7 +108,7 @@
             background: var(--text-muted);
             border-radius: 2px;
             margin: 0.5rem auto 0;
-            opacity: 0.4;
+            opacity: 0.35;
         }
 
         .story-body-content {
@@ -96,7 +119,7 @@
         }
     </style>
 </head>
-<body>
+<body class="">
     <div class="story-container">
                     <!-- Header & Mega Menu Desktop / Standard -->
             <header class="site-header" id="siteHeader">

@@ -21,7 +21,7 @@
     </button>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm mb-4">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
@@ -79,93 +79,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editSubModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.subcategories.update', $item) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Sub-Category: {{ $item->title }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Parent Category</label>
-                                        <select name="category_id" class="form-select" required>
-                                            @foreach($categories as $cat)
-                                                <option value="{{ $cat->id }}" {{ $item->category_id == $cat->id ? 'selected' : '' }}>
-                                                    {{ $cat->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Title</label>
-                                        <input type="text" name="title" class="form-control" value="{{ $item->title }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Slug</label>
-                                        <input type="text" name="slug" class="form-control" value="{{ $item->slug }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Description</label>
-                                        <textarea name="description" class="form-control" rows="2">{{ $item->description }}</textarea>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">URL Destination</label>
-                                            <input type="text" name="url" class="form-control" value="{{ $item->url }}" required>
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Icon Class</label>
-                                            <input type="text" name="icon" class="form-control" value="{{ $item->icon }}">
-                                        </div>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Badge</label>
-                                            <input type="text" name="badge" class="form-control" value="{{ $item->badge }}">
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Sort Order</label>
-                                            <input type="number" name="sort_order" class="form-control" value="{{ $item->sort_order }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="is_active" id="subActive{{ $item->id }}" value="1" {{ $item->is_active ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="subActive{{ $item->id }}">Active in Mega Menu</label>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteSubModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.subcategories.delete', $item) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Confirm Deletion</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete <strong>{{ $item->title }}</strong>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 @empty
                     <tr>
                         <td colspan="7" class="text-center py-4 text-muted">No subcategories found.</td>
@@ -181,16 +94,110 @@
     @endif
 </div>
 
+<!-- All Edit & Delete Modals (Placed Outside Table for Valid DOM) -->
+@foreach($subcategories as $item)
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editSubModal{{ $item->id }}" tabindex="-1" aria-labelledby="editSubLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.subcategories.update', $item) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('PUT')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="editSubLabel{{ $item->id }}">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Edit: {{ $item->title }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Parent Category</label>
+                        <select name="category_id" class="form-select" required>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ $item->category_id == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Title</label>
+                        <input type="text" name="title" class="form-control" value="{{ $item->title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Slug</label>
+                        <input type="text" name="slug" class="form-control" value="{{ $item->slug }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description" class="form-control" rows="2">{{ $item->description }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">URL Destination</label>
+                            <input type="text" name="url" class="form-control" value="{{ $item->url }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Icon Class</label>
+                            <input type="text" name="icon" class="form-control" value="{{ $item->icon }}">
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Badge</label>
+                            <input type="text" name="badge" class="form-control" value="{{ $item->badge }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Sort Order</label>
+                            <input type="number" name="sort_order" class="form-control" value="{{ $item->sort_order }}" required>
+                        </div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="subActive{{ $item->id }}" value="1" {{ $item->is_active ? 'checked' : '' }}>
+                        <label class="form-check-label fw-semibold small" for="subActive{{ $item->id }}">Active in Mega Menu</label>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-3">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteSubModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.subcategories.delete', $item) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold text-danger">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    Are you sure you want to delete <strong>{{ $item->title }}</strong>?
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
+
 <!-- Create SubCategory Modal -->
-<div class="modal fade" id="createSubCategoryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('admin.subcategories.store') }}" method="POST" class="modal-content">
+<div class="modal fade" id="createSubCategoryModal" tabindex="-1" aria-labelledby="createSubLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('admin.subcategories.store') }}" method="POST" class="modal-content shadow-lg border">
             @csrf
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Sub-Category</h5>
+            <div class="modal-header border-bottom py-3">
+                <h5 class="modal-title fw-bold" id="createSubLabel">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Create New Sub-Category
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Parent Category <span class="text-danger">*</span></label>
                     <select name="category_id" class="form-select" required>
@@ -213,7 +220,7 @@
                     <label class="form-label fw-semibold">Description</label>
                     <textarea name="description" class="form-control" rows="2" placeholder="Brief feature summary shown in mega menu"></textarea>
                 </div>
-                <div class="row g-2 mb-3">
+                <div class="row g-3 mb-3">
                     <div class="col-6">
                         <label class="form-label fw-semibold">URL Destination <span class="text-danger">*</span></label>
                         <input type="text" name="url" class="form-control" value="#" required>
@@ -223,7 +230,7 @@
                         <input type="text" name="icon" class="form-control" placeholder="bi-cloud-check">
                     </div>
                 </div>
-                <div class="row g-2 mb-3">
+                <div class="row g-3 mb-3">
                     <div class="col-6">
                         <label class="form-label fw-semibold">Badge</label>
                         <input type="text" name="badge" class="form-control" placeholder="e.g. Popular, New">
@@ -235,15 +242,14 @@
                 </div>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" name="is_active" id="createSubActive" value="1" checked>
-                    <label class="form-check-label" for="createSubActive">Active in Mega Menu</label>
+                    <label class="form-check-label fw-semibold small" for="createSubActive">Active in Mega Menu</label>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Sub-Category</button>
+            <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm px-3">Create Sub-Category</button>
             </div>
         </form>
     </div>
 </div>
 @endsection
-

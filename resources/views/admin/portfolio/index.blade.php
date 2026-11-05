@@ -19,7 +19,7 @@
     </button>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm mb-4">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
@@ -94,130 +94,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- Edit Modal -->
-                    <div class="modal fade" id="editPortfolioModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <form action="{{ route('admin.portfolio.update', $item) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit: {{ $item->title }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-8">
-                                            <label class="form-label fw-semibold">Title</label>
-                                            <input type="text" name="title" class="form-control" value="{{ $item->title }}" required>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label fw-semibold">Type</label>
-                                            <select name="type" class="form-select" required>
-                                                <option value="case_study" {{ $item->type === 'case_study' ? 'selected' : '' }}>Case Study</option>
-                                                <option value="article" {{ $item->type === 'article' ? 'selected' : '' }}>Article / Insight</option>
-                                                <option value="highlight" {{ $item->type === 'highlight' ? 'selected' : '' }}>Highlight</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Slug</label>
-                                            <input type="text" name="slug" class="form-control" value="{{ $item->slug }}" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Menu Category (Associates in Mega Menu)</label>
-                                            <select name="category_id" class="form-select">
-                                                <option value="">None (Global)</option>
-                                                @foreach($categories as $cat)
-                                                    <option value="{{ $cat->id }}" {{ $item->category_id == $cat->id ? 'selected' : '' }}>
-                                                        {{ $cat->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Client Name</label>
-                                            <input type="text" name="client_name" class="form-control" value="{{ $item->client_name }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Tag</label>
-                                            <input type="text" name="tag" class="form-control" value="{{ $item->tag }}">
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Excerpt</label>
-                                        <textarea name="excerpt" class="form-control" rows="2" required>{{ $item->excerpt }}</textarea>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Metric Value</label>
-                                            <input type="text" name="metric" class="form-control" value="{{ $item->metric }}" placeholder="e.g. +312%">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Metric Label</label>
-                                            <input type="text" name="metric_label" class="form-control" value="{{ $item->metric_label }}" placeholder="e.g. Conversion Lift">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Image URL</label>
-                                            <input type="url" name="image_url" class="form-control" value="{{ $item->image_url }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label fw-semibold">Link URL</label>
-                                            <input type="text" name="link_url" class="form-control" value="{{ $item->link_url }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3">
-                                        <div class="col-md-4">
-                                            <label class="form-label fw-semibold">Sort Order</label>
-                                            <input type="number" name="sort_order" class="form-control" value="{{ $item->sort_order }}" required>
-                                        </div>
-                                        <div class="col-md-4 d-flex align-items-center pt-3">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="is_featured" id="feat{{ $item->id }}" value="1" {{ $item->is_featured ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="feat{{ $item->id }}">Featured in Mega Menu</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 d-flex align-items-center pt-3">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="is_active" id="act{{ $item->id }}" value="1" {{ $item->is_active ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="act{{ $item->id }}">Active</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deletePortfolioModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.portfolio.delete', $item) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Confirm Deletion</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete <strong>{{ $item->title }}</strong>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 @empty
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">No portfolio items found.</td>
@@ -233,16 +109,147 @@
     @endif
 </div>
 
+<!-- All Portfolio Edit & Delete Modals (Placed Outside Table for Valid DOM) -->
+@foreach($articles as $item)
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editPortfolioModal{{ $item->id }}" tabindex="-1" aria-labelledby="editPortLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <form action="{{ route('admin.portfolio.update', $item) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('PUT')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="editPortLabel{{ $item->id }}">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Edit: {{ $item->title }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Title</label>
+                            <input type="text" name="title" class="form-control" value="{{ $item->title }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Type</label>
+                            <select name="type" class="form-select" required>
+                                <option value="case_study" {{ $item->type === 'case_study' ? 'selected' : '' }}>Case Study</option>
+                                <option value="article" {{ $item->type === 'article' ? 'selected' : '' }}>Article / Insight</option>
+                                <option value="highlight" {{ $item->type === 'highlight' ? 'selected' : '' }}>Highlight</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Slug</label>
+                            <input type="text" name="slug" class="form-control" value="{{ $item->slug }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Menu Category (Associates in Mega Menu)</label>
+                            <select name="category_id" class="form-select">
+                                <option value="">None (Global)</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" {{ $item->category_id == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Client Name</label>
+                            <input type="text" name="client_name" class="form-control" value="{{ $item->client_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Tag</label>
+                            <input type="text" name="tag" class="form-control" value="{{ $item->tag }}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Excerpt</label>
+                        <textarea name="excerpt" class="form-control" rows="2" required>{{ $item->excerpt }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Metric Value</label>
+                            <input type="text" name="metric" class="form-control" value="{{ $item->metric }}" placeholder="e.g. +312%">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Metric Label</label>
+                            <input type="text" name="metric_label" class="form-control" value="{{ $item->metric_label }}" placeholder="e.g. Conversion Lift">
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Image URL</label>
+                            <input type="url" name="image_url" class="form-control" value="{{ $item->image_url }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Link URL</label>
+                            <input type="text" name="link_url" class="form-control" value="{{ $item->link_url }}" required>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Sort Order</label>
+                            <input type="number" name="sort_order" class="form-control" value="{{ $item->sort_order }}" required>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center pt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_featured" id="feat{{ $item->id }}" value="1" {{ $item->is_featured ? 'checked' : '' }}>
+                                <label class="form-check-label fw-semibold small" for="feat{{ $item->id }}">Featured in Mega Menu</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center pt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="act{{ $item->id }}" value="1" {{ $item->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label fw-semibold small" for="act{{ $item->id }}">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-3">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deletePortfolioModal{{ $item->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.portfolio.delete', $item) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold text-danger">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    Are you sure you want to delete <strong>{{ $item->title }}</strong>?
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
+
 <!-- Create Portfolio Modal -->
-<div class="modal fade" id="createPortfolioModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form action="{{ route('admin.portfolio.store') }}" method="POST" class="modal-content">
+<div class="modal fade" id="createPortfolioModal" tabindex="-1" aria-labelledby="createPortLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form action="{{ route('admin.portfolio.store') }}" method="POST" class="modal-content shadow-lg border">
             @csrf
-            <div class="modal-header">
-                <h5 class="modal-title">Create Portfolio or Article</h5>
+            <div class="modal-header border-bottom py-3">
+                <h5 class="modal-title fw-bold" id="createPortLabel">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Create Portfolio or Article
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <div class="row g-3 mb-3">
                     <div class="col-md-8">
                         <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
@@ -314,23 +321,22 @@
                     <div class="col-md-4 d-flex align-items-center pt-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="is_featured" id="createFeat" value="1" checked>
-                            <label class="form-check-label" for="createFeat">Featured in Mega Menu</label>
+                            <label class="form-check-label fw-semibold small" for="createFeat">Featured in Mega Menu</label>
                         </div>
                     </div>
                     <div class="col-md-4 d-flex align-items-center pt-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="is_active" id="createAct" value="1" checked>
-                            <label class="form-check-label" for="createAct">Active</label>
+                            <label class="form-check-label fw-semibold small" for="createAct">Active</label>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Item</button>
+            <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm px-3">Create Item</button>
             </div>
         </form>
     </div>
 </div>
 @endsection
-

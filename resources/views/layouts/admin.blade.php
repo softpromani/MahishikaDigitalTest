@@ -88,6 +88,35 @@
             border-color: #1e293b;
             background-color: #111827;
         }
+        .modal {
+            z-index: 1060 !important;
+        }
+        .modal-backdrop {
+            z-index: 1050 !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            opacity: 1 !important;
+            border: 1px solid rgba(0, 0, 0, 0.15) !important;
+            border-radius: 14px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+            overflow: hidden;
+        }
+        [data-bs-theme="dark"] .modal-content {
+            background-color: #111827 !important;
+            background: #111827 !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            color: #f8fafc;
+        }
+        .modal-body {
+            background-color: inherit;
+        }
+        .modal-header, .modal-footer {
+            background-color: inherit;
+        }
     </style>
     @stack('styles')
 </head>

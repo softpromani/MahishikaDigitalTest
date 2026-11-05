@@ -11,7 +11,7 @@
     </button>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm mb-4">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
@@ -75,85 +75,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- Edit Category Modal -->
-                    <div class="modal fade" id="editCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.categories.update', $category) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Category: {{ $category->name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Name</label>
-                                        <input type="text" name="name" class="form-control" value="{{ $category->name }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Slug</label>
-                                        <input type="text" name="slug" class="form-control" value="{{ $category->slug }}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold">Description</label>
-                                        <textarea name="description" class="form-control" rows="2">{{ $category->description }}</textarea>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Icon Class</label>
-                                            <input type="text" name="icon" class="form-control" value="{{ $category->icon }}" placeholder="bi-layers">
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Badge</label>
-                                            <input type="text" name="badge" class="form-control" value="{{ $category->badge }}" placeholder="e.g. Popular">
-                                        </div>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <label class="form-label fw-semibold">Sort Order</label>
-                                            <input type="number" name="sort_order" class="form-control" value="{{ $category->sort_order }}" required>
-                                        </div>
-                                        <div class="col-6 d-flex align-items-center pt-3">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="is_active" id="editActive{{ $category->id }}" value="1" {{ $category->is_active ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="editActive{{ $category->id }}">Active in Menu</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.categories.delete', $category) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Confirm Deletion</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete <strong>{{ $category->name }}</strong>?
-                                    <div class="alert alert-warning mt-2 mb-0 small">
-                                        <i class="bi bi-exclamation-triangle me-1"></i>
-                                        This will also delete {{ $category->sub_categories_count }} subcategories nested under it!
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete Category</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 @empty
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">No categories created yet.</td>
@@ -164,16 +85,108 @@
     </div>
 </div>
 
+<!-- All Category Edit & Delete Modals (Placed Outside Table for Valid DOM & Clean Backdrop) -->
+@foreach($categories as $category)
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="editCategoryModal{{ $category->id }}" tabindex="-1" aria-labelledby="editCatLabel{{ $category->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.categories.update', $category) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('PUT')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="editCatLabel{{ $category->id }}">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Edit Category: {{ $category->name }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" value="{{ $category->name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Slug <span class="text-danger">*</span></label>
+                        <input type="text" name="slug" class="form-control" value="{{ $category->slug }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description" class="form-control" rows="2">{{ $category->description }}</textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Icon Class</label>
+                            <input type="text" name="icon" class="form-control" value="{{ $category->icon }}" placeholder="bi-layers">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Badge</label>
+                            <input type="text" name="badge" class="form-control" value="{{ $category->badge }}" placeholder="e.g. Popular">
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold">Sort Order</label>
+                            <input type="number" name="sort_order" class="form-control" value="{{ $category->sort_order }}" required>
+                        </div>
+                        <div class="col-6 d-flex align-items-center pt-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_active" id="editActive{{ $category->id }}" value="1" {{ $category->is_active ? 'checked' : '' }}>
+                                <label class="form-check-label fw-semibold small" for="editActive{{ $category->id }}">Active in Menu</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-3">
+                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.categories.delete', $category) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold text-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    Are you sure you want to delete category <strong>{{ $category->name }}</strong>?
+                    <div class="alert alert-warning mt-3 mb-0 small d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle me-2 fs-5"></i>
+                        <div>
+                            This will also delete <strong>{{ $category->sub_categories_count }} subcategories</strong> nested under it!
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
+
 <!-- Create Category Modal -->
-<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('admin.categories.store') }}" method="POST" class="modal-content">
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCatLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="{{ route('admin.categories.store') }}" method="POST" class="modal-content shadow-lg border">
             @csrf
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Category</h5>
+            <div class="modal-header border-bottom py-3">
+                <h5 class="modal-title fw-bold" id="createCatLabel">
+                    <i class="bi bi-plus-circle text-primary me-2"></i>Create New Category
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
                     <input type="text" name="name" class="form-control" placeholder="e.g. Services, Solutions" required>
@@ -186,7 +199,7 @@
                     <label class="form-label fw-semibold">Description</label>
                     <textarea name="description" class="form-control" rows="2" placeholder="Brief summary for menu intro"></textarea>
                 </div>
-                <div class="row g-2 mb-3">
+                <div class="row g-3 mb-3">
                     <div class="col-6">
                         <label class="form-label fw-semibold">Icon Class</label>
                         <input type="text" name="icon" class="form-control" placeholder="bi-layers">
@@ -196,7 +209,7 @@
                         <input type="text" name="badge" class="form-control" placeholder="e.g. New">
                     </div>
                 </div>
-                <div class="row g-2 mb-3">
+                <div class="row g-3">
                     <div class="col-6">
                         <label class="form-label fw-semibold">Sort Order</label>
                         <input type="number" name="sort_order" class="form-control" value="0">
@@ -204,17 +217,16 @@
                     <div class="col-6 d-flex align-items-center pt-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="is_active" id="createActive" value="1" checked>
-                            <label class="form-check-label" for="createActive">Active in Menu</label>
+                            <label class="form-check-label fw-semibold small" for="createActive">Active in Menu</label>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create Category</button>
+            <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm px-3">Create Category</button>
             </div>
         </form>
     </div>
 </div>
 @endsection
-

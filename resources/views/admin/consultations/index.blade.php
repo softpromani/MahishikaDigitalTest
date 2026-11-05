@@ -71,78 +71,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- View Message Modal -->
-                    <div class="modal fade" id="viewLeadModal{{ $lead->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Inquiry from {{ $lead->name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <div class="text-muted small">Company / Organization:</div>
-                                        <div class="fw-semibold">{{ $lead->company ?? 'Independent' }}</div>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <div class="text-muted small">Email:</div>
-                                            <div><a href="mailto:{{ $lead->email }}">{{ $lead->email }}</a></div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-muted small">Phone:</div>
-                                            <div>{{ $lead->phone ?? 'Not provided' }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="row g-2 mb-3">
-                                        <div class="col-6">
-                                            <div class="text-muted small">Service:</div>
-                                            <div class="fw-medium">{{ $lead->service_interest }}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="text-muted small">Budget:</div>
-                                            <div class="fw-medium">{{ $lead->budget }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="text-muted small mb-1">Project Requirements / Message:</div>
-                                        <div class="p-3 bg-body-tertiary rounded border" style="white-space: pre-wrap;">{{ $lead->message }}</div>
-                                    </div>
-                                    <div class="small text-muted">
-                                        <i class="bi bi-info-circle me-1"></i>IP: {{ $lead->ip_address ?? 'Unknown' }} &bull; Submitted: {{ $lead->created_at->toDayDateTimeString() }}
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="mailto:{{ $lead->email }}?subject=Mahishika%20Digital%20Consultation%20Follow-up" class="btn btn-primary">
-                                        <i class="bi bi-reply me-1"></i> Reply via Email
-                                    </a>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteLeadModal{{ $lead->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <form action="{{ route('admin.consultations.delete', $lead) }}" method="POST" class="modal-content">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Delete Consultation Lead</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete consultation lead from <strong>{{ $lead->name }}</strong> ({{ $lead->email }})?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 @empty
                     <tr>
                         <td colspan="7" class="text-center py-4 text-muted">No consultations received yet.</td>
@@ -157,5 +85,84 @@
         </div>
     @endif
 </div>
+
+<!-- Consultation Modals (Rendered Outside Table for Clean Backdrop & Valid DOM) -->
+@foreach($consultations as $lead)
+    <!-- View Message Modal -->
+    <div class="modal fade" id="viewLeadModal{{ $lead->id }}" tabindex="-1" aria-labelledby="viewLeadLabel{{ $lead->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg border">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold" id="viewLeadLabel{{ $lead->id }}">
+                        <i class="bi bi-chat-quote-fill text-primary me-2"></i>Inquiry from {{ $lead->name }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <div class="text-muted small fw-semibold">Company / Organization:</div>
+                        <div class="fw-bold fs-6">{{ $lead->company ?? 'Independent / Not specified' }}</div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold">Email:</div>
+                            <div><a href="mailto:{{ $lead->email }}" class="text-decoration-none fw-medium"><i class="bi bi-envelope me-1"></i>{{ $lead->email }}</a></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold">Phone:</div>
+                            <div>{{ $lead->phone ?? 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold">Interested Service:</div>
+                            <div><span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">{{ $lead->service_interest }}</span></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-muted small fw-semibold">Estimated Budget:</div>
+                            <div class="fw-semibold text-success">{{ $lead->budget }}</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="text-muted small fw-semibold mb-1">Project Requirements / Message:</div>
+                        <div class="p-3 bg-light rounded-3 border text-body" style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">{{ $lead->message }}</div>
+                    </div>
+                    <div class="small text-muted border-top pt-2 mt-3">
+                        <i class="bi bi-info-circle me-1"></i>IP: {{ $lead->ip_address ?? '127.0.0.1' }} &bull; Submitted: {{ $lead->created_at->toDayDateTimeString() }}
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <a href="mailto:{{ $lead->email }}?subject=Mahishika%20Digital%20Consultation%20Follow-up" class="btn btn-primary btn-sm px-3">
+                        <i class="bi bi-reply me-1"></i> Reply via Email
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteLeadModal{{ $lead->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="{{ route('admin.consultations.delete', $lead) }}" method="POST" class="modal-content shadow-lg border">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold text-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    Are you sure you want to delete the consultation lead from <strong>{{ $lead->name }}</strong> (<code>{{ $lead->email }}</code>)?
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm px-3">Delete Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endforeach
 @endsection
 
