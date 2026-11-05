@@ -33,6 +33,61 @@
             display: flex;
             flex-direction: column;
         }
+
+        /* Simulated Mobile Device Container for Mobile Story */
+        .mobile-screen-wrapper {
+            background: var(--bg-surface);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .mobile-phone-status-bar {
+            height: 24px;
+            background: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-phone-nav-header {
+            padding: 0.85rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            backdrop-filter: blur(8px);
+        }
+
+        .mobile-phone-body {
+            padding: 1.25rem 1rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .mobile-phone-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-surface-subtle);
+        }
+
+        .mobile-home-indicator {
+            width: 120px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 0.5rem auto 0;
+            opacity: 0.4;
+        }
+
         .story-body-content {
             padding: 3rem 1.5rem;
             max-width: 900px;
@@ -43,7 +98,7 @@
 </head>
 <body>
     <div class="story-container">
-                    <!-- Header & Mega Menu -->
+                    <!-- Header & Mega Menu Desktop / Standard -->
             <header class="site-header" id="siteHeader">
                 <div class="header-container">
                     <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
@@ -725,7 +780,7 @@
                             <i class="bi bi-calendar2-check-fill"></i>
                             <span>Book a Consultation</span>
                         </button>
-                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation" aria-expanded="false">
+                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation">
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
@@ -748,255 +803,6 @@
                     </div>
                 </div>
             </header>
-
-            <!-- Mobile Drawer -->
-            <div class="mobile-drawer-backdrop " id="mobileBackdrop"></div>
-            <aside class="mobile-drawer " id="mobileDrawer" role="dialog" aria-modal="true">
-                <div class="mobile-drawer__header">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                            <i class="bi bi-cpu-fill fs-6"></i>
-                        </span>
-                        <span class="fw-bold fs-6">Mahishika Digital</span>
-                    </div>
-                    <button type="button" class="action-btn" id="mobileCloseBtn">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                <div class="mobile-drawer__body">
-                    <ul class="mobile-menu-accordion">
-                                                    <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-services">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-layers-half text-primary"></i>
-                                        <span>Services</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse " id="mobile-sub-services">
-                                    <ul class="mobile-sublink-list">
-                                                                                    <li>
-                                                <a href="#services-cloud" class="mobile-sublink">
-                                                    <i class="bi bi-cloud-check mobile-sublink__icon"></i>
-                                                    <span>Cloud Architecture &amp; DevOps</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Popular</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#services-web" class="mobile-sublink">
-                                                    <i class="bi bi-code-slash mobile-sublink__icon"></i>
-                                                    <span>Custom Web &amp; Full-Stack Apps</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Core</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#services-mobile" class="mobile-sublink">
-                                                    <i class="bi bi-phone mobile-sublink__icon"></i>
-                                                    <span>Mobile &amp; Cross-Platform Apps</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#services-ai" class="mobile-sublink">
-                                                    <i class="bi bi-cpu mobile-sublink__icon"></i>
-                                                    <span>AI Engineering &amp; Intelligent Agents</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">New</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#services-design" class="mobile-sublink">
-                                                    <i class="bi bi-palette mobile-sublink__icon"></i>
-                                                    <span>Product UI/UX &amp; Design Systems</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#services-security" class="mobile-sublink">
-                                                    <i class="bi bi-shield-check mobile-sublink__icon"></i>
-                                                    <span>Cybersecurity &amp; DevSecOps</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Enterprise</span>
-                                                                                                    </a>
-                                            </li>
-                                                                            </ul>
-                                </div>
-                            </li>
-                                                    <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-industries">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-buildings text-primary"></i>
-                                        <span>Industries</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse " id="mobile-sub-industries">
-                                    <ul class="mobile-sublink-list">
-                                                                                    <li>
-                                                <a href="#industry-fintech" class="mobile-sublink">
-                                                    <i class="bi bi-cash-coin mobile-sublink__icon"></i>
-                                                    <span>Financial Services &amp; FinTech</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Regulated</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#industry-healthtech" class="mobile-sublink">
-                                                    <i class="bi bi-heart-pulse mobile-sublink__icon"></i>
-                                                    <span>Healthcare &amp; HealthTech</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">HIPAA</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#industry-ecommerce" class="mobile-sublink">
-                                                    <i class="bi bi-bag-check mobile-sublink__icon"></i>
-                                                    <span>E-Commerce &amp; Omnichannel Retail</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">High Scale</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#industry-saas" class="mobile-sublink">
-                                                    <i class="bi bi-diagram-3 mobile-sublink__icon"></i>
-                                                    <span>Enterprise SaaS &amp; B2B Platforms</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#industry-logistics" class="mobile-sublink">
-                                                    <i class="bi bi-truck mobile-sublink__icon"></i>
-                                                    <span>Logistics &amp; Smart Supply Chain</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#industry-edtech" class="mobile-sublink">
-                                                    <i class="bi bi-play-circle mobile-sublink__icon"></i>
-                                                    <span>Media, Entertainment &amp; EdTech</span>
-                                                                                                    </a>
-                                            </li>
-                                                                            </ul>
-                                </div>
-                            </li>
-                                                    <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-work">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-briefcase text-primary"></i>
-                                        <span>Work</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse " id="mobile-sub-work">
-                                    <ul class="mobile-sublink-list">
-                                                                                    <li>
-                                                <a href="#work-cases" class="mobile-sublink">
-                                                    <i class="bi bi-journal-code mobile-sublink__icon"></i>
-                                                    <span>Enterprise Case Studies</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Featured</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#work-clients" class="mobile-sublink">
-                                                    <i class="bi bi-star mobile-sublink__icon"></i>
-                                                    <span>Client Roster &amp; Partnerships</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#work-oss" class="mobile-sublink">
-                                                    <i class="bi bi-github mobile-sublink__icon"></i>
-                                                    <span>Open Source &amp; Developer Labs</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">OSS</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#work-design-systems" class="mobile-sublink">
-                                                    <i class="bi bi-brush mobile-sublink__icon"></i>
-                                                    <span>Design Systems &amp; Tokens</span>
-                                                                                                    </a>
-                                            </li>
-                                                                            </ul>
-                                </div>
-                            </li>
-                                                    <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-approach">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-compass text-primary"></i>
-                                        <span>Approach</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse " id="mobile-sub-approach">
-                                    <ul class="mobile-sublink-list">
-                                                                                    <li>
-                                                <a href="#approach-architecture" class="mobile-sublink">
-                                                    <i class="bi bi-diagram-2 mobile-sublink__icon"></i>
-                                                    <span>Architecture-First Engineering</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Philosophy</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#approach-agile" class="mobile-sublink">
-                                                    <i class="bi bi-stopwatch mobile-sublink__icon"></i>
-                                                    <span>Agile 2-Week Sprint Cadence</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#approach-ux" class="mobile-sublink">
-                                                    <i class="bi bi-eye mobile-sublink__icon"></i>
-                                                    <span>Human-Centered UX &amp; Usability</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#approach-sre" class="mobile-sublink">
-                                                    <i class="bi bi-speedometer2 mobile-sublink__icon"></i>
-                                                    <span>Observability &amp; SRE Reliability</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">99.99%</span>
-                                                                                                    </a>
-                                            </li>
-                                                                            </ul>
-                                </div>
-                            </li>
-                                                    <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-about">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-people text-primary"></i>
-                                        <span>About</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse " id="mobile-sub-about">
-                                    <ul class="mobile-sublink-list">
-                                                                                    <li>
-                                                <a href="#about-story" class="mobile-sublink">
-                                                    <i class="bi bi-book mobile-sublink__icon"></i>
-                                                    <span>Our Story &amp; Purpose</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#about-team" class="mobile-sublink">
-                                                    <i class="bi bi-person-badge mobile-sublink__icon"></i>
-                                                    <span>Global Team &amp; Leadership</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">12 Countries</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#about-careers" class="mobile-sublink">
-                                                    <i class="bi bi-lightning-charge mobile-sublink__icon"></i>
-                                                    <span>Careers &amp; Open Roles</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">We&#039;re Hiring</span>
-                                                                                                    </a>
-                                            </li>
-                                                                                    <li>
-                                                <a href="#about-awards" class="mobile-sublink">
-                                                    <i class="bi bi-trophy mobile-sublink__icon"></i>
-                                                    <span>Recognition, Press &amp; Awards</span>
-                                                                                                            <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">Awwwards</span>
-                                                                                                    </a>
-                                            </li>
-                                                                            </ul>
-                                </div>
-                            </li>
-                                            </ul>
-                </div>
-                <div class="mobile-drawer__footer">
-                    <button type="button" class="btn-submit-consultation w-100" data-open-consultation>
-                        <i class="bi bi-calendar2-check-fill me-2"></i>
-                        <span>Book a Consultation</span>
-                    </button>
-                </div>
-            </aside>
 
             <!-- Story Body Content -->
             <div class="story-body-content flex-grow-1">

@@ -33,6 +33,61 @@
             display: flex;
             flex-direction: column;
         }
+
+        /* Simulated Mobile Device Container for Mobile Story */
+        .mobile-screen-wrapper {
+            background: var(--bg-surface);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .mobile-phone-status-bar {
+            height: 24px;
+            background: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .mobile-phone-nav-header {
+            padding: 0.85rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            backdrop-filter: blur(8px);
+        }
+
+        .mobile-phone-body {
+            padding: 1.25rem 1rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .mobile-phone-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-surface-subtle);
+        }
+
+        .mobile-home-indicator {
+            width: 120px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            margin: 0.5rem auto 0;
+            opacity: 0.4;
+        }
+
         .story-body-content {
             padding: 3rem 1.5rem;
             max-width: 900px;
@@ -43,7 +98,114 @@
 </head>
 <body>
     <div class="story-container">
-        @if($story === 'login')
+        @if($story === 'mobile')
+            <!-- Dedicated Clean Mobile Viewport Story -->
+            <div class="mobile-screen-wrapper">
+                <!-- Phone Status Bar -->
+                <div class="mobile-phone-status-bar">
+                    <span>9:41</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-wifi"></i>
+                        <i class="bi bi-reception-4"></i>
+                        <i class="bi bi-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Mobile Navbar Header -->
+                <div class="mobile-phone-nav-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
+                            <i class="bi bi-cpu-fill fs-6"></i>
+                        </span>
+                        <div>
+                            <span class="fw-bold" style="font-size: 0.95rem;">Mahishika</span>
+                            <span class="d-block text-muted" style="font-size: 0.65rem; text-transform: uppercase;">Digital Agency</span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <button type="button" class="action-btn" style="width: 36px; height: 36px;" onclick="toggleMobileSearch()">
+                            <i class="bi bi-search" style="font-size: 0.9rem;"></i>
+                        </button>
+                        <button type="button" class="action-btn" style="width: 36px; height: 36px;" onclick="window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'theme_toggle' } }, '*')">
+                            <i class="bi {{ $theme === 'dark' ? 'bi-sun-fill text-warning' : 'bi-moon-stars' }}" style="font-size: 0.9rem;"></i>
+                        </button>
+                        <button type="button" class="hamburger-btn" style="width: 36px; height: 36px;" aria-expanded="true">
+                            <i class="bi bi-x-lg text-primary" style="font-size: 1.1rem;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Search Input Box -->
+                <div class="p-3 pb-0" id="mobileSearchBox" style="display: none;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-body-tertiary border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="search" class="form-control border-start-0" placeholder="Search services...">
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Accordion Body -->
+                <div class="mobile-phone-body">
+                    <ul class="mobile-menu-accordion">
+                        @foreach($categories as $category)
+                            <li class="mobile-menu-item">
+                                <button type="button" 
+                                        class="mobile-menu-trigger" 
+                                        aria-expanded="{{ $category->slug === 'services' ? 'true' : 'false' }}" 
+                                        onclick="toggleAccordion('mobile-sub-{{ $category->slug }}', this)">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi {{ $category->icon ?? 'bi-folder' }} text-primary"></i>
+                                        <span class="fw-bold" style="font-size: 0.98rem;">{{ $category->name }}</span>
+                                    </div>
+                                    <i class="bi bi-chevron-down chevron-icon"></i>
+                                </button>
+                                <div class="mobile-submenu-collapse {{ $category->slug === 'services' ? 'is-open' : '' }}" id="mobile-sub-{{ $category->slug }}">
+                                    <ul class="mobile-sublink-list ps-2 pe-1">
+                                        @foreach($category->subCategories as $sub)
+                                            <li>
+                                                <a href="{{ $sub->url }}" class="mobile-sublink" onclick="window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'mobile_link_click', title: '{{ $sub->title }}' } }, '*')">
+                                                    <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                        <i class="bi {{ $sub->icon ?? 'bi-link' }} mobile-sublink__icon" style="flex-shrink: 0;"></i>
+                                                        <span style="font-size: 0.88rem;">{{ $sub->title }}</span>
+                                                    </div>
+                                                    @if($sub->badge)
+                                                        <span class="badge bg-primary-subtle text-primary ms-2" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
+                                                    @endif
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <!-- Mobile CTA Footer -->
+                <div class="mobile-phone-footer">
+                    <button type="button" class="btn-submit-consultation w-100" onclick="alert('Opening consultation booking modal...'); window.parent.postMessage({ type: 'STORYBOOK_ACTION', payload: { event: 'consultation_modal_open' } }, '*')">
+                        <i class="bi bi-calendar2-check-fill me-2"></i>
+                        <span>Book a Consultation</span>
+                    </button>
+                    <div class="mobile-home-indicator"></div>
+                </div>
+            </div>
+
+            <script>
+                function toggleAccordion(id, btn) {
+                    const target = document.getElementById(id);
+                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', !isExpanded);
+                    target.classList.toggle('is-open');
+                }
+                function toggleMobileSearch() {
+                    const box = document.getElementById('mobileSearchBox');
+                    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+                }
+            </script>
+
+        @elseif($story === 'login')
             <!-- Auth Login Screen Story -->
             <div class="d-flex align-items-center justify-content-center flex-grow-1 p-3">
                 <div class="card border-0 shadow-lg rounded-4 p-4 p-sm-5" style="max-width: 440px; width: 100%; background: var(--bg-surface);">
@@ -65,7 +227,7 @@
                         </div>
                     </div>
 
-                    <form onsubmit="alert('Login form story: credentials validated successfully.'); return false;">
+                    <form onsubmit="alert('Login credentials valid. Redirecting to CMS dashboard...'); return false;">
                         <div class="mb-3 text-start">
                             <label class="form-label small fw-semibold">Admin Email</label>
                             <input type="email" class="form-control" value="admin@mahishika.digital" required>
@@ -84,8 +246,45 @@
                     </form>
                 </div>
             </div>
+
+        @elseif($story === 'docs')
+            <!-- Documentation Story -->
+            <div class="p-4 p-md-5 max-w-4xl mx-auto text-start">
+                <span class="badge bg-success-subtle text-success p-2 mb-3">
+                    <i class="bi bi-check-circle-fill me-1"></i> WCAG 2.1 AA Checklist Verification
+                </span>
+                <h1 class="h3 fw-bold mb-4">Accessibility & Technical Architecture</h1>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card p-3 h-100 border-0 shadow-sm" style="background: var(--bg-surface);">
+                            <h2 class="h6 fw-bold text-primary"><i class="bi bi-keyboard me-2"></i>Keyboard Navigation</h2>
+                            <ul class="small text-secondary ps-3 mb-0" style="line-height: 1.7;">
+                                <li><code>Tab / Shift+Tab</code>: Sequential forward and backward focus.</li>
+                                <li><code>Enter / Space</code>: Toggles dropdown or follows link.</li>
+                                <li><code>Escape</code>: Instantly closes open panel and returns focus to trigger.</li>
+                                <li><code>ArrowLeft / ArrowRight</code>: Navigates top-level menu items.</li>
+                                <li><code>ArrowDown</code>: Enters open panel and focuses first link.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card p-3 h-100 border-0 shadow-sm" style="background: var(--bg-surface);">
+                            <h2 class="h6 fw-bold text-primary"><i class="bi bi-universal-access me-2"></i>ARIA Attributes</h2>
+                            <ul class="small text-secondary ps-3 mb-0" style="line-height: 1.7;">
+                                <li><code>aria-expanded="true|false"</code>: Updated on triggers.</li>
+                                <li><code>aria-controls="panel-id"</code>: Associates panels.</li>
+                                <li><code>aria-haspopup="true"</code>: Indicates popup menu.</li>
+                                <li><code>role="menubar"</code> & <code>role="menuitem"</code>: Semantic menu roles.</li>
+                                <li><code>aria-hidden="true|false"</code>: Screen reader exclusion.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         @else
-            <!-- Header & Mega Menu -->
+            <!-- Header & Mega Menu Desktop / Standard -->
             <header class="site-header" id="siteHeader">
                 <div class="header-container">
                     <a href="#" class="brand-logo" aria-label="Mahishika Digital Home">
@@ -218,7 +417,7 @@
                             <i class="bi bi-calendar2-check-fill"></i>
                             <span>Book a Consultation</span>
                         </button>
-                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation" aria-expanded="{{ $story === 'mobile' ? 'true' : 'false' }}">
+                        <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation">
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
                             <span class="hamburger-bar"></span>
@@ -263,58 +462,6 @@
                     </div>
                 </div>
             </header>
-
-            <!-- Mobile Drawer -->
-            <div class="mobile-drawer-backdrop {{ $story === 'mobile' ? 'is-active' : '' }}" id="mobileBackdrop"></div>
-            <aside class="mobile-drawer {{ $story === 'mobile' ? 'is-active' : '' }}" id="mobileDrawer" role="dialog" aria-modal="true">
-                <div class="mobile-drawer__header">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="brand-logo__mark" style="width: 32px; height: 32px;">
-                            <i class="bi bi-cpu-fill fs-6"></i>
-                        </span>
-                        <span class="fw-bold fs-6">Mahishika Digital</span>
-                    </div>
-                    <button type="button" class="action-btn" id="mobileCloseBtn">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                <div class="mobile-drawer__body">
-                    <ul class="mobile-menu-accordion">
-                        @foreach($categories as $category)
-                            <li class="mobile-menu-item">
-                                <button type="button" class="mobile-menu-trigger" aria-expanded="{{ $story === 'mobile' && $category->slug === 'services' ? 'true' : 'false' }}" aria-controls="mobile-sub-{{ $category->slug }}">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="bi {{ $category->icon ?? 'bi-folder' }} text-primary"></i>
-                                        <span>{{ $category->name }}</span>
-                                    </div>
-                                    <i class="bi bi-chevron-down chevron-icon"></i>
-                                </button>
-                                <div class="mobile-submenu-collapse {{ $story === 'mobile' && $category->slug === 'services' ? 'is-open' : '' }}" id="mobile-sub-{{ $category->slug }}">
-                                    <ul class="mobile-sublink-list">
-                                        @foreach($category->subCategories as $sub)
-                                            <li>
-                                                <a href="{{ $sub->url }}" class="mobile-sublink">
-                                                    <i class="bi {{ $sub->icon ?? 'bi-link' }} mobile-sublink__icon"></i>
-                                                    <span>{{ $sub->title }}</span>
-                                                    @if($sub->badge)
-                                                        <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
-                                                    @endif
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="mobile-drawer__footer">
-                    <button type="button" class="btn-submit-consultation w-100" data-open-consultation>
-                        <i class="bi bi-calendar2-check-fill me-2"></i>
-                        <span>Book a Consultation</span>
-                    </button>
-                </div>
-            </aside>
 
             <!-- Story Body Content -->
             <div class="story-body-content flex-grow-1">

@@ -14,8 +14,7 @@
             --sb-bg-dark: #12151c;
             --sb-sidebar-bg: #181c26;
             --sb-border: rgba(255, 255, 255, 0.08);
-            --sb-border-light: rgba(0, 0, 0, 0.08);
-            --sb-accent: #ff4785; /* Storybook iconic pink-red */
+            --sb-accent: #ff4785;
             --sb-primary: #3b82f6;
             --sb-text: #e2e8f0;
             --sb-text-muted: #94a3b8;
@@ -37,9 +36,7 @@
             display: flex;
         }
 
-        /* ==========================================================================
-           Storybook Left Sidebar
-           ========================================================================== */
+        /* Sidebar */
         .sb-sidebar {
             width: 270px;
             background: var(--sb-sidebar-bg);
@@ -181,11 +178,6 @@
             border-radius: 2px;
         }
 
-        .sb-tree-item .doc-icon {
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-
         .sb-sidebar-footer {
             padding: 0.85rem 1rem;
             border-top: 1px solid var(--sb-border);
@@ -195,9 +187,7 @@
             justify-content: space-between;
         }
 
-        /* ==========================================================================
-           Main Canvas Area
-           ========================================================================== */
+        /* Main Workspace */
         .sb-main {
             flex: 1;
             display: flex;
@@ -258,13 +248,6 @@
             color: #ffffff;
         }
 
-        .sb-btn.is-active {
-            background: var(--sb-primary);
-            border-color: var(--sb-primary);
-            color: #ffffff;
-            font-weight: 600;
-        }
-
         .sb-viewport-group {
             display: flex;
             background: rgba(0, 0, 0, 0.3);
@@ -296,14 +279,15 @@
             font-weight: 600;
         }
 
-        /* Canvas Stage */
+        /* Canvas Stage: align-items: flex-start prevents vertical clipping! */
         .sb-stage {
             flex: 1;
             background: var(--sb-canvas-bg);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            overflow: auto;
+            overflow-y: auto;
+            overflow-x: auto;
             padding: 1.5rem;
             position: relative;
         }
@@ -319,41 +303,23 @@
             background-size: 20px 20px;
         }
 
-        /* Device Frame & IFrame Container */
+        /* Frame Wrapper */
         .sb-frame-wrapper {
             background: #ffffff;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08);
             border-radius: 12px;
             overflow: hidden;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.25s ease, height 0.25s ease;
             display: flex;
             flex-direction: column;
             position: relative;
+            margin: 0 auto;
         }
 
         .sb-frame-wrapper.is-device {
-            border: 8px solid #1e293b;
+            border: 10px solid #1e293b;
             border-radius: 36px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-        }
-
-        .sb-device-notch {
-            height: 18px;
-            background: #1e293b;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sb-frame-wrapper.is-device .sb-device-notch {
-            display: flex;
-        }
-
-        .sb-device-speaker {
-            width: 44px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
         }
 
         .sb-iframe {
@@ -364,16 +330,20 @@
             background: transparent;
         }
 
-        /* ==========================================================================
-           Bottom Addon Panel (Storybook Controls, Actions, A11y)
-           ========================================================================== */
+        /* Addon Panel */
         .sb-addon-panel {
-            height: 210px;
+            height: 190px;
             background: var(--sb-sidebar-bg);
             border-top: 1px solid var(--sb-border);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            transition: height 0.2s ease;
+        }
+
+        .sb-addon-panel.collapsed {
+            height: 38px;
+            overflow: hidden;
         }
 
         .sb-addon-header {
@@ -383,6 +353,7 @@
             align-items: center;
             padding: 0 1rem;
             gap: 1.5rem;
+            user-select: none;
         }
 
         .sb-addon-tab {
@@ -396,11 +367,7 @@
             position: relative;
         }
 
-        .sb-addon-tab:hover {
-            color: #ffffff;
-        }
-
-        .sb-addon-tab.is-active {
+        .sb-addon-tab:hover, .sb-addon-tab.is-active {
             color: #ffffff;
         }
 
@@ -417,7 +384,7 @@
         .sb-addon-body {
             flex: 1;
             overflow-y: auto;
-            padding: 0.85rem 1.25rem;
+            padding: 0.75rem 1.25rem;
             font-size: 0.8rem;
             font-family: 'JetBrains Mono', monospace;
         }
@@ -426,7 +393,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.35rem 0;
+            padding: 0.3rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             color: #cbd5e1;
         }
@@ -439,22 +406,10 @@
             font-size: 0.72rem;
             font-weight: 600;
         }
-
-        .a11y-badge {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
     </style>
 </head>
 <body>
-    <!-- Storybook Left Sidebar -->
+    <!-- Sidebar -->
     <aside class="sb-sidebar">
         <div class="sb-brand">
             <a href="#" class="sb-brand-logo">
@@ -499,12 +454,12 @@
             </div>
 
             <div class="sb-tree-item" data-story="mobile" onclick="selectStory('mobile', this)">
-                <i class="bi bi-file-earmark-code doc-icon"></i>
+                <i class="bi bi-phone doc-icon text-info"></i>
                 <span>Mobile Drawer (375px)</span>
             </div>
 
             <div class="sb-tree-item" data-story="dark" onclick="selectStory('dark', this)">
-                <i class="bi bi-file-earmark-code doc-icon"></i>
+                <i class="bi bi-moon-stars doc-icon text-warning"></i>
                 <span>Dark Theme Variant</span>
             </div>
 
@@ -528,14 +483,14 @@
         </nav>
 
         <div class="sb-sidebar-footer">
-            <span class="text-muted">Mahishika Digital UI</span>
+            <span class="text-muted">Mahishika Digital</span>
             <a href="/" target="_blank" class="sb-btn" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">Live App &rarr;</a>
         </div>
     </aside>
 
-    <!-- Main Content & Canvas -->
+    <!-- Main Workspace -->
     <main class="sb-main">
-        <!-- Top Toolbar -->
+        <!-- Toolbar -->
         <header class="sb-toolbar">
             <div class="sb-breadcrumb">
                 <span>Components</span>
@@ -545,30 +500,27 @@
                 <strong id="breadcrumbStory">Default (Desktop)</strong>
             </div>
 
-            <!-- Viewport Switcher & Theme Controls -->
             <div class="sb-toolbar-actions">
                 <div class="sb-viewport-group">
-                    <button class="sb-viewport-btn is-active" onclick="setViewport('100%', '100%', false, this)" title="100% Fluid Width">
+                    <button class="sb-viewport-btn is-active" id="vpBtnFluid" onclick="setViewport('100%', '100%', false, this)">
                         <i class="bi bi-arrows-fullscreen me-1"></i> Fluid
                     </button>
-                    <button class="sb-viewport-btn" onclick="setViewport('1280px', '800px', false, this)" title="Desktop (1280px)">
+                    <button class="sb-viewport-btn" id="vpBtnDesktop" onclick="setViewport('1280px', '750px', false, this)">
                         <i class="bi bi-laptop me-1"></i> Desktop
                     </button>
-                    <button class="sb-viewport-btn" onclick="setViewport('768px', '900px', true, this)" title="Tablet (768px)">
+                    <button class="sb-viewport-btn" id="vpBtnTablet" onclick="setViewport('768px', '800px', true, this)">
                         <i class="bi bi-tablet me-1"></i> Tablet
                     </button>
-                    <button class="sb-viewport-btn" onclick="setViewport('375px', '720px', true, this)" title="Mobile (375px)">
+                    <button class="sb-viewport-btn" id="vpBtnMobile" onclick="setViewport('375px', '640px', true, this)">
                         <i class="bi bi-phone me-1"></i> 375px Mobile
                     </button>
                 </div>
 
-                <!-- Theme Toggle Button -->
                 <button type="button" class="sb-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Canvas Theme">
                     <i class="bi bi-moon-stars" id="themeBtnIcon"></i>
                     <span id="themeBtnText">Dark</span>
                 </button>
 
-                <!-- Fullscreen / Popout -->
                 <button type="button" class="sb-btn" onclick="openFrameDirectly()" title="Open Story in New Window">
                     <i class="bi bi-box-arrow-up-right"></i>
                 </button>
@@ -582,15 +534,12 @@
         <!-- Canvas Stage -->
         <section class="sb-stage" id="sbStage">
             <div class="sb-frame-wrapper" id="frameWrapper" style="width: 100%; height: 100%;">
-                <div class="sb-device-notch">
-                    <div class="sb-device-speaker"></div>
-                </div>
                 <iframe src="/storybook/frame?story=default&theme=light" class="sb-iframe" id="storyIframe" title="Component Preview"></iframe>
             </div>
         </section>
 
-        <!-- Bottom Addon Panel (Storybook Style) -->
-        <footer class="sb-addon-panel">
+        <!-- Bottom Addon Panel -->
+        <footer class="sb-addon-panel" id="addonPanel">
             <div class="sb-addon-header">
                 <button class="sb-addon-tab is-active" onclick="switchAddonTab('actions', this)">
                     <i class="bi bi-activity me-1"></i> Actions & dataLayer <span class="badge bg-secondary ms-1" id="actionCounter" style="font-size: 0.65rem;">0</span>
@@ -600,6 +549,10 @@
                 </button>
                 <button class="sb-addon-tab" onclick="switchAddonTab('a11y', this)">
                     <i class="bi bi-universal-access me-1"></i> Accessibility (WCAG 2.1 AA)
+                </button>
+
+                <button type="button" class="sb-btn ms-auto" onclick="toggleAddonPanel()" title="Collapse / Expand Panel" style="padding: 0.15rem 0.5rem; font-size: 0.72rem;">
+                    <i class="bi bi-chevron-down" id="addonToggleIcon"></i>
                 </button>
             </div>
 
@@ -636,8 +589,8 @@
                     </div>
                     <div>
                         <label style="font-weight: 600; display: block; margin-bottom: 0.25rem;">Quick Viewport:</label>
-                        <button class="sb-btn" onclick="setViewport('375px', '720px', true)" style="margin-right: 0.5rem;">375px Mobile</button>
-                        <button class="sb-btn" onclick="setViewport('100%', '100%', false)">100% Fluid</button>
+                        <button class="sb-btn" onclick="setViewport('375px', '640px', true, document.getElementById('vpBtnMobile'))" style="margin-right: 0.5rem;">375px Mobile</button>
+                        <button class="sb-btn" onclick="setViewport('100%', '100%', false, document.getElementById('vpBtnFluid'))">100% Fluid</button>
                     </div>
                 </div>
             </div>
@@ -646,7 +599,7 @@
             <div class="sb-addon-body d-none" id="tabA11y" style="font-family: inherit;">
                 <div style="display: flex; gap: 2rem; align-items: flex-start;">
                     <div>
-                        <div class="a11y-badge mb-2"><i class="bi bi-shield-check"></i> WCAG 2.1 AA Passed: 0 Violations</div>
+                        <div class="mb-2" style="color: #34d399; font-weight: 700;"><i class="bi bi-shield-check"></i> WCAG 2.1 AA Passed: 0 Violations</div>
                         <ul style="padding-left: 1.25rem; color: #94a3b8; font-size: 0.82rem; line-height: 1.6;">
                             <li>Semantic Landmark Navigation (<code>&lt;header&gt;</code>, <code>&lt;nav role="menubar"&gt;</code>, <code>&lt;main&gt;</code>).</li>
                             <li>ARIA Expanded & Controls toggled synchronously on open/close states.</li>
@@ -663,11 +616,11 @@
         let currentStory = 'default';
         let currentTheme = 'light';
         let logCount = 0;
+        let isPanelCollapsed = false;
 
         function selectStory(story, element) {
             currentStory = story;
 
-            // Highlight tree item
             document.querySelectorAll('.sb-tree-item').forEach(el => el.classList.remove('is-active'));
             if (element) {
                 element.classList.add('is-active');
@@ -676,17 +629,22 @@
                 target?.classList.add('is-active');
             }
 
-            // Update breadcrumbs
             const storyName = element ? element.querySelector('span').textContent : story;
             document.getElementById('breadcrumbStory').textContent = storyName;
 
-            // If mobile story selected, automatically resize frame to 375px!
+            // When mobile story is selected, automatically switch to 375px phone frame!
             if (story === 'mobile') {
-                const mobileBtn = document.querySelectorAll('.sb-viewport-btn')[3];
-                setViewport('375px', '720px', true, mobileBtn);
+                const mobileBtn = document.getElementById('vpBtnMobile');
+                setViewport('375px', '640px', true, mobileBtn);
+            } else if (story === 'default' || story === 'services' || story === 'industries' || story === 'search') {
+                // If previously in mobile frame and switching to desktop stories, return to fluid
+                const wrapper = document.getElementById('frameWrapper');
+                if (wrapper.style.width === '375px') {
+                    const fluidBtn = document.getElementById('vpBtnFluid');
+                    setViewport('100%', '100%', false, fluidBtn);
+                }
             }
 
-            // If dark story selected, set theme to dark
             if (story === 'dark') {
                 currentTheme = 'dark';
                 updateThemeUI();
@@ -761,6 +719,19 @@
             });
         }
 
+        function toggleAddonPanel() {
+            const panel = document.getElementById('addonPanel');
+            const icon = document.getElementById('addonToggleIcon');
+            isPanelCollapsed = !isPanelCollapsed;
+            if (isPanelCollapsed) {
+                panel.classList.add('collapsed');
+                icon.className = 'bi bi-chevron-up';
+            } else {
+                panel.classList.remove('collapsed');
+                icon.className = 'bi bi-chevron-down';
+            }
+        }
+
         function switchAddonTab(tabName, btn) {
             document.querySelectorAll('.sb-addon-tab').forEach(b => b.classList.remove('is-active'));
             btn.classList.add('is-active');
@@ -772,6 +743,11 @@
             if (tabName === 'actions') document.getElementById('tabActions').classList.remove('d-none');
             if (tabName === 'controls') document.getElementById('tabControls').classList.remove('d-none');
             if (tabName === 'a11y') document.getElementById('tabA11y').classList.remove('d-none');
+
+            const panel = document.getElementById('addonPanel');
+            if (panel.classList.contains('collapsed')) {
+                toggleAddonPanel();
+            }
         }
 
         function logAction(name, payload) {
@@ -789,7 +765,6 @@
             container.prepend(entry);
         }
 
-        // Listen for dataLayer events posted from inside the iframe
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'STORYBOOK_ACTION') {
                 logAction(event.data.payload?.event || 'dataLayer_push', event.data.payload);
