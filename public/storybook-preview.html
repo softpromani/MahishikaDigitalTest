@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storybook Story Preview | Mahishika MegaMenu Component</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./assets/css/tokens.css">
+    <link rel="stylesheet" href="./assets/css/mega-menu.css">
+    <link rel="stylesheet" href="./assets/css/landing.css">
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .sb-toolbar {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+        }
+        .sb-tab-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #cbd5e1;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .sb-tab-btn:hover, .sb-tab-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+        .sb-frame-container {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .sb-viewport {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: max-width 0.3s ease;
+        }
+        .sb-viewport.mobile {
+            max-width: 375px;
+        }
+        .sb-viewport.tablet {
+            max-width: 768px;
+        }
+        .sb-viewport.desktop {
+            max-width: 100%;
+        }
+        .sb-doc-panel {
+            background: #ffffff;
+            padding: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sb-toolbar">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center gap-2 fw-bold text-white">
+                <i class="bi bi-book-half text-primary"></i> Storybook Story: <code>Components / MegaMenu</code>
+            </span>
+            <div class="d-flex gap-2">
+                <button class="sb-tab-btn active" onclick="setStory('default')">Default (Closed)</button>
+                <button class="sb-tab-btn" onclick="setStory('services')">Services Expanded</button>
+                <button class="sb-tab-btn" onclick="setStory('dark')">Dark Mode</button>
+                <button class="sb-tab-btn" onclick="setStory('search')">Search Active</button>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="small text-secondary me-2">Viewport:</span>
+            <button class="sb-tab-btn active" onclick="setViewport('desktop', this)">100% Desktop</button>
+            <button class="sb-tab-btn" onclick="setViewport('tablet', this)">768px Tablet</button>
+            <button class="sb-tab-btn" onclick="setViewport('mobile', this)">375px Mobile</button>
+            <a href="/" class="btn btn-sm btn-outline-info ms-3" target="_blank">View Live Site &rarr;</a>
+        </div>
+    </div>
+
+    <div class="sb-frame-container">
+        <div class="sb-viewport desktop" id="viewport">
+            <!-- Story Header Mount Point -->
+            <div id="storyMount"></div>
+
+            <div class="p-5 text-center">
+                <h1 class="h3 fw-bold mb-2">Mahishika Digital Mega Menu Storybook Sandbox</h1>
+                <p class="text-secondary max-w-md mx-auto">
+                    Use the story tabs above to test interactive component states: desktop mega-panels, keyboard accessibility, dark/light themes, mobile drawer, and instant search.
+                </p>
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <span class="badge bg-primary-subtle text-primary p-2">WCAG 2.1 AA Compliant</span>
+                    <span class="badge bg-success-subtle text-success p-2">Lighthouse &ge; 90 Target</span>
+                    <span class="badge bg-info-subtle text-info p-2">Zero Prebuilt Mega-Menu Kit</span>
+                </div>
+            </div>
+
+            <!-- Story Documentation -->
+            <div class="sb-doc-panel">
+                <h2 class="h5 fw-bold mb-3"><i class="bi bi-info-circle me-2 text-primary"></i>Component Specifications & Accessibility</h2>
+                <div class="row g-4 small text-secondary">
+                    <div class="col-md-4">
+                        <strong class="text-dark d-block mb-1">Keyboard Navigation Map</strong>
+                        <ul class="ps-3 mb-0">
+                            <li><code>Tab / Shift+Tab</code>: Sequential focus navigation</li>
+                            <li><code>Enter / Space</code>: Toggle mega menu panel</li>
+                            <li><code>Escape</code>: Close panel and restore focus to trigger button</li>
+                            <li><code>ArrowLeft / ArrowRight</code>: Navigate top-level items</li>
+                            <li><code>ArrowDown</code>: Enter dropdown panel</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <strong class="text-dark d-block mb-1">ARIA State Attributes</strong>
+                        <ul class="ps-3 mb-0">
+                            <li><code>aria-expanded="true|false"</code> on triggers</li>
+                            <li><code>aria-haspopup="true"</code> on menu buttons</li>
+                            <li><code>aria-controls="panel-id"</code> associating panels</li>
+                            <li><code>role="menubar"</code> & <code>role="menuitem"</code> semantics</li>
+                            <li><code>aria-hidden="true|false"</code> on dropdown panels</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <strong class="text-dark d-block mb-1">Interaction Polish & Tokens</strong>
+                        <ul class="ps-3 mb-0">
+                            <li>Intent hover debounce (120ms timeout prevents accidental closing)</li>
+                            <li>CSS design tokens for light and dark themes</li>
+                            <li>GTM <code>dataLayer</code> events on open, click, and search</li>
+                            <li>Mobile offcanvas drawer with focus trapping</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Site iframe or direct component renderer -->
+    <script>
+        function setViewport(size, btn) {
+            const vp = document.getElementById('viewport');
+            vp.className = `sb-viewport ${size}`;
+            document.querySelectorAll('.sb-toolbar .sb-tab-btn').forEach(b => {
+                if (b.textContent.includes('Desktop') || b.textContent.includes('Tablet') || b.textContent.includes('Mobile')) {
+                    b.classList.remove('active');
+                }
+            });
+            btn.classList.add('active');
+        }
+
+        function setStory(storyName) {
+            document.querySelectorAll('.sb-toolbar .sb-tab-btn').forEach(b => {
+                if (!b.textContent.includes('Desktop') && !b.textContent.includes('Tablet') && !b.textContent.includes('Mobile')) {
+                    b.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+
+            const mount = document.getElementById('storyMount');
+            const isDark = storyName === 'dark';
+            document.getElementById('viewport').setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.getElementById('viewport').setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+
+            fetch('/')
+                .then(r => r.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const header = doc.getElementById('siteHeader');
+                    if (header) {
+                        mount.innerHTML = header.outerHTML;
+
+                        if (storyName === 'services' || storyName === 'dark') {
+                            const servicesBtn = mount.querySelector('#trigger-services');
+                            const servicesPanel = mount.querySelector('#panel-services');
+                            if (servicesBtn) servicesBtn.setAttribute('aria-expanded', 'true');
+                            if (servicesPanel) {
+                                servicesPanel.classList.add('is-open');
+                                servicesPanel.setAttribute('aria-hidden', 'false');
+                            }
+                        } else if (storyName === 'search') {
+                            const searchOverlay = mount.querySelector('#searchOverlay');
+                            if (searchOverlay) searchOverlay.classList.add('is-active');
+                        }
+                    }
+                })
+                .catch(() => {
+                    mount.innerHTML = `<div class="p-3 text-center text-muted">Please visit the main landing page to test live interactive states.</div>`;
+                });
+        }
+
+        // Initialize with default
+        setStory('default');
+    </script>
+</body>
+</html>
+

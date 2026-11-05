@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/menu",
+      "destination": "/api/menu.json"
+    },
+    {
+      "source": "/storybook",
+      "destination": "/storybook-preview.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+

@@ -1,0 +1,19 @@
+[build]
+  publish = "public"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/api/menu"
+  to = "/api/menu.json"
+  status = 200
+
+[[redirects]]
+  from = "/storybook"
+  to = "/storybook-preview.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
