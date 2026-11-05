@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 // Public Services Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/storybook/frame', [HomeController::class, 'storybookFrame'])->name('storybook.frame');
+Route::post('/consultations', [\App\Http\Controllers\ApiController::class, 'storeConsultation'])->name('consultations.submit');
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

@@ -105,7 +105,7 @@ class ApiController extends Controller
     /**
      * Store new consultation booking.
      */
-    public function storeConsultation(Request $request): JsonResponse
+    public function storeConsultation(Request $request): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:100',
@@ -125,11 +125,15 @@ class ApiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed. Please correct the highlighted errors.',
-                'errors' => $validator->errors(),
-            ], 422);
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed. Please correct the highlighted errors.',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            return back()->withErrors($validator)->withInput();
         }
 
         $validated = $validator->validated();
@@ -139,16 +143,20 @@ class ApiController extends Controller
 
         $consultation = Consultation::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Thank you for reaching out! A senior solutions architect from Mahishika Digital will review your requirements and reach out within 24 business hours.',
-            'consultation_id' => $consultation->id,
-            'data' => [
-                'name' => $consultation->name,
-                'service' => $consultation->service_interest,
-                'created_at' => $consultation->created_at->toIso8601String(),
-            ],
-        ], 201);
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you for reaching out! A senior solutions architect from Mahishika Digital will review your requirements and reach out within 24 business hours.',
+                'consultation_id' => $consultation->id,
+                'data' => [
+                    'name' => $consultation->name,
+                    'service' => $consultation->service_interest,
+                    'created_at' => $consultation->created_at->toIso8601String(),
+                ],
+            ], 201);
+        }
+
+        return back()->with('success', 'Thank you! Your growth audit request has been received.');
     }
 
     /**

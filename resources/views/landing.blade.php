@@ -4,41 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Mahishika Digital | Enterprise Digital Agency & Cloud Engineering</title>
-    <meta name="description" content="Mahishika Digital is a premier digital engineering agency crafting resilient cloud architectures, bespoke web platforms, AI agents, and accessible design systems.">
-    <meta name="theme-color" content="#2563eb">
+    <title>Analytics & Tracking Services | Mahishika Digital</title>
+    <meta name="description" content="GA4, Tag Manager, and conversion tracking set up properly with one revenue dashboard that connects marketing to revenue.">
+    <meta name="theme-color" content="#0070f3">
 
-    <!-- Preconnect Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 & Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- Custom CSS Design Tokens, Mega Menu & Landing Styles -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ asset('assets/css/tokens.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/mega-menu.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/landing.css') }}">
-
-    <!-- Google Tag Manager / Analytics DataLayer Initialization -->
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            'event': 'page_view',
-            'page_title': 'Mahishika Digital - Services Landing Page',
-            'theme': localStorage.getItem('mahishika_theme') || 'light'
-        });
-    </script>
 </head>
 <body>
-    <!-- Skip to Content Link (WCAG 2.1 AA) -->
+    <!-- Accessibility Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- ==========================================================================
-       Header with Custom Mega Menu
+       1. Top Black Announcement Bar (from Zeplin)
+       ========================================================================== -->
+    <div class="top-announcement-bar">
+        <div class="container-xl d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <span class="announcement-text">Analytics &amp; Tracking page draft. Portfolio pieces and numbers are placeholders — copy is a first draft, ready for review.</span>
+            <button type="button" class="btn-highlight-placeholders" id="highlightPlaceholdersBtn">Highlight placeholders</button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       2. Site Header with Mega Menu (from Zeplin & Task PDF)
        ========================================================================== -->
     <header class="site-header" id="siteHeader">
         <div class="header-container">
@@ -50,183 +49,205 @@
             <!-- Desktop Navigation Menu -->
             <nav class="desktop-nav" aria-label="Primary Navigation">
                 <ul class="mega-menu-list" role="menubar">
-                    @foreach($categories as $category)
-                        <li class="mega-menu-item" role="none">
-                            <button type="button" 
-                                    class="mega-menu-trigger" 
-                                    role="menuitem" 
-                                    aria-haspopup="true" 
-                                    aria-expanded="false" 
-                                    aria-controls="panel-{{ $category->slug }}"
-                                    id="trigger-{{ $category->slug }}">
-                                <span>{{ $category->name }}</span>
-                                <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
-                            </button>
+                    <!-- 1. Services with 3-Column Zeplin Mega Menu Dropdown -->
+                    <li class="mega-menu-item position-relative" role="none">
+                        <button type="button" 
+                                class="mega-menu-trigger" 
+                                role="menuitem" 
+                                aria-haspopup="true" 
+                                aria-expanded="false" 
+                                aria-controls="megaMenuZeplin"
+                                id="servicesTrigger">
+                            <span>Services</span>
+                            <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                        </button>
 
-                            <!-- Mega Menu Dropdown Panel -->
-                            <div class="mega-menu-panel" 
-                                 id="panel-{{ $category->slug }}" 
-                                 role="region" 
-                                 aria-labelledby="trigger-{{ $category->slug }}" 
-                                 aria-hidden="true">
-                                <div class="mega-menu-grid">
-                                    <!-- Column 1: Category Overview -->
-                                    <div class="mega-column--overview">
-                                        <div>
-                                            @if($category->badge)
-                                                <div class="mega-overview-badge">
-                                                    <i class="bi {{ $category->icon ?? 'bi-stars' }}" aria-hidden="true"></i>
-                                                    <span>{{ $category->badge }}</span>
+                        <!-- Zeplin 3-Column Floating Mega Menu -->
+                        <div class="mega-menu-panel--zeplin" id="megaMenuZeplin" role="region" aria-labelledby="servicesTrigger" aria-hidden="true">
+                            <div class="mega-zeplin-body">
+                                <!-- Column 1: Verticals Sidebar (Design, Video, Tech, Marketing) -->
+                                <div class="mega-zeplin-sidebar">
+                                    <div class="mega-sidebar-title">Services</div>
+                                    
+                                    @php
+                                        // Ensure standard order for verticals
+                                        $verticalOrder = ['design', 'video', 'tech', 'marketing'];
+                                        $sortedVerticals = $serviceVerticals->sortBy(function($cat) use ($verticalOrder) {
+                                            $idx = array_search($cat->slug, $verticalOrder);
+                                            return $idx !== false ? $idx : 99;
+                                        });
+                                    @endphp
+
+                                    @foreach($sortedVerticals as $vCat)
+                                        @php
+                                            $dotClass = match($vCat->slug) {
+                                                'design' => 'tab-dot--design',
+                                                'video' => 'tab-dot--video',
+                                                'tech' => 'tab-dot--tech',
+                                                'marketing' => 'tab-dot--marketing',
+                                                default => 'tab-dot--tech'
+                                            };
+                                            // Tech is default active tab as shown in Zeplin
+                                            $isActive = ($vCat->slug === 'tech');
+                                        @endphp
+                                        <button type="button" 
+                                                class="mega-vertical-tab {{ $isActive ? 'is-active' : '' }}" 
+                                                data-vertical-target="panel-vertical-{{ $vCat->slug }}"
+                                                aria-selected="{{ $isActive ? 'true' : 'false' }}">
+                                            <div class="tab-left">
+                                                <span class="tab-dot {{ $dotClass }}"></span>
+                                                <div class="text-start">
+                                                    <div class="tab-name">{{ $vCat->name }}</div>
+                                                    <span class="tab-count">{{ $vCat->subCategories->count() }} services</span>
                                                 </div>
-                                            @endif
-                                            <h3 class="mega-overview-title">{{ $category->name }}</h3>
-                                            <p class="mega-overview-desc">{{ $category->description }}</p>
+                                            </div>
+                                            <i class="bi bi-chevron-right tab-chevron" aria-hidden="true"></i>
+                                        </button>
+                                    @endforeach
+                                </div>
+
+                                <!-- Column 2: Center Services Grid (2 Columns x 3 Rows) -->
+                                <div class="mega-zeplin-center">
+                                    @foreach($sortedVerticals as $vCat)
+                                        @php
+                                            $isActive = ($vCat->slug === 'tech');
+                                            $hubTitle = $vCat->name . ' Services';
+                                            $tagline = $vCat->description ?? ($vCat->slug === 'tech' ? 'A site, store, or app that works without babysitting.' : 'Capabilities tailored for enterprise scale.');
+                                        @endphp
+                                        <div class="mega-tab-content-panel {{ $isActive ? 'is-active' : '' }}" id="panel-vertical-{{ $vCat->slug }}">
+                                            <div class="mega-center-header">
+                                                <div class="title-row">
+                                                    <h3>{{ $hubTitle }}</h3>
+                                                    <a href="#{{ $vCat->slug }}-hub" class="mega-hub-link">
+                                                        <span>Explore {{ $vCat->name }} hub</span>
+                                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
+                                                <p class="tagline">{{ $tagline }}</p>
+                                            </div>
+
+                                            <div class="mega-service-grid">
+                                                @foreach($vCat->subCategories as $index => $sub)
+                                                    @php
+                                                        // Highlight the first item as in Zeplin (Website Development)
+                                                        $isHighlight = ($vCat->slug === 'tech' && $index === 0);
+                                                    @endphp
+                                                    <a href="{{ $sub->url }}" class="mega-service-item {{ $isHighlight ? 'is-highlighted' : '' }}">
+                                                        <div class="item-title-row">
+                                                            <span class="item-title">{{ $sub->title }}</span>
+                                                            <i class="bi bi-arrow-right item-arrow" aria-hidden="true"></i>
+                                                        </div>
+                                                        <p class="item-desc">{{ $sub->description }}</p>
+                                                    </a>
+                                                @endforeach
+                                            </div>
                                         </div>
-                                        <div>
-                                            <a href="#{{ $category->slug }}-section" class="mega-overview-link">
-                                                <span>View all {{ strtolower($category->name) }}</span>
+                                    @endforeach
+                                </div>
+
+                                <!-- Column 3: Featured Project -->
+                                <div class="mega-zeplin-featured">
+                                    <div class="mega-featured-title">Featured Project</div>
+
+                                    @foreach($sortedVerticals as $vCat)
+                                        @php
+                                            $isActive = ($vCat->slug === 'tech');
+                                            $featuredItem = $vCat->portfolioArticles->where('is_featured', true)->first() ?? $vCat->portfolioArticles->first();
+                                            $caseHeadline = $featuredItem ? $featuredItem->title : '[Client]: checkout rebuilt and mobile load time cut in half';
+                                            $caseLink = $featuredItem ? $featuredItem->link_url : '#portfolio';
+                                        @endphp
+                                        <div class="mega-featured-item-panel {{ $isActive ? 'd-flex' : 'd-none' }} flex-column h-100" id="featured-vertical-{{ $vCat->slug }}">
+                                            <div class="featured-case-box">
+                                                @if($featuredItem && $featuredItem->image_url)
+                                                    <img src="{{ $featuredItem->image_url }}" alt="{{ $caseHeadline }}" class="w-100 h-100 object-fit-cover">
+                                                @else
+                                                    <span>[Case image]</span>
+                                                @endif
+                                            </div>
+                                            <h4 class="featured-case-headline">{{ $caseHeadline }}</h4>
+                                            <a href="{{ $caseLink }}" class="featured-case-link">
+                                                <span>View in portfolio</span>
                                                 <i class="bi bi-arrow-right" aria-hidden="true"></i>
                                             </a>
                                         </div>
-                                    </div>
-
-                                    <!-- Column 2: Sub-Categories Links Grid -->
-                                    <div class="mega-column--links">
-                                        @foreach($category->subCategories as $sub)
-                                            <a href="{{ $sub->url }}" class="mega-sublink">
-                                                <div class="mega-sublink__icon">
-                                                    <i class="bi {{ $sub->icon ?? 'bi-arrow-right-short' }}" aria-hidden="true"></i>
-                                                </div>
-                                                <div class="mega-sublink__content">
-                                                    <div class="mega-sublink__header">
-                                                        <span class="mega-sublink__title">{{ $sub->title }}</span>
-                                                        @if($sub->badge)
-                                                            <span class="mega-sublink__badge {{ strtolower($sub->badge) === 'new' ? 'mega-sublink__badge--new' : (strtolower($sub->badge) === 'enterprise' ? 'mega-sublink__badge--enterprise' : '') }}">
-                                                                {{ $sub->badge }}
-                                                            </span>
-                                                        @endif
-                                                    </div>
-                                                    <p class="mega-sublink__desc">{{ $sub->description }}</p>
-                                                </div>
-                                            </a>
-                                        @endforeach
-                                    </div>
-
-                                    <!-- Column 3: Featured Case Study / Article Card -->
-                                    <div class="mega-column--featured">
-                                        @php
-                                            $featured = $category->portfolioArticles->first();
-                                        @endphp
-                                        @if($featured)
-                                            <a href="{{ $featured->link_url }}" class="featured-card">
-                                                <div class="featured-card__media">
-                                                    <img src="{{ $featured->image_url ?? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80' }}" 
-                                                         alt="{{ $featured->title }}" 
-                                                         class="featured-card__img" 
-                                                         loading="lazy" 
-                                                         width="320" 
-                                                         height="130">
-                                                    <span class="featured-card__tag">{{ $featured->tag ?? 'Spotlight' }}</span>
-                                                </div>
-                                                <div class="featured-card__body">
-                                                    @if($featured->metric)
-                                                        <div class="featured-card__metric-box">
-                                                            <span class="featured-card__metric">{{ $featured->metric }}</span>
-                                                            <span class="featured-card__metric-label">{{ $featured->metric_label }}</span>
-                                                        </div>
-                                                    @endif
-                                                    <h4 class="featured-card__title">{{ $featured->title }}</h4>
-                                                    <p class="featured-card__excerpt">{{ $featured->excerpt }}</p>
-                                                    <span class="featured-card__cta">
-                                                        <span>Explore Case Study</span>
-                                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                                                    </span>
-                                                </div>
-                                            </a>
-                                        @else
-                                            <div class="p-3 text-center text-muted small bg-body-tertiary rounded h-100 d-flex align-items-center justify-content-center">
-                                                <span>Custom engineering engagements tailored to your roadmap.</span>
-                                            </div>
-                                        @endif
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
-                        </li>
-                    @endforeach
+
+                            <!-- Bottom Bar -->
+                            <div class="mega-zeplin-footer">
+                                <div class="footer-left">
+                                    <strong>Not sure where to start?</strong>
+                                    <span>We'll map it with you.</span>
+                                </div>
+                                <div class="footer-right">
+                                    <a href="#growth-audit" class="mega-footer-link--primary" data-bs-toggle="modal" data-bs-target="#consultationModal">Get a free growth audit &rarr;</a>
+                                    <a href="#all-services" class="mega-footer-link--secondary">All services &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- 2. Industries -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#industries" class="mega-menu-trigger" role="menuitem">Industries</a>
+                    </li>
+
+                    <!-- 3. Work -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Work</a>
+                    </li>
+
+                    <!-- 4. Approach -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#process" class="mega-menu-trigger" role="menuitem">Approach</a>
+                    </li>
+
+                    <!-- 5. About -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#about" class="mega-menu-trigger" role="menuitem">About</a>
+                    </li>
+
+                    <!-- 6. Portfolio / Blog / Contact Links -->
+                    <li class="mega-menu-item d-none d-xxl-inline-block" role="none">
+                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Portfolio</a>
+                    </li>
+                    <li class="mega-menu-item d-none d-xxl-inline-block" role="none">
+                        <a href="#insights" class="mega-menu-trigger" role="menuitem">Blog</a>
+                    </li>
+                    <li class="mega-menu-item" role="none">
+                        <a href="#contact" class="mega-menu-trigger" role="menuitem" data-bs-toggle="modal" data-bs-target="#consultationModal">Contact</a>
+                    </li>
                 </ul>
             </nav>
 
-            <!-- Header Right Actions: Search, Theme Toggle, Consultation CTA & Mobile Toggle -->
+            <!-- Header Actions -->
             <div class="header-actions">
-                <!-- Search Trigger Button -->
-                <button type="button" 
-                        class="action-btn" 
-                        id="searchToggleBtn" 
-                        aria-label="Search services, industries and case studies" 
-                        aria-expanded="false" 
-                        aria-controls="searchOverlay">
-                    <i class="bi bi-search" aria-hidden="true"></i>
+                <!-- Theme Toggle Button -->
+                <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light mode">
+                    <i class="bi bi-moon-stars" id="themeIcon"></i>
                 </button>
 
-                <!-- Dark / Light Mode Toggle Button -->
-                <button type="button" 
-                        class="action-btn" 
-                        id="themeToggleBtn" 
-                        aria-label="Toggle dark mode" 
-                        aria-pressed="false">
-                    <i class="bi bi-moon-stars" id="themeIcon" aria-hidden="true"></i>
-                </button>
+                <!-- Admin Link -->
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary d-none d-xl-inline-flex align-items-center gap-1 rounded-pill px-3">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Admin</span>
+                </a>
 
-                <!-- Primary Top-Level CTA Button -->
-                <button type="button" 
-                        class="btn-cta-consultation d-none d-sm-inline-flex" 
-                        data-open-consultation 
-                        aria-label="Book a consultation with Mahishika Digital">
-                    <i class="bi bi-calendar2-check-fill" aria-hidden="true"></i>
-                    <span>Book a Consultation</span>
-                </button>
+                <!-- Primary CTA Button (as specified in Task PDF) -->
+                <a href="#growth-audit" class="btn-zeplin-primary d-none d-sm-inline-flex" data-bs-toggle="modal" data-bs-target="#consultationModal">
+                    Book a Consultation
+                </a>
 
                 <!-- Mobile Hamburger Button -->
-                <button type="button" 
-                        class="hamburger-btn" 
-                        id="hamburgerBtn" 
-                        aria-label="Toggle navigation drawer" 
-                        aria-expanded="false" 
-                        aria-controls="mobileDrawer">
-                    <span class="hamburger-bar"></span>
-                    <span class="hamburger-bar"></span>
-                    <span class="hamburger-bar"></span>
+                <button type="button" class="mobile-toggle-btn" id="mobileMenuBtn" aria-label="Open mobile navigation" aria-expanded="false" aria-controls="mobileDrawer">
+                    <i class="bi bi-list fs-4"></i>
                 </button>
-            </div>
-        </div>
-
-        <!-- ======================================================================
-           Live Search Overlay
-           ====================================================================== -->
-        <div class="search-overlay" id="searchOverlay" role="search" aria-label="Mega menu search">
-            <div class="search-container">
-                <div class="search-input-wrapper">
-                    <i class="bi bi-search search-icon" aria-hidden="true"></i>
-                    <input type="search" 
-                           class="search-input" 
-                           id="megaSearchInput" 
-                           placeholder="Search capabilities, industries, or case studies (e.g., 'Cloud', 'FinTech', 'AI')..." 
-                           aria-label="Search services and articles" 
-                           autocomplete="off">
-                    <button type="button" class="search-close-btn" id="searchCloseBtn" aria-label="Close search">
-                        <i class="bi bi-x-lg" aria-hidden="true"></i>
-                    </button>
-                </div>
-                <div class="search-results-list" id="searchResultsList" role="listbox" aria-label="Search results"></div>
             </div>
         </div>
     </header>
 
-    <!-- ==========================================================================
-       Mobile Navigation Drawer
-       ========================================================================== -->
-    <div class="mobile-drawer-backdrop" id="mobileBackdrop" aria-hidden="true"></div>
-
+    <!-- Mobile Drawer -->
     <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
         <div class="mobile-drawer__header">
             <a href="{{ route('home') }}" class="brand-logo" aria-label="Mahishika Digital Home">
@@ -239,302 +260,777 @@
 
         <div class="mobile-drawer__body">
             <ul class="mobile-menu-accordion">
-                @foreach($categories as $category)
-                    <li class="mobile-menu-item">
-                        <button type="button" 
-                                class="mobile-menu-trigger" 
-                                aria-expanded="false" 
-                                aria-controls="mobile-sub-{{ $category->slug }}">
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi {{ $category->icon ?? 'bi-folder' }} text-primary" aria-hidden="true"></i>
-                                <span>{{ $category->name }}</span>
-                            </div>
-                            <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
-                        </button>
-                        <div class="mobile-submenu-collapse" id="mobile-sub-{{ $category->slug }}">
-                            <ul class="mobile-sublink-list">
-                                @foreach($category->subCategories as $sub)
+                <!-- Services Accordion Item -->
+                <li class="mobile-menu-item">
+                    <button type="button" class="mobile-menu-trigger" aria-expanded="true" aria-controls="mobile-sub-services">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-layers-half text-primary"></i>
+                            <span class="fw-bold">Services</span>
+                        </span>
+                        <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                    </button>
+                    <div class="mobile-submenu-collapse is-open" id="mobile-sub-services">
+                        <ul class="mobile-sublink-list">
+                            @foreach($serviceVerticals as $vCat)
+                                <li class="px-3 pt-2 pb-1 text-uppercase text-secondary fw-bold small" style="font-size: 0.72rem;">{{ $vCat->name }}</li>
+                                @foreach($vCat->subCategories as $sub)
                                     <li>
                                         <a href="{{ $sub->url }}" class="mobile-sublink">
-                                            <i class="bi {{ $sub->icon ?? 'bi-link' }} mobile-sublink__icon" aria-hidden="true"></i>
+                                            <i class="bi {{ $sub->icon ?? 'bi-arrow-right-short' }} mobile-sublink__icon"></i>
                                             <span>{{ $sub->title }}</span>
-                                            @if($sub->badge)
-                                                <span class="badge bg-primary-subtle text-primary ms-auto" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
-                                            @endif
                                         </a>
                                     </li>
                                 @endforeach
-                            </ul>
-                        </div>
-                    </li>
-                @endforeach
+                            @endforeach
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="mobile-menu-item">
+                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#industries" class="mobile-menu-trigger text-decoration-none">
+                        <span>Industries</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#about" class="mobile-menu-trigger text-decoration-none">
+                        <span>About</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#insights" class="mobile-menu-trigger text-decoration-none">
+                        <span>Blog</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#contact" class="mobile-menu-trigger text-decoration-none" data-bs-toggle="modal" data-bs-target="#consultationModal">
+                        <span>Contact</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
         <div class="mobile-drawer__footer">
-            <button type="button" class="btn-submit-consultation w-100" data-open-consultation>
-                <i class="bi bi-calendar2-check-fill me-2" aria-hidden="true"></i>
-                <span>Book a Consultation</span>
-            </button>
+            <a href="#growth-audit" class="btn-zeplin-primary w-100 justify-content-center" data-bs-toggle="modal" data-bs-target="#consultationModal">
+                Book a growth audit
+            </a>
             <div class="mt-3 text-center">
                 <a href="{{ route('admin.dashboard') }}" class="small text-secondary text-decoration-none">
-                    <i class="bi bi-gear-fill me-1" aria-hidden="true"></i> Admin CMS Portal
+                    <i class="bi bi-shield-lock me-1"></i> Admin Portal
                 </a>
             </div>
         </div>
     </aside>
 
-    <!-- ==========================================================================
-       Main Content Container
-       ========================================================================== -->
+    <!-- Main Content Area -->
     <main id="main-content">
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-glow" aria-hidden="true"></div>
-            <div class="container position-relative">
-                <div class="hero-content">
-                    <div class="hero-badge">
-                        <span class="hero-badge__dot" aria-hidden="true"></span>
-                        <span>Accepting Strategic Architecture Engagements &bull; Q1/Q2</span>
-                    </div>
+        <!-- ==========================================================================
+           3. Hero Section (Image 1 from Zeplin)
+           ========================================================================== -->
+        <section class="py-5" id="overview">
+            <div class="container-xl">
+                <div class="row g-4 align-items-start">
+                    <!-- Left Hero Column -->
+                    <div class="col-lg-7 pe-lg-4">
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb" class="marketing-breadcrumb">
+                            <a href="{{ route('home') }}">Home</a>
+                            <span class="mx-1">/</span>
+                            <a href="#services">Services</a>
+                            <span class="mx-1">/</span>
+                            <a href="#marketing">Marketing</a>
+                            <span class="mx-1">/</span>
+                            <span class="current">Analytics &amp; Tracking</span>
+                        </nav>
 
-                    <h1 class="hero-title">
-                        Engineering Resilient <span class="hero-title__highlight">Digital Systems</span> for Visionary Enterprises
-                    </h1>
+                        <!-- H1 Heading -->
+                        <h1 class="marketing-h1">Numbers you can actually trust.</h1>
 
-                    <p class="hero-subtitle">
-                        Mahishika Digital pairs cloud architects, full-stack engineers, and human-centered designers to build mission-critical web applications, autonomous AI workflows, and frictionless cross-platform experiences.
-                    </p>
+                        <!-- Subhead -->
+                        <p class="marketing-subhead">
+                            GA4, Tag Manager and conversion tracking set up properly, with one dashboard that shows which channels drive revenue, so every decision starts from real data.
+                        </p>
 
-                    <div class="hero-actions">
-                        <button type="button" class="btn-hero-primary" data-open-consultation>
-                            <i class="bi bi-calendar2-check-fill" aria-hidden="true"></i>
-                            <span>Book an Architecture Consultation</span>
-                        </button>
-                        <a href="#services-section" class="btn-hero-secondary">
-                            <span>Explore Our Capabilities</span>
-                            <i class="bi bi-arrow-down" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Metrics & Reliability Bar -->
-                <div class="metrics-bar">
-                    <div class="row g-4 align-items-center">
-                        @foreach($stats as $stat)
-                            <div class="col-6 col-md-3">
-                                <div class="metric-item">
-                                    <div class="metric-item__value">{{ $stat['value'] }}</div>
-                                    <div class="metric-item__label">{{ $stat['label'] }}</div>
-                                    <div class="metric-item__sub">{{ $stat['sub'] }}</div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Services Capabilities Section -->
-        <section class="section-wrapper" id="services-section">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">
-                        <i class="bi bi-layers-half" aria-hidden="true"></i> Core Capabilities
-                    </span>
-                    <h2 class="section-title">Engineered for Scale, Speed, and Zero Compromise</h2>
-                    <p class="section-desc">
-                        From cloud-native microservices to reactive frontends and enterprise AI pipelines, we deliver end-to-end technical excellence.
-                    </p>
-                </div>
-
-                <div class="row g-4">
-                    @foreach($allServices as $service)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="service-card" id="{{ str_replace('#', '', $service->url) }}">
-                                <div class="service-card__icon-wrapper">
-                                    <i class="bi {{ $service->icon ?? 'bi-gear-wide-connected' }}" aria-hidden="true"></i>
-                                </div>
-                                <h3 class="service-card__title">{{ $service->title }}</h3>
-                                <p class="service-card__desc">{{ $service->description }}</p>
-                                
-                                <div class="service-card__pills">
-                                    @if($service->badge)
-                                        <span class="badge bg-primary-subtle text-primary">{{ $service->badge }}</span>
-                                    @endif
-                                    <span class="service-pill">WCAG 2.1 AA</span>
-                                    <span class="service-pill">SOC2 Compliant</span>
-                                    <span class="service-pill">Cloud-Ready</span>
-                                </div>
-
-                                <button type="button" 
-                                        class="service-card__cta border-0 bg-transparent p-0 text-start" 
-                                        data-open-consultation 
-                                        data-service-preselect="{{ $service->title }}">
-                                    <span>Discuss this capability</span>
-                                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                                </button>
-                            </div>
+                        <!-- CTAs -->
+                        <div class="d-flex flex-wrap align-items-center gap-3">
+                            <a href="#growth-audit" class="btn-zeplin-primary" data-bs-toggle="modal" data-bs-target="#consultationModal">
+                                Book a growth audit
+                            </a>
+                            <a href="#portfolio" class="btn-zeplin-outline">
+                                See related portfolio pieces
+                            </a>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
 
-        <!-- Industries Domain Expertise Section -->
-        <section class="section-wrapper bg-body-tertiary" id="industries-section">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">
-                        <i class="bi bi-buildings" aria-hidden="true"></i> Industry Domains
-                    </span>
-                    <h2 class="section-title">Deep Technical Expertise Across Complex Sectors</h2>
-                    <p class="section-desc">
-                        We understand regulatory frameworks, concurrency challenges, and domain constraints across high-velocity industries.
-                    </p>
-                </div>
+                        <!-- Pill Badges -->
+                        <div class="hero-pill-group">
+                            <span class="hero-pill-badge">GA4 + Tag Manager</span>
+                            <span class="hero-pill-badge">Conversion tracking</span>
+                            <span class="hero-pill-badge">One revenue dashboard</span>
+                        </div>
 
-                <div class="row g-4">
-                    @foreach($allIndustries as $industry)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="industry-box h-100">
-                                <div class="industry-box__icon">
-                                    <i class="bi {{ $industry->icon ?? 'bi-check2' }}" aria-hidden="true"></i>
+                        <!-- Revenue Dashboard Graphic Card -->
+                        <div class="revenue-dashboard-preview">
+                            <div class="revenue-dashboard-header">Revenue Dashboard &bull; All Channels</div>
+
+                            <!-- 4 Metric Cards -->
+                            <div class="metric-blocks-grid">
+                                <div class="metric-mini-card">
+                                    <span class="label">Revenue</span>
+                                    <div class="val">&#8377;[00L]</div>
                                 </div>
-                                <div>
-                                    <h3 class="industry-box__title">{{ $industry->title }}</h3>
-                                    <p class="industry-box__desc">{{ $industry->description }}</p>
+                                <div class="metric-mini-card">
+                                    <span class="label">Leads</span>
+                                    <div class="val">[000]</div>
+                                </div>
+                                <div class="metric-mini-card">
+                                    <span class="label">CPA</span>
+                                    <div class="val">&#8377;[000]</div>
+                                </div>
+                                <div class="metric-mini-card">
+                                    <span class="label">ROAS</span>
+                                    <div class="val">[0.0x]</div>
+                                </div>
+                            </div>
+
+                            <!-- Bar Chart Visual -->
+                            <div class="dashboard-bar-chart-card">
+                                <div class="bar-chart-column">
+                                    <div class="bar-chart-pillar" style="height: 52px;" title="SEO: ₹2.4L"></div>
+                                    <span class="bar-chart-label">SEO</span>
+                                </div>
+                                <div class="bar-chart-column">
+                                    <div class="bar-chart-pillar" style="height: 108px;" title="Paid: ₹4.8L"></div>
+                                    <span class="bar-chart-label">Paid</span>
+                                </div>
+                                <div class="bar-chart-column">
+                                    <div class="bar-chart-pillar" style="height: 80px;" title="Social: ₹3.1L"></div>
+                                    <span class="bar-chart-label">Social</span>
+                                </div>
+                                <div class="bar-chart-column">
+                                    <div class="bar-chart-pillar" style="height: 125px;" title="Email: ₹5.6L"></div>
+                                    <span class="bar-chart-label">Email</span>
+                                </div>
+                                <div class="bar-chart-column">
+                                    <div class="bar-chart-pillar" style="height: 44px;" title="Referral: ₹1.9L"></div>
+                                    <span class="bar-chart-label">Referral</span>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
+                    </div>
 
-        <!-- Work & Featured Case Studies Section -->
-        <section class="section-wrapper" id="work-section">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">
-                        <i class="bi bi-briefcase" aria-hidden="true"></i> Proven Outcomes
-                    </span>
-                    <h2 class="section-title">Measurable Results for Industry Leaders</h2>
-                    <p class="section-desc">
-                        Real-world systems engineered to withstand millions of requests while delivering intuitive user experiences.
-                    </p>
-                </div>
+                    <!-- Right Column: Floating Form Aside Card -->
+                    <div class="col-lg-5">
+                        <aside class="zeplin-form-aside" id="growth-audit-aside">
+                            <div class="card-content">
+                                <h3>Book a growth audit</h3>
+                                <p class="card-subtext">Tell us what you track today. We'll show you what's missing.</p>
 
-                <div class="row g-4">
-                    @foreach($featuredCaseStudies as $case)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="case-card">
-                                <div class="case-card__media">
-                                    <img src="{{ $case->image_url ?? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80' }}" 
-                                         alt="{{ $case->title }}" 
-                                         class="case-card__img" 
-                                         loading="lazy" 
-                                         width="400" 
-                                         height="220">
-                                    <span class="case-card__tag">{{ $case->tag ?? 'Case Study' }}</span>
-                                </div>
-                                <div class="case-card__body">
-                                    @if($case->metric)
-                                        <div class="case-card__metric-callout">
-                                            <span class="case-card__metric-val">{{ $case->metric }}</span>
-                                            <span class="case-card__metric-lbl">{{ $case->metric_label }}</span>
+                                <form action="{{ route('consultations.submit') }}" method="POST" id="asideGrowthAuditForm">
+                                    @csrf
+                                    <div class="zeplin-input-group">
+                                        <label for="asideName">Name</label>
+                                        <input type="text" name="name" id="asideName" class="zeplin-form-control" required placeholder="Your full name">
+                                    </div>
+
+                                    <div class="zeplin-input-group">
+                                        <label for="asideEmail">Work email</label>
+                                        <input type="email" name="email" id="asideEmail" class="zeplin-form-control" required placeholder="name@company.com">
+                                    </div>
+
+                                    <div class="zeplin-input-group">
+                                        <label for="asideCompany">Company</label>
+                                        <input type="text" name="company" id="asideCompany" class="zeplin-form-control" placeholder="Company or organization">
+                                    </div>
+
+                                    <div class="zeplin-input-group">
+                                        <label for="asideStart">Where should we start?</label>
+                                        <select name="service_interest" id="asideStart" class="zeplin-form-control">
+                                            <option value="Not sure yet">Not sure yet</option>
+                                            <option value="GA4 & Tag Manager Setup">GA4 &amp; Tag Manager Setup</option>
+                                            <option value="Conversion Tracking & CAPI">Conversion Tracking &amp; CAPI</option>
+                                            <option value="Revenue Dashboards & Reporting">Revenue Dashboards &amp; Reporting</option>
+                                            <option value="Full Tracking Audit">Full Tracking Audit</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="zeplin-input-group">
+                                        <label>What do you need help with?</label>
+                                        <div class="help-checkbox-grid">
+                                            <label class="help-check-pill">
+                                                <input type="checkbox" name="help_topics[]" value="Design" class="form-check-input mt-0">
+                                                <span>Design</span>
+                                            </label>
+                                            <label class="help-check-pill">
+                                                <input type="checkbox" name="help_topics[]" value="Video" class="form-check-input mt-0">
+                                                <span>Video</span>
+                                            </label>
+                                            <label class="help-check-pill">
+                                                <input type="checkbox" name="help_topics[]" value="Tech" class="form-check-input mt-0">
+                                                <span>Tech</span>
+                                            </label>
+                                            <label class="help-check-pill">
+                                                <input type="checkbox" name="help_topics[]" value="Marketing" class="form-check-input mt-0" checked>
+                                                <span>Marketing</span>
+                                            </label>
                                         </div>
-                                    @endif
-                                    <h3 class="case-card__title">{{ $case->title }}</h3>
-                                    <p class="case-card__desc">{{ $case->excerpt }}</p>
-                                    <button type="button" 
-                                            class="service-card__cta border-0 bg-transparent p-0 text-start mt-auto" 
-                                            data-open-consultation 
-                                            data-service-preselect="{{ $case->title }}">
-                                        <span>Request Architectural Brief</span>
-                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                    </div>
+
+                                    <div class="zeplin-input-group">
+                                        <label for="asideMessage">What's not working today?</label>
+                                        <textarea name="message" id="asideMessage" class="zeplin-form-control" rows="3" placeholder="Discrepant channel reports, missing GA4 events, broken Meta pixel..."></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn-submit-audit" id="asideSubmitBtn">
+                                        Book my growth audit
                                     </button>
+
+                                    <a href="#consultationModal" data-bs-toggle="modal" data-bs-target="#consultationModal" class="expert-link">
+                                        Book a free discussion with Expert
+                                    </a>
+
+                                    <ul class="aside-bullet-list">
+                                        <li class="aside-bullet-item">
+                                            <span class="aside-bullet-dot" style="background-color: #f59e0b;"></span>
+                                            <span>Talk to the team that does the work</span>
+                                        </li>
+                                        <li class="aside-bullet-item">
+                                            <span class="aside-bullet-dot" style="background-color: #ef4444;"></span>
+                                            <span>Leave with a ranked list of gaps</span>
+                                        </li>
+                                        <li class="aside-bullet-item">
+                                            <span class="aside-bullet-dot" style="background-color: #0ea5e9;"></span>
+                                            <span>No obligation to use all four services</span>
+                                        </li>
+                                    </ul>
+                                </form>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+           4. Sticky In-Page Navigation Bar (Image 2 from Zeplin)
+           ========================================================================== -->
+        <nav class="in-page-nav-bar" aria-label="Section navigation">
+            <div class="container-xl">
+                <ul class="in-page-nav-list">
+                    <li><a href="#overview" class="in-page-nav-link active">Overview</a></li>
+                    <li><a href="#what-we-build" class="in-page-nav-link">What we build</a></li>
+                    <li><a href="#where-to-start" class="in-page-nav-link">Where to start</a></li>
+                    <li><a href="#how-it-connects" class="in-page-nav-link">How it connects</a></li>
+                    <li><a href="#process" class="in-page-nav-link">Process</a></li>
+                    <li><a href="#portfolio" class="in-page-nav-link">Portfolio</a></li>
+                    <li><a href="#faq" class="in-page-nav-link">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- ==========================================================================
+           5. Problem Quotes Section (Image 2 from Zeplin)
+           ========================================================================== -->
+        <section class="py-5">
+            <div class="container-xl">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 class="marketing-section-h2">Every channel reports a different number.</h2>
+                        <p class="marketing-section-sub">Without trustworthy tracking, every budget decision is a guess.</p>
+
+                        <!-- 4 Quote Cards -->
+                        <div class="problem-quotes-grid">
+                            <div class="problem-quote-card border-amber">
+                                <h3 class="quote-title">&ldquo;Google and Meta both claim the same sale.&rdquo;</h3>
+                                <p class="quote-desc">Each platform counts conversions its own way.</p>
+                            </div>
+                            <div class="problem-quote-card border-red">
+                                <h3 class="quote-title">&ldquo;Our GA4 numbers don't match our CRM.&rdquo;</h3>
+                                <p class="quote-desc">Events and conversions were never set up consistently.</p>
+                            </div>
+                            <div class="problem-quote-card border-cyan">
+                                <h3 class="quote-title">&ldquo;We don't know which channel drives revenue.&rdquo;</h3>
+                                <p class="quote-desc">Leads lose their source somewhere between the click and the deal.</p>
+                            </div>
+                            <div class="problem-quote-card border-green">
+                                <h3 class="quote-title">&ldquo;Our reports take a week to put together.&rdquo;</h3>
+                                <p class="quote-desc">Data lives in five tools and a spreadsheet.</p>
+                            </div>
+                        </div>
+
+                        <h3 class="h4 fw-bold text-dark mt-4 mb-2" style="color: #1e295d !important;">
+                            Every channel depends on tracking being right first. That's why it's usually where we start.
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+           6. What We Build: 4 Solution Cards (Image 3 from Zeplin)
+           ========================================================================== -->
+        <section class="py-5 bg-body-tertiary" id="what-we-build">
+            <div class="container-xl">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 class="marketing-section-h2">Four parts of measurement, one source of truth.</h2>
+                        <p class="marketing-section-sub">Each part fixes a gap. Together, you see the whole funnel.</p>
+
+                        <!-- 4 Service Cards Grid -->
+                        <div class="solution-services-grid">
+                            <!-- Card 1 -->
+                            <div class="solution-service-card">
+                                <h4>GA4 and event setup</h4>
+                                <p class="card-subtext">The foundation every report depends on.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">GA4 property and event plan</li>
+                                    <li class="solution-bullet-item">Ecommerce and lead events</li>
+                                    <li class="solution-bullet-item">Consent mode setup</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 2 -->
+                            <div class="solution-service-card">
+                                <h4>Tag management</h4>
+                                <p class="card-subtext">Tags that fire when they should.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">Google Tag Manager setup</li>
+                                    <li class="solution-bullet-item">Server-side tagging</li>
+                                    <li class="solution-bullet-item">Tag audits and cleanup</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 3 -->
+                            <div class="solution-service-card">
+                                <h4>Conversion tracking</h4>
+                                <p class="card-subtext">Platforms that learn from real results.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">Meta Pixel and Conversions API</li>
+                                    <li class="solution-bullet-item">Google Ads conversions</li>
+                                    <li class="solution-bullet-item">Offline and CRM conversions</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 4 (Highlighted in Zeplin) -->
+                            <div class="solution-service-card is-active-border">
+                                <h4>Dashboards and reporting</h4>
+                                <p class="card-subtext">One view of what drives revenue.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">Looker Studio dashboards</li>
+                                    <li class="solution-bullet-item">Channel attribution views</li>
+                                    <li class="solution-bullet-item">Monthly ROI reporting</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           7. Outcomes: Delivered vs What Changes (Image 4 from Zeplin)
+                           ========================================================================== -->
+                        <h2 class="marketing-section-h2">What you walk away with.</h2>
+                        <p class="marketing-section-sub">One version of the truth, updated automatically.</p>
+
+                        <div class="outcomes-grid">
+                            <!-- Delivered Green Box -->
+                            <div class="outcome-box--delivered">
+                                <h3 class="outcome-box-title">Delivered</h3>
+                                <ul class="outcome-bullet-list">
+                                    <li class="outcome-bullet-item">A clean GA4 and Tag Manager setup</li>
+                                    <li class="outcome-bullet-item">Conversion tracking on every ad platform</li>
+                                    <li class="outcome-bullet-item">A revenue dashboard across channels</li>
+                                </ul>
+                            </div>
+
+                            <!-- What changes for you Gray Box -->
+                            <div class="outcome-box--changes">
+                                <h3 class="outcome-box-title">What changes for you</h3>
+                                <ul class="outcome-bullet-list">
+                                    <li class="outcome-bullet-item">Budget decisions start from real data</li>
+                                    <li class="outcome-bullet-item">Ad platforms optimise on real conversions</li>
+                                    <li class="outcome-bullet-item">Reporting takes minutes, not days</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+           8. Where Should Your Tracking Start? (Image 4 from Zeplin)
+           ========================================================================== -->
+        <section class="py-5" id="where-to-start">
+            <div class="container-xl">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 class="marketing-section-h2">Where should your tracking start?</h2>
+                        <p class="marketing-section-sub">It depends on what you can't see today.</p>
+
+                        <div class="where-start-grid">
+                            <div class="where-start-card is-active-green">
+                                <h4>Foundation first</h4>
+                                <p class="start-desc">Your GA4 setup is missing or broken.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">Missing or duplicated events</li>
+                                    <li class="solution-bullet-item">Numbers that don't add up</li>
+                                </ul>
+                            </div>
+
+                            <div class="where-start-card">
+                                <h4>Conversions first</h4>
+                                <p class="start-desc">Ad platforms can't see what converts.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">No Conversions API</li>
+                                    <li class="solution-bullet-item">Leads not linked to campaigns</li>
+                                </ul>
+                            </div>
+
+                            <div class="where-start-card">
+                                <h4>Reporting first</h4>
+                                <p class="start-desc">The data exists but nobody can read it.</p>
+                                <ul class="solution-bullet-list">
+                                    <li class="solution-bullet-item">Manual weekly reports</li>
+                                    <li class="solution-bullet-item">No single dashboard</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="callout-banner-pill">
+                            Most setups need all three. The audit shows which gap is costing you the most.
+                        </div>
+
+                        <!-- ==========================================================================
+                           9. Cross-Discipline Integration Tree (Image 5 from Zeplin)
+                           ========================================================================== -->
+                        <div class="integration-tree-container" id="how-it-connects">
+                            <h2 class="marketing-section-h2">Tracking that every other team depends on.</h2>
+                            <p class="marketing-section-sub">Analytics only works if every channel and page is measured the same way.</p>
+
+                            <!-- Root System Box -->
+                            <div class="system-root-card">
+                                <h4>Your measurement system</h4>
+                                <p>Built by Marketing, used by three other disciplines</p>
+                            </div>
+
+                            <!-- 3 Branches -->
+                            <div class="discipline-branches-grid">
+                                <div class="discipline-branch-card border-amber">
+                                    <h5>Design uses it</h5>
+                                    <p>Heatmaps and funnel data show which layouts actually convert.</p>
+                                    <a href="#design-hub">Explore design &rarr;</a>
+                                </div>
+
+                                <div class="discipline-branch-card border-red">
+                                    <h5>Video uses it</h5>
+                                    <p>View and retention data decide which videos get more budget.</p>
+                                    <a href="#video-hub">Explore video &rarr;</a>
+                                </div>
+
+                                <div class="discipline-branch-card border-cyan">
+                                    <h5>Tech feeds it</h5>
+                                    <p>Clean code and a data layer make tracking accurate and fast.</p>
+                                    <a href="#tech-hub">Explore tech &rarr;</a>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
 
-        <!-- Approach & Methodology Section -->
-        <section class="section-wrapper bg-body-tertiary" id="approach-section">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">
-                        <i class="bi bi-compass" aria-hidden="true"></i> Engineering Playbook
-                    </span>
-                    <h2 class="section-title">How We Ship Production Code in Week 2</h2>
-                    <p class="section-desc">
-                        Our disciplined 4-stage cadence eliminates bureaucratic waste and aligns engineering directly with business impact.
-                    </p>
-                </div>
+                        <!-- ==========================================================================
+                           10. How an Analytics Engagement Runs (Process from Zeplin)
+                           ========================================================================== -->
+                        <div class="process-section" id="process">
+                            <h2 class="marketing-section-h2">How an analytics engagement runs.</h2>
+                            <p class="marketing-section-sub">Our 4-D Growth Framework, applied to measurement.</p>
 
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="approach-step">
-                            <div class="approach-step__number">01</div>
-                            <h3 class="approach-step__title">Architecture Blueprint</h3>
-                            <p class="approach-step__desc">
-                                We dissect requirements into decoupled domain boundaries, define contract schemas, and scaffold infrastructure as code before writing business logic.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="approach-step">
-                            <div class="approach-step__number">02</div>
-                            <h3 class="approach-step__title">2-Week Sprint Cadence</h3>
-                            <p class="approach-step__desc">
-                                Ephemeral preview environments on every Git pull request with automated linting, test suites, and transparent daily burndown tracking.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="approach-step">
-                            <div class="approach-step__number">03</div>
-                            <h3 class="approach-step__title">Accessibility & QA Gate</h3>
-                            <p class="approach-step__desc">
-                                Every component undergoes automated and keyboard testing for WCAG 2.1 AA compliance, cross-browser validation, and Lighthouse 90+ score enforcement.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3">
-                        <div class="approach-step">
-                            <div class="approach-step__number">04</div>
-                            <h3 class="approach-step__title">Zero-Downtime SRE</h3>
-                            <p class="approach-step__desc">
-                                Canary rollouts, automated rollback heuristics, distributed tracing, and 24/7 reliability monitoring backed by explicit SLAs.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                            <div class="process-timeline-list">
+                                <!-- Step 1 -->
+                                <div class="process-timeline-step">
+                                    <div class="process-step-num step-orange">1</div>
+                                    <div class="process-step-body">
+                                        <h4>Discover and audit</h4>
+                                        <p>We audit your GA4, tags, pixels and CRM data, and list every gap.</p>
+                                        <span class="takeaway">You get: a tracking audit with fixes ranked.</span>
+                                    </div>
+                                </div>
 
-        <!-- Call to Action Banner -->
-        <section class="section-wrapper" id="consultation-section">
-            <div class="container">
-                <div class="consultation-cta-card">
-                    <div class="row align-items-center g-4">
-                        <div class="col-lg-8">
-                            <span class="section-tag text-primary">
-                                <i class="bi bi-stars" aria-hidden="true"></i> Start Your Transformation
-                            </span>
-                            <h2 class="h1 fw-bold text-primary mb-3">Ready to Build Something Extraordinary?</h2>
-                            <p class="fs-5 text-secondary mb-0">
-                                Schedule a 45-minute technical discovery session with our senior solutions architect. No sales pitch — just high-value architectural insight.
-                            </p>
+                                <!-- Step 2 -->
+                                <div class="process-timeline-step">
+                                    <div class="process-step-num step-red">2</div>
+                                    <div class="process-step-body">
+                                        <h4>Design and architect</h4>
+                                        <p>We write a measurement plan: events, conversions and dashboards.</p>
+                                        <span class="takeaway">You get: an approved measurement plan.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="process-timeline-step">
+                                    <div class="process-step-num step-cyan">3</div>
+                                    <div class="process-step-body">
+                                        <h4>Deploy and develop</h4>
+                                        <p>We implement tags, conversions and dashboards, and test every one.</p>
+                                        <span class="takeaway">You get: verified tracking and a live dashboard.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div class="process-timeline-step">
+                                    <div class="process-step-num step-green">4</div>
+                                    <div class="process-step-body">
+                                        <h4>Drive and optimize</h4>
+                                        <p>We monitor data quality and report monthly on channel ROI.</p>
+                                        <span class="takeaway">You get: monthly ROI reporting and alerts.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="callout-banner-pill">
+                                We test every tag before go-live and monitor data quality after, so numbers stay trustworthy.
+                            </div>
                         </div>
-                        <div class="col-lg-4 text-lg-end">
-                            <button type="button" class="btn-hero-primary" data-open-consultation>
-                                <i class="bi bi-calendar2-check-fill" aria-hidden="true"></i>
-                                <span>Schedule Technical Call</span>
-                            </button>
+
+                        <!-- ==========================================================================
+                           11. Tools We Work In (from Zeplin)
+                           ========================================================================== -->
+                        <div class="tools-section pt-4">
+                            <h2 class="marketing-section-h2">Tools we work in.</h2>
+                            <div class="tools-chips-wrap">
+                                <span class="tool-chip">Google Analytics 4</span>
+                                <span class="tool-chip">Google Tag Manager</span>
+                                <span class="tool-chip">Looker Studio</span>
+                                <span class="tool-chip">Meta Conversions API</span>
+                                <span class="tool-chip">BigQuery</span>
+                                <span class="tool-chip">HubSpot</span>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           12. Portfolio / Case Studies (from Zeplin)
+                           ========================================================================== -->
+                        <div class="portfolio-section" id="portfolio">
+                            <h2 class="marketing-section-h2">Data that finally matched the bank account.</h2>
+                            <p class="marketing-section-sub">Placeholders below, ready for your real portfolio pieces.</p>
+
+                            <div class="zeplin-portfolio-grid">
+                                <!-- Card 1 -->
+                                <div class="zeplin-portfolio-card">
+                                    <div class="zeplin-portfolio-thumb">
+                                        <span>[Image]</span>
+                                    </div>
+                                    <div class="portfolio-cat-row">
+                                        <span class="portfolio-cat-text">Retail and e-commerce</span>
+                                        <div class="portfolio-tri-dots">
+                                            <span class="dot dot-amber"></span>
+                                            <span class="dot dot-cyan"></span>
+                                            <span class="dot dot-green"></span>
+                                        </div>
+                                    </div>
+                                    <h4>[Client name]: [one-line outcome]</h4>
+                                    <div class="problem-result-block">
+                                        <div>
+                                            <span class="meta-label">The problem</span>
+                                            <span>[Problem in one line]</span>
+                                        </div>
+                                        <div>
+                                            <span class="meta-label">The result</span>
+                                            <div class="result-val">[+00%] <span class="fs-6 fw-normal text-muted">[metric]</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2 -->
+                                <div class="zeplin-portfolio-card">
+                                    <div class="zeplin-portfolio-thumb">
+                                        <span>[Image]</span>
+                                    </div>
+                                    <div class="portfolio-cat-row">
+                                        <span class="portfolio-cat-text">Technology and SaaS</span>
+                                        <div class="portfolio-tri-dots">
+                                            <span class="dot dot-amber"></span>
+                                            <span class="dot dot-cyan"></span>
+                                            <span class="dot dot-green"></span>
+                                        </div>
+                                    </div>
+                                    <h4>[Client name]: [one-line outcome]</h4>
+                                    <div class="problem-result-block">
+                                        <div>
+                                            <span class="meta-label">The problem</span>
+                                            <span>[Problem in one line]</span>
+                                        </div>
+                                        <div>
+                                            <span class="meta-label">The result</span>
+                                            <div class="result-val">[+00%] <span class="fs-6 fw-normal text-muted">[metric]</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Testimonial Dark Card -->
+                            <div class="zeplin-testimonial-dark">
+                                <span class="testimonial-sample-tag">Sample copy, replace with a real testimonial</span>
+                                <div class="zeplin-testimonial-quote">
+                                    &ldquo;For the first time, marketing and finance agree on what each channel is worth.&rdquo;
+                                </div>
+                                <p class="zeplin-testimonial-author">[Name], [Role], [Company]</p>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           13. Industries Block (from Zeplin)
+                           ========================================================================== -->
+                        <div class="industries-block-box" id="industries">
+                            <h2 class="marketing-section-h2">Analytics across sectors.</h2>
+                            <p class="marketing-section-sub">Any business spending on more than one channel.</p>
+
+                            <div class="industry-chip-wrap">
+                                <a href="#industry-retail" class="industry-chip">Retail and e-commerce</a>
+                                <a href="#industry-tech" class="industry-chip">Technology and SaaS</a>
+                                <a href="#industry-bfsi" class="industry-chip">BFSI</a>
+                                <a href="#industry-edtech" class="industry-chip">Education and EdTech</a>
+                                <a href="#industry-travel" class="industry-chip">Travel and hospitality</a>
+                            </div>
+
+                            <div class="industry-note-banner">
+                                Link each chip to its industry page, and show only industries where you have proof.
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           14. Ways to Work Together (3 Packages from Zeplin)
+                           ========================================================================== -->
+                        <div class="ways-section">
+                            <h2 class="marketing-section-h2">Ways to work together.</h2>
+                            <p class="marketing-section-sub">A one-time audit, a full setup, or ongoing measurement.</p>
+
+                            <div class="ways-work-grid">
+                                <!-- Package 1 -->
+                                <div class="ways-work-card top-amber">
+                                    <h4>Tracking audit</h4>
+                                    <p class="card-subtext">Find every gap.</p>
+                                    <ul class="ways-bullet-list">
+                                        <li class="ways-bullet-item">GA4, tag and pixel audit</li>
+                                        <li class="ways-bullet-item">Prioritised fix list</li>
+                                        <li class="ways-bullet-item">No ongoing commitment</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Package 2 -->
+                                <div class="ways-work-card top-cyan">
+                                    <h4>Full setup</h4>
+                                    <p class="card-subtext">Tracking and dashboards, done properly.</p>
+                                    <ul class="ways-bullet-list">
+                                        <li class="ways-bullet-item">GA4 and Tag Manager</li>
+                                        <li class="ways-bullet-item">Conversion tracking</li>
+                                        <li class="ways-bullet-item">Revenue dashboard</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Package 3 -->
+                                <div class="ways-work-card top-green">
+                                    <h4>Measurement retainer</h4>
+                                    <p class="card-subtext">Data you can keep trusting.</p>
+                                    <ul class="ways-bullet-list">
+                                        <li class="ways-bullet-item">Monthly data-quality checks</li>
+                                        <li class="ways-bullet-item">New events as you grow</li>
+                                        <li class="ways-bullet-item">Monthly ROI reporting</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           15. FAQ Accordion (from Zeplin)
+                           ========================================================================== -->
+                        <div class="zeplin-faq-wrap" id="faq">
+                            <h2 class="marketing-section-h2">Questions about analytics and tracking.</h2>
+
+                            <!-- FAQ 1 (Open by default in Zeplin) -->
+                            <div class="zeplin-faq-item is-open">
+                                <button type="button" class="zeplin-faq-trigger" aria-expanded="true">
+                                    <span>Do we need GA4 if we already use other tools?</span>
+                                    <span class="zeplin-faq-icon">&plus;</span>
+                                </button>
+                                <div class="zeplin-faq-body">
+                                    Usually yes. GA4 is free, connects to Google Ads, and gives a neutral view across channels that platform reports don't.
+                                </div>
+                            </div>
+
+                            <!-- FAQ 2 -->
+                            <div class="zeplin-faq-item">
+                                <button type="button" class="zeplin-faq-trigger" aria-expanded="false">
+                                    <span>What is server-side tracking, and do we need it?</span>
+                                    <span class="zeplin-faq-icon">&plus;</span>
+                                </button>
+                                <div class="zeplin-faq-body">
+                                    Server-side tracking moves tag processing from the visitor's browser to your cloud server. This bypasses ad-blockers and iOS privacy restrictions, ensuring 100% data fidelity for ad platforms like Meta Conversions API and Google Ads.
+                                </div>
+                            </div>
+
+                            <!-- FAQ 3 -->
+                            <div class="zeplin-faq-item">
+                                <button type="button" class="zeplin-faq-trigger" aria-expanded="false">
+                                    <span>How do you handle cookie consent and privacy?</span>
+                                    <span class="zeplin-faq-icon">&plus;</span>
+                                </button>
+                                <div class="zeplin-faq-body">
+                                    We implement Google Consent Mode v2 and integrate compliant CMP banners (Cookiebot / OneTrust). Tags only fire based on granted permissions, fully adhering to GDPR and CCPA requirements.
+                                </div>
+                            </div>
+
+                            <!-- FAQ 4 -->
+                            <div class="zeplin-faq-item">
+                                <button type="button" class="zeplin-faq-trigger" aria-expanded="false">
+                                    <span>Can you connect our CRM data to ad platforms?</span>
+                                    <span class="zeplin-faq-icon">&plus;</span>
+                                </button>
+                                <div class="zeplin-faq-body">
+                                    Yes. We establish automated pipelines between HubSpot, Salesforce, or your custom CRM and ad networks to pass qualified lead and closed-won deal data back for accurate algorithm optimization.
+                                </div>
+                            </div>
+
+                            <!-- FAQ 5 -->
+                            <div class="zeplin-faq-item">
+                                <button type="button" class="zeplin-faq-trigger" aria-expanded="false">
+                                    <span>How long does a tracking setup take?</span>
+                                    <span class="zeplin-faq-icon">&plus;</span>
+                                </button>
+                                <div class="zeplin-faq-body">
+                                    A comprehensive audit is delivered in 3 to 5 business days. Full GTM, GA4, CAPI implementation and verified revenue dashboards typically take 10 to 14 days start to finish.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           16. More from Marketing (from Zeplin)
+                           ========================================================================== -->
+                        <div class="more-marketing-section">
+                            <h2 class="marketing-section-h2">More from Marketing.</h2>
+                            <div class="more-marketing-grid">
+                                <a href="#marketing-all" class="more-marketing-card">
+                                    <h5>All Marketing services</h5>
+                                    <p>SEO, paid ads, social, leads and analytics.</p>
+                                </a>
+                                <a href="#lead-gen" class="more-marketing-card">
+                                    <h5>Lead Generation &amp; Funnels</h5>
+                                    <p>Track every lead from click to deal.</p>
+                                </a>
+                                <a href="#performance-ads" class="more-marketing-card">
+                                    <h5>Performance Marketing &amp; Paid Ads</h5>
+                                    <p>Ads that optimise on real conversions.</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           17. Bottom Navy CTA Card (from Zeplin)
+                           ========================================================================== -->
+                        <div class="bottom-cta-navy-card">
+                            <h2>Make every decision with numbers you trust.</h2>
+                            <p>Tell us what you track today. We'll show you what's missing and what it's costing you.</p>
+                            <a href="#consultationModal" class="btn-cta-white" data-bs-toggle="modal" data-bs-target="#consultationModal">
+                                Book a growth audit
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -543,183 +1039,319 @@
     </main>
 
     <!-- ==========================================================================
-       Consultation Booking Modal (WCAG 2.1 AA Compliant)
+       18. Clean White Footer (Image 6 from Zeplin)
        ========================================================================== -->
-    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered consultation-modal-dialog">
-            <div class="modal-content border-0 shadow-xl rounded-4 overflow-hidden">
-                <div class="modal-header border-bottom py-3 px-4">
-                    <div>
-                        <h2 class="modal-title h5 fw-bold mb-1" id="consultationModalLabel">Book an Architecture Consultation</h2>
-                        <p class="text-secondary small mb-0">Speak directly with a senior engineering architect from Mahishika Digital.</p>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close dialog"></button>
-                </div>
-
-                <div class="modal-body p-4">
-                    <!-- Status message container -->
-                    <div id="consultationStatusAlert" class="alert d-none" role="alert"></div>
-
-                    <!-- Booking Form View -->
-                    <form id="consultationForm" novalidate>
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="clientName" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="clientName" name="name" required placeholder="e.g. John Doe">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="clientEmail" class="form-label">Work Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="clientEmail" name="email" required placeholder="john@company.com">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="clientCompany" class="form-label">Company / Organization</label>
-                                <input type="text" class="form-control" id="clientCompany" name="company" placeholder="e.g. Acme Corp">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="clientPhone" class="form-label">Phone (Optional)</label>
-                                <input type="tel" class="form-control" id="clientPhone" name="phone" placeholder="+1 (555) 000-0000">
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="serviceInterest" class="form-label">Primary Capability of Interest</label>
-                                <select class="form-select" id="serviceInterest" name="service_interest">
-                                    <option value="Cloud Architecture & DevOps">Cloud Architecture & DevOps</option>
-                                    <option value="Custom Web & Full-Stack Apps">Custom Web & Full-Stack Apps</option>
-                                    <option value="Mobile & Cross-Platform Apps">Mobile & Cross-Platform Apps</option>
-                                    <option value="AI Engineering & Intelligent Agents">AI Engineering & Intelligent Agents</option>
-                                    <option value="Product UI/UX & Design Systems">Product UI/UX & Design Systems</option>
-                                    <option value="Cybersecurity & DevSecOps">Cybersecurity & DevSecOps</option>
-                                    <option value="Full Digital Transformation">Full Digital Transformation</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="clientBudget" class="form-label">Estimated Budget Range</label>
-                                <select class="form-select" id="clientBudget" name="budget">
-                                    <option value="$25,000 - $50,000">$25,000 - $50,000</option>
-                                    <option value="$50,000 - $100,000" selected>$50,000 - $100,000</option>
-                                    <option value="$100,000 - $250,000">$100,000 - $250,000</option>
-                                    <option value="$250,000+">$250,000+</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="clientMessage" class="form-label">Project Scope & Objectives <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="clientMessage" name="message" rows="3" required placeholder="Tell us about your system requirements, target launch timeline, and key performance milestones..."></textarea>
-                            <div class="invalid-feedback"></div>
-                        </div>
-
-                        <button type="submit" class="btn-submit-consultation" id="consultationSubmitBtn">
-                            <span>Confirm Consultation Request</span>
-                            <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
-                        </button>
-                    </form>
-
-                    <!-- Success Confirmation View -->
-                    <div id="consultationSuccessView" class="d-none text-center py-4">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle p-3 mb-3" style="width: 72px; height: 72px;">
-                            <i class="bi bi-check-circle-fill fs-1" aria-hidden="true"></i>
-                        </div>
-                        <h3 class="h4 fw-bold mb-2">Consultation Scheduled!</h3>
-                        <p class="text-secondary mb-4">
-                            Thank you, <strong id="confirmedClientName">Valued Partner</strong>. Our principal solutions architect will review your technical requirements and contact you within 24 business hours.
-                        </p>
-                        <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-bs-dismiss="modal">
-                            Return to Website
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==========================================================================
-       Site Footer
-       ========================================================================== -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="d-flex align-items-center gap-2 mb-3">
+    <footer class="zeplin-page-footer">
+        <div class="container-xl">
+            <div class="row g-4 justify-content-between">
+                <!-- Column 1: Brand Info -->
+                <div class="col-lg-4 col-md-6">
+                    <a href="{{ route('home') }}" class="d-inline-block mb-3">
                         <img src="{{ asset('assets/images/logo.webp') }}" alt="Mahishika Digital" class="brand-logo__img" height="34">
-                    </div>
-                    <p class="text-secondary small mb-3">
-                        A world-class digital agency engineering resilient cloud architectures, scalable web applications, and accessible design systems.
+                    </a>
+                    <p class="text-secondary small mb-3" style="max-width: 320px; line-height: 1.6;">
+                        Empowering brands with data-driven growth, visual storytelling, and modern digital infrastructure.
                     </p>
-                    <div class="small text-muted">
-                        <i class="bi bi-geo-alt me-1" aria-hidden="true"></i> San Francisco &bull; London &bull; Bengaluru
-                    </div>
                 </div>
 
-                <div class="col-6 col-md-3 col-lg-2">
-                    <div class="footer-heading">Capabilities</div>
-                    <ul class="footer-links">
-                        <li><a href="#services-cloud">Cloud Architecture</a></li>
-                        <li><a href="#services-web">Full-Stack Apps</a></li>
-                        <li><a href="#services-mobile">Mobile Systems</a></li>
-                        <li><a href="#services-ai">AI & Machine Learning</a></li>
-                        <li><a href="#services-design">UI/UX Systems</a></li>
+                <!-- Column 2: Services -->
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h5 class="zeplin-footer-heading">Services</h5>
+                    <ul class="zeplin-footer-links">
+                        <li><a href="#design-hub">Design</a></li>
+                        <li><a href="#video-hub">Video</a></li>
+                        <li><a href="#tech-hub">Tech</a></li>
+                        <li><a href="#marketing-hub">Marketing</a></li>
                     </ul>
                 </div>
 
-                <div class="col-6 col-md-3 col-lg-2">
-                    <div class="footer-heading">Industries</div>
-                    <ul class="footer-links">
-                        <li><a href="#industry-fintech">FinTech & Banking</a></li>
-                        <li><a href="#industry-healthtech">Healthcare & Telehealth</a></li>
-                        <li><a href="#industry-ecommerce">Omnichannel Retail</a></li>
-                        <li><a href="#industry-saas">Enterprise SaaS</a></li>
-                        <li><a href="#industry-logistics">Smart Supply Chain</a></li>
+                <!-- Column 3: Company -->
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h5 class="zeplin-footer-heading">Company</h5>
+                    <ul class="zeplin-footer-links">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#portfolio">Portfolio</a></li>
+                        <li><a href="#industries">Industries</a></li>
+                        <li><a href="#insights">Blog</a></li>
+                        <li><a href="#write-for-us">Write for us</a></li>
+                        <li><a href="#careers">Careers</a></li>
                     </ul>
                 </div>
 
-                <div class="col-6 col-md-3 col-lg-2">
-                    <div class="footer-heading">Company</div>
-                    <ul class="footer-links">
-                        <li><a href="#about-story">Our Story</a></li>
-                        <li><a href="#approach-section">The Playbook</a></li>
-                        <li><a href="#work-section">Client Roster</a></li>
-                        <li><a href="#about-careers">Careers (Hiring)</a></li>
-                        <li><a href="{{ route('admin.dashboard') }}">Admin Portal</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-6 col-md-3 col-lg-2">
-                    <div class="footer-heading">Compliance</div>
-                    <ul class="footer-links">
-                        <li><a href="#">WCAG 2.1 AA Statement</a></li>
-                        <li><a href="#">Security & Privacy</a></li>
-                        <li><a href="#">SOC2 Type II Report</a></li>
-                        <li><a href="#">Open Source Notice</a></li>
-                        <li><a href="/api/menu" target="_blank">Menu API JSON</a></li>
+                <!-- Column 4: Contact -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="zeplin-footer-heading">Contact</h5>
+                    <ul class="zeplin-footer-links">
+                        <li><a href="mailto:chat@mahishika.com" class="text-primary fw-medium">chat@mahishika.com</a></li>
+                        <li><a href="tel:+918595117352">+91 8595 117 352</a></li>
+                        <li class="pt-2">
+                            <div class="d-flex align-items-center gap-2 small text-secondary">
+                                <a href="https://linkedin.com" target="_blank">[LinkedIn]</a>
+                                <a href="https://instagram.com" target="_blank">[Instagram]</a>
+                                <a href="https://youtube.com" target="_blank">[YouTube]</a>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="footer-bottom">
+            <!-- Bottom Copyright -->
+            <div class="zeplin-footer-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
                 <div>
-                    &copy; {{ date('Y') }} Mahishika Digital Inc. All rights reserved. Built with precision and care.
+                    &copy; {{ date('Y') }} Mahishika Digital Pvt. Ltd. All rights reserved.
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="badge bg-body-secondary text-body fw-normal border">WCAG 2.1 AA Compliant</span>
-                    <span class="badge bg-body-secondary text-body fw-normal border">Lighthouse 90+ Target</span>
+                <div>
+                    <a href="{{ route('admin.dashboard') }}" class="text-secondary text-decoration-none small">
+                        <i class="bi bi-shield-lock me-1"></i> Admin Portal
+                    </a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- ==========================================================================
+       19. Consultation Modal
+       ========================================================================== -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg border-0" style="border-radius: 18px; overflow: hidden;">
+                <div class="modal-header border-bottom py-3 px-4 bg-body-tertiary">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="bi bi-calendar2-check-fill fs-5"></i>
+                        </span>
+                        <div>
+                            <h5 class="modal-title fw-bold fs-6 mb-0" id="consultationModalLabel">Book a Growth Audit &amp; Technical Discovery</h5>
+                            <small class="text-muted">Speak directly with a senior engineering architect from Mahishika Digital.</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <form action="{{ route('consultations.submit') }}" method="POST" id="modalConsultationForm">
+                        @csrf
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="mName" class="form-label fw-semibold">Your Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="mName" name="name" required placeholder="e.g. Alex Morgan">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mEmail" class="form-label fw-semibold">Work Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="mEmail" name="email" required placeholder="alex@company.com">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="mCompany" class="form-label fw-semibold">Company / Organization</label>
+                                <input type="text" class="form-control" id="mCompany" name="company" placeholder="e.g. Acme FinTech Labs">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mPhone" class="form-label fw-semibold">Phone (Optional)</label>
+                                <input type="tel" class="form-control" id="mPhone" name="phone" placeholder="+1 (555) 000-0000">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="mService" class="form-label fw-semibold">Service Focus</label>
+                                <select class="form-select" id="mService" name="service_interest">
+                                    <option value="Analytics & Tracking" selected>Analytics &amp; Tracking (GA4 + GTM)</option>
+                                    <option value="Website Development">Website Development</option>
+                                    <option value="WordPress & E-commerce">WordPress &amp; E-commerce</option>
+                                    <option value="Custom Web & Cloud Apps">Custom Web &amp; Cloud Apps</option>
+                                    <option value="Mobile App Development">Mobile App Development</option>
+                                    <option value="UI/UX Product Design">UI/UX Product Design</option>
+                                    <option value="Video & Motion Graphics">Video &amp; Motion Graphics</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mBudget" class="form-label fw-semibold">Budget Range</label>
+                                <select class="form-select" id="mBudget" name="budget">
+                                    <option value="$10,000 - $25,000">$10,000 - $25,000</option>
+                                    <option value="$25,000 - $50,000" selected>$25,000 - $50,000</option>
+                                    <option value="$50,000 - $100,000">$50,000 - $100,000</option>
+                                    <option value="$100,000+">$100,000+</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="mMessage" class="form-label fw-semibold">Project Scope &amp; Gaps <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="mMessage" name="message" rows="3" required placeholder="What are your key metrics, tracking bottlenecks, or launch deadlines?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit-audit w-100" id="modalSubmitBtn">
+                            Confirm Growth Audit Request &rarr;
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <!-- Application JavaScript Bundle -->
-    <script type="module" src="{{ asset('assets/js/app.js') }}"></script>
+    <!-- Custom Script for Zeplin Mega Menu & Interactive Elements -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Zeplin Mega Menu Trigger & Vertical Tabs
+            const servicesTrigger = document.getElementById('servicesTrigger');
+            const megaMenuZeplin = document.getElementById('megaMenuZeplin');
+            const verticalTabs = document.querySelectorAll('.mega-vertical-tab');
+
+            function openZeplinMegaMenu() {
+                megaMenuZeplin?.classList.add('is-open');
+                servicesTrigger?.setAttribute('aria-expanded', 'true');
+                servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-down', 'bi-chevron-up');
+            }
+
+            function closeZeplinMegaMenu() {
+                megaMenuZeplin?.classList.remove('is-open');
+                servicesTrigger?.setAttribute('aria-expanded', 'false');
+                servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-up', 'bi-chevron-down');
+            }
+
+            servicesTrigger?.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (megaMenuZeplin?.classList.contains('is-open')) {
+                    closeZeplinMegaMenu();
+                } else {
+                    openZeplinMegaMenu();
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!megaMenuZeplin?.contains(e.target) && !servicesTrigger?.contains(e.target)) {
+                    closeZeplinMegaMenu();
+                }
+            });
+
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeZeplinMegaMenu();
+            });
+
+            // Interactive Tab Switching inside Mega Menu on hover/click
+            verticalTabs.forEach(tab => {
+                const switchTab = () => {
+                    verticalTabs.forEach(t => {
+                        t.classList.remove('is-active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    tab.classList.add('is-active');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    const targetId = tab.dataset.verticalTarget;
+                    document.querySelectorAll('.mega-tab-content-panel').forEach(p => p.classList.remove('is-active'));
+                    const targetPanel = document.getElementById(targetId);
+                    if (targetPanel) targetPanel.classList.add('is-active');
+
+                    // Switch right featured project
+                    const slug = targetId.replace('panel-vertical-', '');
+                    document.querySelectorAll('.mega-featured-item-panel').forEach(fp => {
+                        fp.classList.remove('d-flex');
+                        fp.classList.add('d-none');
+                    });
+                    const targetFeatured = document.getElementById('featured-vertical-' + slug);
+                    if (targetFeatured) {
+                        targetFeatured.classList.remove('d-none');
+                        targetFeatured.classList.add('d-flex');
+                    }
+                };
+
+                tab.addEventListener('mouseenter', switchTab);
+                tab.addEventListener('click', switchTab);
+            });
+
+            // 2. Mobile Drawer Accordion
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const mobileClose = document.getElementById('mobileCloseBtn');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+
+            mobileBtn?.addEventListener('click', () => {
+                mobileDrawer?.classList.add('is-active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            mobileClose?.addEventListener('click', () => {
+                mobileDrawer?.classList.remove('is-active');
+                document.body.style.overflow = '';
+            });
+
+            // 3. FAQ Accordion Toggle
+            const faqItems = document.querySelectorAll('.zeplin-faq-item');
+            faqItems.forEach(item => {
+                const trigger = item.querySelector('.zeplin-faq-trigger');
+                trigger?.addEventListener('click', () => {
+                    const isOpen = item.classList.contains('is-open');
+                    // Toggle current
+                    if (isOpen) {
+                        item.classList.remove('is-open');
+                        trigger.setAttribute('aria-expanded', 'false');
+                    } else {
+                        item.classList.add('is-open');
+                        trigger.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+
+            // 4. Highlight Placeholders Button Toggle
+            const highlightBtn = document.getElementById('highlightPlaceholdersBtn');
+            let placeholdersActive = false;
+            highlightBtn?.addEventListener('click', () => {
+                placeholdersActive = !placeholdersActive;
+                highlightBtn.style.background = placeholdersActive ? '#0070f3' : '#ffffff';
+                highlightBtn.style.color = placeholdersActive ? '#ffffff' : '#0f172a';
+                document.querySelectorAll('.val, .result-val, .featured-case-box, .zeplin-portfolio-thumb, .testimonial-sample-tag').forEach(el => {
+                    el.style.outline = placeholdersActive ? '2px dashed #0070f3' : '';
+                    el.style.backgroundColor = placeholdersActive ? '#e0f2fe' : '';
+                });
+            });
+
+            // 5. Theme Toggle Logic
+            const htmlEl = document.documentElement;
+            const themeBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const saved = localStorage.getItem('mahishika_theme') || 'light';
+            setTheme(saved);
+
+            themeBtn?.addEventListener('click', () => {
+                const cur = htmlEl.getAttribute('data-theme') || 'light';
+                const next = cur === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+            });
+
+            function setTheme(t) {
+                htmlEl.setAttribute('data-theme', t);
+                htmlEl.setAttribute('data-bs-theme', t);
+                localStorage.setItem('mahishika_theme', t);
+                if (themeIcon) {
+                    themeIcon.className = t === 'dark' ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars';
+                }
+            }
+
+            // 6. Sticky In-Page Nav Active Indicator on Scroll
+            const inPageLinks = document.querySelectorAll('.in-page-nav-link');
+            window.addEventListener('scroll', () => {
+                const scrollPos = window.scrollY + 120;
+                inPageLinks.forEach(link => {
+                    const sec = document.querySelector(link.getAttribute('href'));
+                    if (sec) {
+                        const top = sec.offsetTop;
+                        const height = sec.offsetHeight;
+                        if (scrollPos >= top && scrollPos < top + height) {
+                            inPageLinks.forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
-

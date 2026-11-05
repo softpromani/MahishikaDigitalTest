@@ -152,89 +152,212 @@
                                         <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
                                     </button>
 
-                                    <!-- Panel -->
-                                    <div class="mega-menu-panel {{ $isCategoryActive ? 'is-open' : '' }}" 
-                                         id="panel-{{ $category->slug }}" 
-                                         role="region" 
-                                         aria-labelledby="trigger-{{ $category->slug }}" 
-                                         aria-hidden="{{ $isCategoryActive ? 'false' : 'true' }}">
-                                        <div class="mega-menu-grid">
-                                            <!-- Overview -->
-                                            <div class="mega-column--overview">
-                                                <div>
-                                                    @if($category->badge)
-                                                        <div class="mega-overview-badge">
-                                                            <i class="bi {{ $category->icon ?? 'bi-stars' }}" aria-hidden="true"></i>
-                                                            <span>{{ $category->badge }}</span>
-                                                        </div>
-                                                    @endif
-                                                    <h3 class="mega-overview-title">{{ $category->name }}</h3>
-                                                    <p class="mega-overview-desc">{{ $category->description }}</p>
-                                                </div>
-                                                <div>
-                                                    <a href="#" class="mega-overview-link">
-                                                        <span>View all {{ strtolower($category->name) }}</span>
-                                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
+                                    @if($category->slug === 'services' && isset($serviceVerticals) && $serviceVerticals->isNotEmpty())
+                                        <!-- Zeplin 3-Column Floating Mega Menu -->
+                                        <div class="mega-menu-panel--zeplin {{ $isCategoryActive ? 'is-open' : '' }}" 
+                                             id="panel-{{ $category->slug }}" 
+                                             role="region" 
+                                             aria-labelledby="trigger-{{ $category->slug }}" 
+                                             aria-hidden="{{ $isCategoryActive ? 'false' : 'true' }}">
+                                            <div class="mega-zeplin-body">
+                                                <!-- Column 1: Verticals Sidebar (Design, Video, Tech, Marketing) -->
+                                                <div class="mega-zeplin-sidebar">
+                                                    <div class="mega-sidebar-title">Services</div>
+                                                    @php
+                                                        $verticalOrder = ['design', 'video', 'tech', 'marketing'];
+                                                        $sortedVerticals = $serviceVerticals->sortBy(function($cat) use ($verticalOrder) {
+                                                            $idx = array_search($cat->slug, $verticalOrder);
+                                                            return $idx !== false ? $idx : 99;
+                                                        });
+                                                    @endphp
 
-                                            <!-- Links Grid -->
-                                            <div class="mega-column--links">
-                                                @foreach($category->subCategories as $sub)
-                                                    <a href="{{ $sub->url }}" class="mega-sublink">
-                                                        <div class="mega-sublink__icon">
-                                                            <i class="bi {{ $sub->icon ?? 'bi-arrow-right-short' }}" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div class="mega-sublink__content">
-                                                            <div class="mega-sublink__header">
-                                                                <span class="mega-sublink__title">{{ $sub->title }}</span>
-                                                                @if($sub->badge)
-                                                                    <span class="mega-sublink__badge {{ strtolower($sub->badge) === 'new' ? 'mega-sublink__badge--new' : '' }}">
-                                                                        {{ $sub->badge }}
-                                                                    </span>
-                                                                @endif
-                                                            </div>
-                                                            <p class="mega-sublink__desc">{{ $sub->description }}</p>
-                                                        </div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-
-                                            <!-- Featured Card -->
-                                            <div class="mega-column--featured">
-                                                @php
-                                                    $featured = $category->portfolioArticles->first();
-                                                @endphp
-                                                @if($featured)
-                                                    <a href="#" class="featured-card">
-                                                        <div class="featured-card__media">
-                                                            <img src="{{ $featured->image_url ?? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80' }}" 
-                                                                 alt="{{ $featured->title }}" 
-                                                                 class="featured-card__img" 
-                                                                 width="320" 
-                                                                 height="130">
-                                                            <span class="featured-card__tag">{{ $featured->tag ?? 'Case Study' }}</span>
-                                                        </div>
-                                                        <div class="featured-card__body">
-                                                            @if($featured->metric)
-                                                                <div class="featured-card__metric-box">
-                                                                    <span class="featured-card__metric">{{ $featured->metric }}</span>
-                                                                    <span class="featured-card__metric-label">{{ $featured->metric_label }}</span>
+                                                    @foreach($sortedVerticals as $vCat)
+                                                        @php
+                                                            $dotClass = match($vCat->slug) {
+                                                                'design' => 'tab-dot--design',
+                                                                'video' => 'tab-dot--video',
+                                                                'tech' => 'tab-dot--tech',
+                                                                'marketing' => 'tab-dot--marketing',
+                                                                default => 'tab-dot--tech'
+                                                            };
+                                                            $isActive = ($vCat->slug === 'tech');
+                                                        @endphp
+                                                        <button type="button" 
+                                                                class="mega-vertical-tab {{ $isActive ? 'is-active' : '' }}" 
+                                                                data-vertical-target="panel-vertical-{{ $vCat->slug }}"
+                                                                aria-selected="{{ $isActive ? 'true' : 'false' }}">
+                                                            <div class="tab-left">
+                                                                <span class="tab-dot {{ $dotClass }}"></span>
+                                                                <div class="text-start">
+                                                                    <div class="tab-name">{{ $vCat->name }}</div>
+                                                                    <span class="tab-count">{{ $vCat->subCategories->count() }} services</span>
                                                                 </div>
-                                                            @endif
-                                                            <h4 class="featured-card__title">{{ $featured->title }}</h4>
-                                                            <p class="featured-card__excerpt">{{ $featured->excerpt }}</p>
-                                                            <span class="featured-card__cta">
-                                                                <span>Explore Case Study</span>
-                                                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                                                            </span>
+                                                            </div>
+                                                            <i class="bi bi-chevron-right tab-chevron" aria-hidden="true"></i>
+                                                        </button>
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- Column 2: Center Services Grid -->
+                                                <div class="mega-zeplin-center">
+                                                    @foreach($sortedVerticals as $vCat)
+                                                        @php
+                                                            $isActive = ($vCat->slug === 'tech');
+                                                            $hubTitle = $vCat->name . ' Services';
+                                                            $tagline = $vCat->description ?? ($vCat->slug === 'tech' ? 'A site, store, or app that works without babysitting.' : 'Capabilities tailored for enterprise scale.');
+                                                        @endphp
+                                                        <div class="mega-tab-content-panel {{ $isActive ? 'is-active' : '' }}" id="panel-vertical-{{ $vCat->slug }}">
+                                                            <div class="mega-center-header">
+                                                                <div class="title-row">
+                                                                    <h3>{{ $hubTitle }}</h3>
+                                                                    <a href="#{{ $vCat->slug }}-hub" class="mega-hub-link">
+                                                                        <span>Explore {{ $vCat->name }} hub</span>
+                                                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                                    </a>
+                                                                </div>
+                                                                <p class="tagline">{{ $tagline }}</p>
+                                                            </div>
+
+                                                            <div class="mega-service-grid">
+                                                                @foreach($vCat->subCategories as $index => $sub)
+                                                                    @php
+                                                                        $isHighlight = ($vCat->slug === 'tech' && $index === 0);
+                                                                    @endphp
+                                                                    <a href="{{ $sub->url }}" class="mega-service-item {{ $isHighlight ? 'is-highlighted' : '' }}">
+                                                                        <div class="item-title-row">
+                                                                            <span class="item-title">{{ $sub->title }}</span>
+                                                                            <i class="bi bi-arrow-right item-arrow" aria-hidden="true"></i>
+                                                                        </div>
+                                                                        <p class="item-desc">{{ $sub->description }}</p>
+                                                                    </a>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
-                                                    </a>
-                                                @endif
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- Column 3: Featured Project -->
+                                                <div class="mega-zeplin-featured">
+                                                    <div class="mega-featured-title">Featured Project</div>
+                                                    @foreach($sortedVerticals as $vCat)
+                                                        @php
+                                                            $isActive = ($vCat->slug === 'tech');
+                                                            $featArt = $vCat->portfolioArticles->first();
+                                                        @endphp
+                                                        <div class="mega-featured-item-panel {{ $isActive ? 'd-flex' : 'd-none' }} flex-column" id="featured-vertical-{{ $vCat->slug }}">
+                                                            <div class="featured-case-box">
+                                                                <div class="featured-case-inner">[Case image]</div>
+                                                            </div>
+                                                            <div class="featured-case-desc">
+                                                                <strong>[{{ $featArt->client_name ?? 'Client' }}]:</strong>
+                                                                <span>{{ $featArt->title ?? 'checkout rebuilt and mobile load time cut in half' }}</span>
+                                                            </div>
+                                                            <a href="{{ $featArt->link_url ?? '#portfolio' }}" class="featured-case-link">
+                                                                <span>View in portfolio</span>
+                                                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                            <!-- Bottom Bar -->
+                                            <div class="mega-zeplin-footer">
+                                                <div class="footer-left">
+                                                    <strong>Not sure where to start?</strong>
+                                                    <span>We'll map it with you.</span>
+                                                </div>
+                                                <div class="footer-right">
+                                                    <a href="#growth-audit" class="mega-footer-link--primary">Get a free growth audit &rarr;</a>
+                                                    <a href="#all-services" class="mega-footer-link--secondary">All services &rarr;</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <!-- Standard 3-Column Panel -->
+                                        <div class="mega-menu-panel {{ $isCategoryActive ? 'is-open' : '' }}" 
+                                             id="panel-{{ $category->slug }}" 
+                                             role="region" 
+                                             aria-labelledby="trigger-{{ $category->slug }}" 
+                                             aria-hidden="{{ $isCategoryActive ? 'false' : 'true' }}">
+                                            <div class="mega-menu-grid">
+                                                <!-- Overview -->
+                                                <div class="mega-column--overview">
+                                                    <div>
+                                                        @if($category->badge)
+                                                            <div class="mega-overview-badge">
+                                                                <i class="bi {{ $category->icon ?? 'bi-stars' }}" aria-hidden="true"></i>
+                                                                <span>{{ $category->badge }}</span>
+                                                            </div>
+                                                        @endif
+                                                        <h3 class="mega-overview-title">{{ $category->name }}</h3>
+                                                        <p class="mega-overview-desc">{{ $category->description }}</p>
+                                                    </div>
+                                                    <div>
+                                                        <a href="#" class="mega-overview-link">
+                                                            <span>View all {{ strtolower($category->name) }}</span>
+                                                            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Links Grid -->
+                                                <div class="mega-column--links">
+                                                    @foreach($category->subCategories as $sub)
+                                                        <a href="{{ $sub->url }}" class="mega-sublink">
+                                                            <div class="mega-sublink__icon">
+                                                                <i class="bi {{ $sub->icon ?? 'bi-arrow-right-short' }}" aria-hidden="true"></i>
+                                                            </div>
+                                                            <div class="mega-sublink__content">
+                                                                <div class="mega-sublink__header">
+                                                                    <span class="mega-sublink__title">{{ $sub->title }}</span>
+                                                                    @if($sub->badge)
+                                                                        <span class="mega-sublink__badge {{ strtolower($sub->badge) === 'new' ? 'mega-sublink__badge--new' : '' }}">
+                                                                            {{ $sub->badge }}
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                                <p class="mega-sublink__desc">{{ $sub->description }}</p>
+                                                            </div>
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+
+                                                <!-- Featured Card -->
+                                                <div class="mega-column--featured">
+                                                    @php
+                                                        $featured = $category->portfolioArticles->first();
+                                                    @endphp
+                                                    @if($featured)
+                                                        <a href="#" class="featured-card">
+                                                            <div class="featured-card__media">
+                                                                <img src="{{ $featured->image_url ?? 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=700&q=80' }}" 
+                                                                     alt="{{ $featured->title }}" 
+                                                                     class="featured-card__img" 
+                                                                     width="320" 
+                                                                     height="130">
+                                                                <span class="featured-card__tag">{{ $featured->tag ?? 'Case Study' }}</span>
+                                                            </div>
+                                                            <div class="featured-card__body">
+                                                                @if($featured->metric)
+                                                                    <div class="featured-card__metric-box">
+                                                                        <span class="featured-card__metric">{{ $featured->metric }}</span>
+                                                                        <span class="featured-card__metric-label">{{ $featured->metric_label }}</span>
+                                                                    </div>
+                                                                @endif
+                                                                <h4 class="featured-card__title">{{ $featured->title }}</h4>
+                                                                <p class="featured-card__excerpt">{{ $featured->excerpt }}</p>
+                                                                <span class="featured-card__cta">
+                                                                    <span>Explore Case Study</span>
+                                                                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                                </span>
+                                                            </div>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
@@ -451,6 +574,43 @@
         document.addEventListener('DOMContentLoaded', () => {
             const menu = new MegaMenu();
             const consultation = new ConsultationController();
+
+            // Zeplin vertical tab switching in storybook
+            const verticalTabs = document.querySelectorAll('.mega-vertical-tab');
+            verticalTabs.forEach(tab => {
+                const switchTab = (e) => {
+                    e.preventDefault();
+                    verticalTabs.forEach(t => {
+                        t.classList.remove('is-active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    tab.classList.add('is-active');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    const targetId = tab.dataset.verticalTarget;
+                    document.querySelectorAll('.mega-tab-content-panel').forEach(panel => {
+                        panel.classList.remove('is-active');
+                    });
+                    const targetPanel = document.getElementById(targetId);
+                    if (targetPanel) {
+                        targetPanel.classList.add('is-active');
+                    }
+
+                    const slug = targetId.replace('panel-vertical-', '');
+                    document.querySelectorAll('.mega-featured-item-panel').forEach(fp => {
+                        fp.classList.remove('d-flex');
+                        fp.classList.add('d-none');
+                    });
+                    const targetFeatured = document.getElementById('featured-vertical-' + slug);
+                    if (targetFeatured) {
+                        targetFeatured.classList.remove('d-none');
+                        targetFeatured.classList.add('d-flex');
+                    }
+                };
+
+                tab.addEventListener('mouseenter', switchTab);
+                tab.addEventListener('click', switchTab);
+            });
 
             // Intercept dataLayer events and relay to parent Storybook logger
             const originalPush = window.dataLayer?.push;

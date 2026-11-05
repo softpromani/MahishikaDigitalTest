@@ -35,6 +35,12 @@ class HomeController extends Controller
         $approachCategory = $categories->firstWhere('slug', 'approach');
         $aboutCategory = $categories->firstWhere('slug', 'about');
 
+        // Service verticals for the Zeplin Mega Menu (Design, Video, Tech, Marketing)
+        $serviceVerticals = $categories->whereIn('slug', ['design', 'video', 'tech', 'marketing'])->values();
+        if ($serviceVerticals->isEmpty() && $servicesCategory) {
+            $serviceVerticals = collect([$servicesCategory]);
+        }
+
         $featuredCaseStudies = PortfolioArticle::query()
             ->where('is_active', true)
             ->where('is_featured', true)
@@ -54,6 +60,7 @@ class HomeController extends Controller
 
         return view('landing', compact(
             'categories',
+            'serviceVerticals',
             'servicesCategory',
             'industriesCategory',
             'workCategory',
@@ -87,6 +94,8 @@ class HomeController extends Controller
             ])
             ->get();
 
-        return view('storybook.frame', compact('story', 'theme', 'categories'));
+        $serviceVerticals = $categories->whereIn('slug', ['design', 'video', 'tech', 'marketing'])->values();
+
+        return view('storybook.frame', compact('story', 'theme', 'categories', 'serviceVerticals'));
     }
 }
