@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build -o public/storybook"
     },
     "devDependencies": {
         "@storybook/html": "^10.6.5",
