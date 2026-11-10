@@ -15,8 +15,8 @@
                 <tr>
                     <th scope="col">Client Name</th>
                     <th scope="col">Company</th>
-                    <th scope="col">Service Interest</th>
-                    <th scope="col">Budget & Timeline</th>
+                    <th scope="col">Where to Start</th>
+                    <th scope="col">Help Needed (Figma Topics)</th>
                     <th scope="col">Status</th>
                     <th scope="col">Received</th>
                     <th scope="col" class="text-end" style="width: 140px;">Actions</th>
@@ -41,8 +41,30 @@
                             </span>
                         </td>
                         <td>
-                            <div class="small fw-semibold">{{ $lead->budget ?? 'Not specified' }}</div>
-                            <small class="text-muted">{{ $lead->timeline ?? 'Flexible' }}</small>
+                            @php
+                                $topics = is_array($lead->help_topics) ? $lead->help_topics : (is_string($lead->help_topics) ? json_decode($lead->help_topics, true) : null);
+                            @endphp
+                            @if(!empty($topics))
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach($topics as $topic)
+                                        @php
+                                            $topicColor = match(strtolower($topic)) {
+                                                'tech' => 'bg-info-subtle text-info border-info-subtle',
+                                                'design' => 'bg-warning-subtle text-warning-emphasis border-warning-subtle',
+                                                'video' => 'bg-danger-subtle text-danger border-danger-subtle',
+                                                'marketing' => 'bg-success-subtle text-success border-success-subtle',
+                                                default => 'bg-secondary-subtle text-secondary border-secondary-subtle'
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $topicColor }} border" style="font-size: 0.72rem;">{{ $topic }}</span>
+                                    @endforeach
+                                </div>
+                            @elseif(!empty($lead->budget))
+                                <div class="small fw-semibold">{{ $lead->budget }}</div>
+                                <small class="text-muted">{{ $lead->timeline ?? 'Flexible' }}</small>
+                            @else
+                                <span class="text-muted small">&mdash;</span>
+                            @endif
                         </td>
                         <td>
                             <form action="{{ route('admin.consultations.status', $lead) }}" method="POST" class="d-inline">
@@ -120,16 +142,31 @@
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
-                            <div class="text-muted small fw-semibold">Interested Service:</div>
+                            <div class="text-muted small fw-semibold">Where to Start:</div>
                             <div class="mt-1"><span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">{{ $lead->service_interest }}</span></div>
                         </div>
                         <div class="col-sm-6">
-                            <div class="text-muted small fw-semibold">Estimated Budget:</div>
-                            <div class="fw-semibold text-success mt-1">{{ $lead->budget }}</div>
+                            <div class="text-muted small fw-semibold">Disciplines Needed:</div>
+                            <div class="mt-1">
+                                @php
+                                    $topics = is_array($lead->help_topics) ? $lead->help_topics : (is_string($lead->help_topics) ? json_decode($lead->help_topics, true) : null);
+                                @endphp
+                                @if(!empty($topics))
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach($topics as $topic)
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">{{ $topic }}</span>
+                                        @endforeach
+                                    </div>
+                                @elseif($lead->budget)
+                                    <div class="fw-semibold text-success">{{ $lead->budget }}</div>
+                                @else
+                                    <span class="text-muted small">Not specified</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <div class="text-muted small fw-semibold mb-1">Project Requirements / Message:</div>
+                        <div class="text-muted small fw-semibold mb-1">What's Not Working Today / Project Requirements:</div>
                         <div class="p-3 bg-light rounded-3 border text-body" style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">{{ $lead->message }}</div>
                     </div>
                     <div class="small text-muted border-top pt-2 mt-3">
@@ -137,8 +174,8 @@
                     </div>
 
                     @php
-                        $gmailSubject = rawurlencode("Mahishika Digital: Strategic Consultation Follow-up");
-                        $gmailBody = rawurlencode("Hi {$lead->name},\n\nThank you for contacting Mahishika Digital regarding your {$lead->service_interest} project requirements.\n\nWe reviewed your submission and would like to arrange an introductory architecture discovery session.\n\nPlease let us know what dates and times work best for your team this week.\n\nBest regards,\nMahishika Digital Team\nhttps://mahishika.digital");
+                        $gmailSubject = rawurlencode("Mahishika Digital: Growth Audit Review Follow-up");
+                        $gmailBody = rawurlencode("Hi {$lead->name},\n\nThank you for booking a growth audit with Mahishika Digital regarding {$lead->service_interest}.\n\nWe reviewed what is not working in your current setup and prepared preliminary audit observations.\n\nPlease let us know what dates and times work best for your team this week for a 20-minute review call.\n\nBest regards,\nMahishika Digital Team\nhttps://mahishika.digital");
                         $gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" . rawurlencode($lead->email) . "&su={$gmailSubject}&body={$gmailBody}";
                         $outlookUrl = "https://outlook.live.com/mail/0/deeplink/compose?to=" . rawurlencode($lead->email) . "&subject={$gmailSubject}&body={$gmailBody}";
                     @endphp
@@ -163,18 +200,18 @@
                             @csrf
                             <div class="mb-2">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Subject</label>
-                                <input type="text" name="subject" class="form-control form-control-sm" value="Mahishika Digital Consultation: Follow-up on {{ $lead->service_interest }}" required>
+                                <input type="text" name="subject" class="form-control form-control-sm" value="Mahishika Digital Growth Audit: Follow-up on {{ $lead->service_interest }}" required>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Reply Message</label>
                                 <textarea name="reply_message" rows="4" class="form-control form-control-sm" required>Hi {{ $lead->name }},
 
-Thank you for reaching out to Mahishika Digital. We reviewed your project inquiry regarding {{ $lead->service_interest }} (Estimated Budget: {{ $lead->budget }}).
+Thank you for reaching out to Mahishika Digital. We reviewed your growth audit request regarding {{ $lead->service_interest }}.
 
-We would be pleased to schedule an introductory architecture discovery session. Please let us know your team's availability this week for a brief 20-minute call.
+We would be pleased to schedule an introductory growth architecture discovery session. Please let us know your team's availability this week for a brief 20-minute call.
 
 Best regards,
-Mahishika Digital Client Solutions Team</textarea>
+Mahishika Digital Solutions Team</textarea>
                             </div>
                             <div class="d-flex justify-content-between align-items-center pt-2">
                                 <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Sends reply and updates status to <strong>Contacted</strong>.</small>

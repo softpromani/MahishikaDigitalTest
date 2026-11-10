@@ -7,13 +7,22 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div class="d-flex align-items-center gap-2">
         <label class="form-label mb-0 fw-semibold text-secondary">Filter by Category:</label>
-        <select class="form-select form-select-sm" style="width: 220px;" onchange="window.location.href=this.value">
+        <select class="form-select form-select-sm" style="min-width: 260px;" onchange="window.location.href=this.value">
             <option value="{{ route('admin.subcategories') }}">All Categories</option>
-            @foreach($categories as $cat)
-                <option value="{{ route('admin.subcategories', ['category_id' => $cat->id]) }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>
-                    {{ $cat->name }}
-                </option>
-            @endforeach
+            <optgroup label="Mega Menu Verticals (Design, Video, Tech, Marketing)">
+                @foreach($categories->filter(fn($c) => in_array($c->slug, ['tech', 'design', 'video', 'marketing'])) as $cat)
+                    <option value="{{ route('admin.subcategories', ['category_id' => $cat->id]) }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>
+                        {{ $cat->name }} Services ({{ $cat->sub_categories_count ?? $cat->subCategories->count() }})
+                    </option>
+                @endforeach
+            </optgroup>
+            <optgroup label="Other Sections">
+                @foreach($categories->filter(fn($c) => !in_array($c->slug, ['tech', 'design', 'video', 'marketing'])) as $cat)
+                    <option value="{{ route('admin.subcategories', ['category_id' => $cat->id]) }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>
+                        {{ $cat->name }} ({{ $cat->sub_categories_count ?? $cat->subCategories->count() }})
+                    </option>
+                @endforeach
+            </optgroup>
         </select>
     </div>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSubCategoryModal">

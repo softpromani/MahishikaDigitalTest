@@ -4,8 +4,19 @@
 @section('page_title', 'Top-Level Menu Categories')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <p class="text-secondary mb-0">These items populate the top navigation bar of Mahishika Digital.</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <p class="text-secondary mb-1">Manage top navigation links and the 4 <strong>Services Mega Menu Verticals</strong> (Design, Video, Tech, Marketing) from the Figma design.</p>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Category Filters" id="categoryScopeFilters">
+            <button type="button" class="btn btn-outline-primary active" data-filter="all">All Categories ({{ $categories->count() }})</button>
+            <button type="button" class="btn btn-outline-primary" data-filter="verticals">
+                <i class="bi bi-layers-half me-1"></i>Mega Menu Verticals (4)
+            </button>
+            <button type="button" class="btn btn-outline-primary" data-filter="nav">
+                <i class="bi bi-compass me-1"></i>Navbar Links
+            </button>
+        </div>
+    </div>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
         <i class="bi bi-plus-lg me-1"></i> New Category
     </button>
@@ -13,31 +24,57 @@
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0" id="categoriesTable">
             <thead class="table-light">
                 <tr>
                     <th scope="col" style="width: 70px;">Order</th>
-                    <th scope="col">Category Name</th>
+                    <th scope="col">Category & UI Scope</th>
                     <th scope="col">Slug</th>
                     <th scope="col">Badge</th>
-                    <th scope="col">Sub-Categories</th>
-                    <th scope="col">Featured Articles</th>
+                    <th scope="col">Sub-Categories / Services</th>
+                    <th scope="col">Featured Case Study</th>
                     <th scope="col">Status</th>
                     <th scope="col" class="text-end" style="width: 140px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($categories as $category)
-                    <tr>
+                    @php
+                        $isVertical = in_array($category->slug, ['tech', 'design', 'video', 'marketing']);
+                        $dotColor = match($category->slug) {
+                            'design' => '#f59e0b',
+                            'video' => '#ef4444',
+                            'tech' => '#0ea5e9',
+                            'marketing' => '#10b981',
+                            default => '#6366f1'
+                        };
+                        $featuredArticle = $category->portfolioArticles->where('is_featured', true)->first() ?? $category->portfolioArticles->first();
+                    @endphp
+                    <tr class="category-row {{ $isVertical ? 'is-vertical' : 'is-nav' }}" data-scope="{{ $isVertical ? 'verticals' : 'nav' }}">
                         <td>
                             <span class="badge bg-secondary-subtle text-secondary-emphasis fw-bold">#{{ $category->sort_order }}</span>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-5 text-primary"></i>
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-3 p-2 text-white flex-shrink-0" style="width: 38px; height: 38px; background-color: {{ $dotColor }};">
+                                    <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-5"></i>
+                                </span>
                                 <div>
-                                    <div class="fw-semibold">{{ $category->name }}</div>
-                                    <small class="text-muted d-block text-truncate" style="max-width: 250px;">{{ $category->description }}</small>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold fs-6">{{ $category->name }}</span>
+                                        @if($isVertical)
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1" style="font-size: 0.72rem;">
+                                                <i class="bi bi-layers-half me-1"></i>Mega Menu Vertical
+                                            </span>
+                                        @elseif($category->slug === 'services')
+                                            <span class="badge bg-info-subtle text-info border border-info-subtle py-1" style="font-size: 0.72rem;">
+                                                <i class="bi bi-menu-button-wide me-1"></i>Mega Menu Root
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary-subtle text-secondary border py-1" style="font-size: 0.72rem;">Navbar Link</span>
+                                        @endif
+                                    </div>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 280px;">{{ $category->description }}</small>
                                 </div>
                             </div>
                         </td>
@@ -50,12 +87,21 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.subcategories', ['category_id' => $category->id]) }}" class="badge bg-body-secondary text-body text-decoration-none">
-                                {{ $category->sub_categories_count }} subcategories &rarr;
+                            <a href="{{ route('admin.subcategories', ['category_id' => $category->id]) }}" class="badge bg-body-secondary text-body text-decoration-none py-1 px-2">
+                                <strong>{{ $category->sub_categories_count }}</strong> services &rarr;
                             </a>
                         </td>
                         <td>
-                            <span class="badge bg-light text-dark border">{{ $category->portfolio_articles_count }}</span>
+                            @if($featuredArticle)
+                                <div class="d-flex align-items-center gap-2" style="max-width: 200px;">
+                                    @if($featuredArticle->image_url)
+                                        <img src="{{ $featuredArticle->image_url }}" alt="{{ $featuredArticle->title }}" class="rounded object-fit-cover flex-shrink-0" width="36" height="24" onerror="this.src='/assets/images/tech-case.jpg'">
+                                    @endif
+                                    <small class="text-truncate" title="{{ $featuredArticle->title }}">{{ $featuredArticle->title }}</small>
+                                </div>
+                            @else
+                                <span class="text-muted small">&mdash;</span>
+                            @endif
                         </td>
                         <td>
                             <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-0">
@@ -245,3 +291,30 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const filterBtns = document.querySelectorAll('#categoryScopeFilters button');
+        const rows = document.querySelectorAll('#categoriesTable tbody tr.category-row');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+
+                rows.forEach(row => {
+                    if (filter === 'all') {
+                        row.style.display = '';
+                    } else if (filter === 'verticals') {
+                        row.style.display = row.dataset.scope === 'verticals' ? '' : 'none';
+                    } else if (filter === 'nav') {
+                        row.style.display = row.dataset.scope === 'nav' ? '' : 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+@endpush

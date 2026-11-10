@@ -15,11 +15,16 @@ class Consultation extends Model
         'phone',
         'company',
         'service_interest',
+        'help_topics',
         'budget',
         'timeline',
         'message',
         'status',
         'ip_address',
         'user_agent',
+    ];
+
+    protected $casts = [
+        'help_topics' => 'array',
     ];
 }

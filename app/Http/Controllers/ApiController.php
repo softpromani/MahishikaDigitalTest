@@ -113,6 +113,8 @@ class ApiController extends Controller
             'phone' => 'nullable|string|max:30',
             'company' => 'nullable|string|max:100',
             'service_interest' => 'nullable|string|max:100',
+            'help_topics' => 'nullable|array',
+            'help_topics.*' => 'string|max:50',
             'budget' => 'nullable|string|max:50',
             'timeline' => 'nullable|string|max:50',
             'message' => 'required|string|min:10|max:3000',

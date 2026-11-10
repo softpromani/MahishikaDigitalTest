@@ -41,7 +41,7 @@
                         <td><span class="badge bg-secondary-subtle text-secondary-emphasis">#{{ $item->sort_order }}</span></td>
                         <td>
                             @if($item->image_url)
-                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="rounded object-fit-cover" width="60" height="40" loading="lazy">
+                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="rounded object-fit-cover" width="60" height="40" loading="lazy" onerror="this.src='/assets/images/tech-case.jpg'">
                             @else
                                 <div class="bg-secondary-subtle rounded d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 40px;">
                                     <i class="bi bi-image"></i>
@@ -59,7 +59,19 @@
                         </td>
                         <td>
                             @if($item->category)
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">{{ $item->category->name }}</span>
+                                @php
+                                    $dot = match($item->category->slug) {
+                                        'design' => '#f59e0b',
+                                        'video' => '#ef4444',
+                                        'tech' => '#0ea5e9',
+                                        'marketing' => '#10b981',
+                                        default => '#6366f1'
+                                    };
+                                @endphp
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                    <span class="d-inline-block rounded-circle me-1" style="width: 7px; height: 7px; background-color: {{ $dot }};"></span>
+                                    {{ $item->category->name }}
+                                </span>
                             @else
                                 <span class="text-muted small">Global</span>
                             @endif

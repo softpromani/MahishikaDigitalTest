@@ -88,14 +88,28 @@
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">
                     @forelse($categories as $category)
+                        @php
+                            $isVertical = in_array($category->slug, ['tech', 'design', 'video', 'marketing']);
+                            $dotColor = match($category->slug) {
+                                'design' => '#f59e0b',
+                                'video' => '#ef4444',
+                                'tech' => '#0ea5e9',
+                                'marketing' => '#10b981',
+                                default => '#6366f1'
+                            };
+                        @endphp
                         <div class="list-group-item p-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-primary bg-opacity-10 text-primary">#{{ $category->sort_order }}</span>
-                                    <i class="bi {{ $category->icon ?? 'bi-folder' }} text-secondary"></i>
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-2 text-white p-1" style="width: 28px; height: 28px; background-color: {{ $dotColor }};">
+                                        <i class="bi {{ $category->icon ?? 'bi-folder' }} fs-6"></i>
+                                    </span>
                                     <strong class="fs-6">{{ $category->name }}</strong>
+                                    @if($isVertical)
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size: 0.7rem;">Mega Menu Vertical</span>
+                                    @endif
                                     @if($category->badge)
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis">{{ $category->badge }}</span>
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis" style="font-size: 0.7rem;">{{ $category->badge }}</span>
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
