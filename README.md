@@ -332,18 +332,35 @@ php artisan test
 ```
 
 ### Test Coverage Summary:
-- `✓ admin dashboard loads with statistics`
-- `✓ admin can create category`
-- `✓ admin can create subcategory`
-- `✓ admin can create portfolio item`
-- `✓ admin can update consultation status`
-- `✓ api menu returns categories and cta`
-- `✓ api search finds relevant results`
-- `✓ consultation form validation rejects empty payload (422)`
-- `✓ consultation form accepts valid submission (201)`
-- `✓ the application returns a successful response (200)`
+- **Authentication (`AuthTest`)**:
+  - `✓ login page loads successfully`
+  - `✓ unauthenticated user cannot access admin dashboard`
+  - `✓ user cannot login with invalid password`
+  - `✓ admin can login with valid credentials`
+  - `✓ authenticated admin can logout`
+- **Admin CMS & Workflow (`AdminTest`)**:
+  - `✓ admin dashboard loads with statistics`
+  - `✓ admin can create category`
+  - `✓ admin can create subcategory`
+  - `✓ admin can create portfolio item`
+  - `✓ admin can update consultation status`
+  - `✓ admin can reply to consultation`
+  - `✓ admin can toggle category status`
+  - `✓ admin can toggle category status via ajax`
+  - `✓ admin can toggle subcategory status`
+  - `✓ admin can toggle portfolio status and featured`
+  - `✓ subcategories pagination renders bootstrap without giant svg`
+  - `✓ admin pages render status confirmation modal`
+- **REST API & Validation (`ApiTest`)**:
+  - `✓ api menu returns categories and cta`
+  - `✓ api search finds relevant results`
+  - `✓ consultation form validation rejects empty payload`
+  - `✓ consultation form accepts valid submission`
+- **Frontend Integration (`ExampleTest`)**:
+  - `✓ that true is true`
+  - `✓ the application returns a successful response (200)`
 
-**11 passing tests, 70 assertions (100% green).**
+**23 passing tests, 120 assertions (100% green).**
 
 ---
 
