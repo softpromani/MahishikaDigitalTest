@@ -199,9 +199,45 @@
                         <a href="#industries" class="mega-menu-trigger" role="menuitem">Industries</a>
                     </li>
 
-                    <!-- 4. About -->
-                    <li class="mega-menu-item" role="none">
-                        <a href="#about" class="mega-menu-trigger" role="menuitem">About</a>
+                    <!-- 4. About (with hover dropdown showing subcategories) -->
+                    <li class="mega-menu-item about-nav-item" role="none">
+                        <a href="#about" class="mega-menu-trigger d-inline-flex align-items-center gap-1" role="menuitem" id="aboutTrigger">
+                            <span>About</span>
+                            <i class="bi bi-chevron-down chevron-icon" aria-hidden="true" style="font-size: 0.7rem;"></i>
+                        </a>
+                        @if(isset($aboutCategory) && $aboutCategory && $aboutCategory->subCategories->isNotEmpty())
+                            <div class="about-dropdown-menu shadow-lg" role="region" aria-labelledby="aboutTrigger">
+                                <div class="about-dropdown-header">
+                                    <span class="about-dropdown-caption">Company &amp; Culture</span>
+                                </div>
+                                <ul class="about-dropdown-list list-unstyled mb-0">
+                                    @foreach($aboutCategory->subCategories as $sub)
+                                        <li>
+                                            <a href="{{ $sub->url }}" class="about-dropdown-item">
+                                                <div class="about-item-icon">
+                                                    <i class="bi {{ $sub->icon ?? 'bi-building' }}"></i>
+                                                </div>
+                                                <div class="about-item-body">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="about-item-title">{{ $sub->title }}</span>
+                                                        @if($sub->badge)
+                                                            <span class="about-item-badge">{{ $sub->badge }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <span class="about-item-sub">{{ Str::limit($sub->description, 50) }}</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <div class="about-dropdown-footer">
+                                    <a href="#about" class="about-dropdown-all">
+                                        <span>View all about company</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
                     </li>
 
                     <!-- 5. Blog -->
@@ -513,6 +549,8 @@
                     <li><a href="#how-it-connects" class="in-page-nav-link">How it connects</a></li>
                     <li><a href="#process" class="in-page-nav-link">Process</a></li>
                     <li><a href="#portfolio" class="in-page-nav-link">Portfolio</a></li>
+                    <li><a href="#about" class="in-page-nav-link">About</a></li>
+                    <li><a href="#insights" class="in-page-nav-link">Blog</a></li>
                     <li><a href="#faq" class="in-page-nav-link">FAQ</a></li>
                 </ul>
             </div>
@@ -1030,7 +1068,154 @@
                         </div>
 
                         <!-- ==========================================================================
-                           17. Bottom Navy CTA Card (from Zeplin)
+                           17. About Mahishika Digital (from CMS Categories & Subcategories)
+                           ========================================================================== -->
+                        <div class="about-section-wrap" id="about">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                                <div>
+                                    <h2 class="marketing-section-h2 mb-2">About Mahishika Digital.</h2>
+                                    <p class="marketing-section-sub mb-0">Engineers, architects, and visual storytellers building durable digital products and growth infrastructure.</p>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-people-fill me-1"></i> Company &amp; Culture
+                                </span>
+                            </div>
+
+                            @if(isset($aboutCategory) && $aboutCategory && $aboutCategory->subCategories->isNotEmpty())
+                                <div class="about-grid">
+                                    @foreach($aboutCategory->subCategories as $sub)
+                                        <div class="about-card" id="{{ ltrim($sub->url, '#') }}">
+                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                <div class="about-card-icon">
+                                                    <i class="bi {{ $sub->icon ?? 'bi-building' }}"></i>
+                                                </div>
+                                                @if($sub->badge)
+                                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill">{{ $sub->badge }}</span>
+                                                @endif
+                                            </div>
+                                            <h4 class="about-card-title">{{ $sub->title }}</h4>
+                                            <p class="about-card-desc">{{ $sub->description }}</p>
+                                            <div class="about-card-footer mt-auto pt-3">
+                                                <a href="#consultationModal" data-bs-toggle="modal" data-bs-target="#consultationModal" class="about-card-link">
+                                                    <span>Explore details</span>
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <!-- Trust Metrics Strip -->
+                            <div class="about-metrics-strip mt-4">
+                                <div class="metric-item">
+                                    <div class="metric-val text-primary">99.99%</div>
+                                    <div class="metric-name">Infrastructure Uptime</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-val text-success">120+</div>
+                                    <div class="metric-name">Global Deployments</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-val text-info">14 Days</div>
+                                    <div class="metric-name">Sprint-to-Production</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-val text-warning">4.9 / 5</div>
+                                    <div class="metric-name">Verified Partner CSAT</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           18. Engineering & Growth Insights (Blog)
+                           ========================================================================== -->
+                        <div class="blog-section-wrap" id="insights">
+                            <div id="blog" style="position: relative; top: -80px;"></div>
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                                <div>
+                                    <h2 class="marketing-section-h2 mb-2">Latest insights &amp; handbooks.</h2>
+                                    <p class="marketing-section-sub mb-0">Production architectural teardowns, tracking guides, and growth engineering playbooks.</p>
+                                </div>
+                                <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill fw-semibold">
+                                    <i class="bi bi-journal-text me-1"></i> Engineering Blog
+                                </span>
+                            </div>
+
+                            <div class="blog-articles-grid">
+                                <!-- Article 1 -->
+                                <article class="blog-article-card">
+                                    <div class="blog-article-thumb">
+                                        <img src="{{ asset('assets/images/portfolio-retail.jpg') }}" alt="Server-Side CAPI" class="w-100 h-100 object-fit-cover">
+                                        <span class="blog-thumb-badge">Analytics &bull; GA4</span>
+                                    </div>
+                                    <div class="blog-article-body">
+                                        <div class="blog-meta-row">
+                                            <span>Nov 2026</span>
+                                            <span>&bull;</span>
+                                            <span>6 min read</span>
+                                        </div>
+                                        <h4>Server-Side CAPI vs. Client Pixels: How to Recover 40% Lost Conversion Data</h4>
+                                        <p>Why browser privacy updates drop high-intent conversion signals, and how server-side proxy tagging restores full attribution.</p>
+                                        <div class="blog-card-bottom">
+                                            <span class="blog-author-name"><i class="bi bi-person-circle me-1"></i>Jeetu Prajapati</span>
+                                            <a href="#consultationModal" data-bs-toggle="modal" data-bs-target="#consultationModal" class="blog-read-link">
+                                                Read guide &rarr;
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <!-- Article 2 -->
+                                <article class="blog-article-card">
+                                    <div class="blog-article-thumb">
+                                        <img src="{{ asset('assets/images/portfolio-saas.jpg') }}" alt="CloudScale Data Platform" class="w-100 h-100 object-fit-cover">
+                                        <span class="blog-thumb-badge">SaaS &bull; Infrastructure</span>
+                                    </div>
+                                    <div class="blog-article-body">
+                                        <div class="blog-meta-row">
+                                            <span>Oct 2026</span>
+                                            <span>&bull;</span>
+                                            <span>8 min read</span>
+                                        </div>
+                                        <h4>Single Revenue Source of Truth: Aligning Stripe, BigQuery &amp; Finance</h4>
+                                        <p>How subscription churn and refund timing disparities create discrepancies between marketing and finance, and how to fix them.</p>
+                                        <div class="blog-card-bottom">
+                                            <span class="blog-author-name"><i class="bi bi-person-circle me-1"></i>Elena Rostova</span>
+                                            <a href="#consultationModal" data-bs-toggle="modal" data-bs-target="#consultationModal" class="blog-read-link">
+                                                Read guide &rarr;
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+
+                                <!-- Article 3 -->
+                                <article class="blog-article-card">
+                                    <div class="blog-article-thumb">
+                                        <img src="{{ asset('assets/images/tech-case.jpg') }}" alt="14-Day Sprint Engine" class="w-100 h-100 object-fit-cover">
+                                        <span class="blog-thumb-badge">Delivery &bull; Agile</span>
+                                    </div>
+                                    <div class="blog-article-body">
+                                        <div class="blog-meta-row">
+                                            <span>Oct 2026</span>
+                                            <span>&bull;</span>
+                                            <span>5 min read</span>
+                                        </div>
+                                        <h4>The 14-Day Delivery Engine: How We Ship Production Code in Week 2</h4>
+                                        <p>Our opinionated scaffolding, ephemeral preview environments, and automated CI test gates that eliminate months of discovery meetings.</p>
+                                        <div class="blog-card-bottom">
+                                            <span class="blog-author-name"><i class="bi bi-person-circle me-1"></i>Marcus Vance</span>
+                                            <a href="#consultationModal" data-bs-toggle="modal" data-bs-target="#consultationModal" class="blog-read-link">
+                                                Read guide &rarr;
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+
+                        <!-- ==========================================================================
+                           19. Bottom Navy CTA Card (from Zeplin)
                            ========================================================================== -->
                         <div class="bottom-cta-navy-card">
                             <h2>Make every decision with numbers you trust.</h2>
@@ -1376,6 +1561,31 @@
                         if (scrollPos >= top && scrollPos < top + height) {
                             inPageLinks.forEach(l => l.classList.remove('active'));
                             link.classList.add('active');
+                        }
+                    }
+                });
+            });
+
+            // 6. Smooth Scroll for Navigation Anchors
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (!targetId || targetId === '#' || targetId.startsWith('#consultationModal')) return;
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        e.preventDefault();
+                        const headerOffset = 80;
+                        const elementPosition = targetEl.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                        history.pushState(null, null, targetId);
+                        // If mobile drawer is open, close it
+                        if (mobileDrawer && mobileDrawer.classList.contains('is-active')) {
+                            mobileDrawer.classList.remove('is-active');
+                            document.body.style.overflow = '';
                         }
                     }
                 });
