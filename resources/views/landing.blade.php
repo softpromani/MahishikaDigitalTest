@@ -26,14 +26,6 @@
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- Top Draft Banner (from Figma / Zeplin) -->
-    <div class="draft-top-banner">
-        <div class="container-fluid px-3 px-md-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <span class="draft-banner-text">Analytics &amp; Tracking page draft. Portfolio pieces and numbers are placeholders &mdash; copy is a first draft, ready for review.</span>
-            <button type="button" class="btn-highlight-placeholders" id="togglePlaceholdersBtn">Highlight placeholders</button>
-        </div>
-    </div>
-
     <!-- ==========================================================================
        Site Header with Mega Menu (from Zeplin & Task PDF)
        ========================================================================== -->
@@ -1372,14 +1364,7 @@
                 }
             }
 
-            // 5. Placeholder Highlight Toggle (from Zeplin top bar)
-            const placeholderBtn = document.getElementById('togglePlaceholdersBtn');
-            placeholderBtn?.addEventListener('click', () => {
-                document.body.classList.toggle('placeholders-active');
-                placeholderBtn.textContent = document.body.classList.contains('placeholders-active') ? 'Unhighlight' : 'Highlight placeholders';
-            });
-
-            // 6. Sticky In-Page Nav Active Indicator on Scroll
+            // 5. Sticky In-Page Nav Active Indicator on Scroll
             const inPageLinks = document.querySelectorAll('.in-page-nav-link');
             window.addEventListener('scroll', () => {
                 const scrollPos = window.scrollY + 120;
