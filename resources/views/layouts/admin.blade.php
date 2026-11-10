@@ -491,6 +491,66 @@
         </main>
     </div>
 
+    <!-- Universal Status Confirmation Modal -->
+    <div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-labelledby="statusConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+            <div class="modal-content shadow-lg border">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="statusConfirmModalLabel">
+                        <i class="bi bi-shield-exclamation text-primary fs-5" id="statusConfirmIcon"></i>
+                        <span id="statusConfirmTitle">Confirm Status Change</span>
+                    </h5>
+                    <button type="button" class="btn-close" id="statusConfirmCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-3 d-inline-flex p-3 rounded-circle bg-warning-subtle text-warning" id="statusConfirmAvatar">
+                        <i class="bi bi-toggle2-on fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 fs-5" id="statusConfirmHeading">Change status?</h6>
+                    <p class="text-secondary small mb-3" id="statusConfirmPrompt">
+                        Are you sure you want to change the status of this item?
+                    </p>
+                    <div class="p-3 rounded-3 bg-body-tertiary border text-start small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Item Name:</span>
+                            <span class="fw-bold text-body text-truncate ms-2" style="max-width: 240px;" id="statusConfirmItemName">Item</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Module / Type:</span>
+                            <span class="text-body fw-medium" id="statusConfirmItemType">Category</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="text-secondary">New Status:</span>
+                            <span id="statusConfirmNewState">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" id="statusConfirmCancelBtn" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-2" id="statusConfirmOkBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="statusConfirmSpinner" role="status" aria-hidden="true"></span>
+                        <span id="statusConfirmOkText">Yes, Update Status</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        <div id="adminLiveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2" id="adminToastMessage">
+                    <i class="bi bi-check-circle-fill text-success fs-5" id="adminToastIcon"></i>
+                    <span id="adminToastText">Status updated successfully.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
@@ -575,9 +635,9 @@
         backdrop?.addEventListener('click', closeMobileSidebar);
 
         // Global Toast Notification Helper
-        const liveToastEl = document.getElementById('adminLiveToast');
-        const liveToast = liveToastEl ? new bootstrap.Toast(liveToastEl, { delay: 3500 }) : null;
         function showAdminToast(message, isSuccess = true) {
+            const liveToastEl = document.getElementById('adminLiveToast');
+            if (!liveToastEl) return;
             const toastText = document.getElementById('adminToastText');
             const toastIcon = document.getElementById('adminToastIcon');
             if (toastText) toastText.textContent = message;
@@ -586,23 +646,20 @@
                     ? 'bi bi-check-circle-fill text-success fs-5' 
                     : 'bi bi-exclamation-triangle-fill text-danger fs-5';
             }
-            if (liveToast) liveToast.show();
+            const liveToast = bootstrap.Toast.getOrCreateInstance(liveToastEl, { delay: 3500 });
+            liveToast.show();
         }
 
         // Global Status Toggle with Confirmation Modal
         let pendingToggle = null;
-        let statusModal = null;
 
         function getStatusModal() {
-            if (!statusModal) {
-                const el = document.getElementById('statusConfirmModal');
-                if (el) {
-                    statusModal = new bootstrap.Modal(el);
-                }
-            }
-            return statusModal;
+            const el = document.getElementById('statusConfirmModal');
+            if (!el) return null;
+            return bootstrap.Modal.getOrCreateInstance(el);
         }
 
+        // Capture clicks on toggle switch or companion label/badge
         document.addEventListener('click', (e) => {
             let toggle = e.target.closest('.admin-status-toggle');
 
@@ -620,18 +677,29 @@
 
             if (!toggle) return;
 
-            // Prevent default so checkbox does not flip until user confirms in modal
-            e.preventDefault();
+            if (toggle.disabled) {
+                e.preventDefault();
+                return;
+            }
 
-            if (toggle.disabled) return;
+            // Calculate target state:
+            // If click was directly on the <input type="checkbox"> switch, the browser's native behavior
+            // has already flipped toggle.checked to the desired NEW state.
+            // If click was on the <label>, the input has NOT flipped yet.
+            let willBeChecked;
+            if (e.target.matches('.admin-status-toggle') || e.target.type === 'checkbox') {
+                willBeChecked = toggle.checked;
+                e.preventDefault(); // Keep visual switch in current position until modal is confirmed
+            } else {
+                e.preventDefault();
+                willBeChecked = !toggle.checked;
+            }
 
             pendingToggle = toggle;
 
             const itemName = toggle.dataset.itemName || 'this item';
             const itemType = toggle.dataset.itemType || 'Item';
             const toggleType = toggle.dataset.toggleType || 'status'; // 'status' or 'featured'
-            const isCurrentlyChecked = toggle.checked;
-            const willBeChecked = !isCurrentlyChecked;
 
             const titleEl = document.getElementById('statusConfirmTitle');
             const headingEl = document.getElementById('statusConfirmHeading');
@@ -698,21 +766,30 @@
             modal?.show();
         });
 
-        // When confirmation modal closes/cancels, reset pending toggle
-        const statusModalEl = document.getElementById('statusConfirmModal');
-        statusModalEl?.addEventListener('hidden.bs.modal', () => {
-            pendingToggle = null;
-            const spinner = document.getElementById('statusConfirmSpinner');
-            if (spinner) spinner.classList.add('d-none');
-            const okBtn = document.getElementById('statusConfirmOkBtn');
-            if (okBtn) okBtn.disabled = false;
-            const cancelBtn = document.getElementById('statusConfirmCancelBtn');
-            if (cancelBtn) cancelBtn.disabled = false;
+        // When confirmation modal closes/cancels, reset pending toggle and state
+        document.addEventListener('hidden.bs.modal', (e) => {
+            if (e.target.id === 'statusConfirmModal') {
+                pendingToggle = null;
+                const spinner = document.getElementById('statusConfirmSpinner');
+                if (spinner) spinner.classList.add('d-none');
+                const okBtn = document.getElementById('statusConfirmOkBtn');
+                if (okBtn) okBtn.disabled = false;
+                const cancelBtn = document.getElementById('statusConfirmCancelBtn');
+                if (cancelBtn) cancelBtn.disabled = false;
+            }
         });
 
-        // When confirmed, send AJAX PATCH request and update toggle
-        document.getElementById('statusConfirmOkBtn')?.addEventListener('click', async () => {
-            if (!pendingToggle) return;
+        // Document-level delegated click listener for modal confirmation button (#statusConfirmOkBtn)
+        document.addEventListener('click', async (e) => {
+            const okBtn = e.target.closest('#statusConfirmOkBtn');
+            if (!okBtn) return;
+            e.preventDefault();
+
+            if (!pendingToggle) {
+                const modal = getStatusModal();
+                modal?.hide();
+                return;
+            }
 
             const toggle = pendingToggle;
             const endpoint = toggle.dataset.endpoint;
@@ -720,11 +797,10 @@
             const toggleType = toggle.dataset.toggleType || 'status';
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            const okBtn = document.getElementById('statusConfirmOkBtn');
             const cancelBtn = document.getElementById('statusConfirmCancelBtn');
             const spinner = document.getElementById('statusConfirmSpinner');
 
-            if (okBtn) okBtn.disabled = true;
+            okBtn.disabled = true;
             if (cancelBtn) cancelBtn.disabled = true;
             if (spinner) spinner.classList.remove('d-none');
 
@@ -744,8 +820,12 @@
 
                 const data = await response.json();
 
-                // Officially toggle checked property
-                toggle.checked = !toggle.checked;
+                // Apply authoritative server state directly
+                if (toggleType === 'featured') {
+                    toggle.checked = !!data.is_featured;
+                } else {
+                    toggle.checked = !!data.is_active;
+                }
 
                 // Update label badge UI dynamically
                 if (labelEl) {
@@ -772,7 +852,7 @@
                 modal?.hide();
                 showAdminToast('Failed to update status. Please try again.', false);
             } finally {
-                if (okBtn) okBtn.disabled = false;
+                okBtn.disabled = false;
                 if (cancelBtn) cancelBtn.disabled = false;
                 if (spinner) spinner.classList.add('d-none');
                 pendingToggle = null;
@@ -825,66 +905,6 @@
             }
         });
     </script>
-
-    <!-- Universal Status Confirmation Modal -->
-    <div class="modal fade" id="statusConfirmModal" tabindex="-1" aria-labelledby="statusConfirmModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
-            <div class="modal-content shadow-lg border">
-                <div class="modal-header border-bottom py-3">
-                    <h5 class="modal-title fw-bold fs-6 d-flex align-items-center gap-2" id="statusConfirmModalLabel">
-                        <i class="bi bi-shield-exclamation text-primary fs-5" id="statusConfirmIcon"></i>
-                        <span id="statusConfirmTitle">Confirm Status Change</span>
-                    </h5>
-                    <button type="button" class="btn-close" id="statusConfirmCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4 text-center">
-                    <div class="mb-3 d-inline-flex p-3 rounded-circle bg-warning-subtle text-warning" id="statusConfirmAvatar">
-                        <i class="bi bi-toggle2-on fs-1"></i>
-                    </div>
-                    <h6 class="fw-bold mb-2 fs-5" id="statusConfirmHeading">Change status?</h6>
-                    <p class="text-secondary small mb-3" id="statusConfirmPrompt">
-                        Are you sure you want to change the status of this item?
-                    </p>
-                    <div class="p-3 rounded-3 bg-body-tertiary border text-start small">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-secondary">Item Name:</span>
-                            <span class="fw-bold text-body text-truncate ms-2" style="max-width: 240px;" id="statusConfirmItemName">Item</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-secondary">Module / Type:</span>
-                            <span class="text-body fw-medium" id="statusConfirmItemType">Category</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                            <span class="text-secondary">New Status:</span>
-                            <span id="statusConfirmNewState">
-                                <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer border-top py-2 px-4 bg-body-tertiary d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-secondary btn-sm px-3" id="statusConfirmCancelBtn" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-2" id="statusConfirmOkBtn">
-                        <span class="spinner-border spinner-border-sm d-none" id="statusConfirmSpinner" role="status" aria-hidden="true"></span>
-                        <span id="statusConfirmOkText">Yes, Update Status</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
-        <div id="adminLiveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body d-flex align-items-center gap-2" id="adminToastMessage">
-                    <i class="bi bi-check-circle-fill text-success fs-5" id="adminToastIcon"></i>
-                    <span id="adminToastText">Status updated successfully.</span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
     @stack('scripts')
 </body>
 </html>
