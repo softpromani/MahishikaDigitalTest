@@ -484,6 +484,7 @@
 
                                 <form action="{{ route('consultations.submit') }}" method="POST" id="asideGrowthAuditForm">
                                     @csrf
+                                    <div id="asideFormAlertContainer"></div>
                                     <div class="zeplin-input-group">
                                         <label for="asideName">Name</label>
                                         <input type="text" name="name" id="asideName" class="zeplin-form-control" required placeholder="Your full name">
@@ -1351,6 +1352,7 @@
                 </div>
 
                 <div class="modal-body p-4">
+                    <div id="modalFormAlertContainer"></div>
                     <form action="{{ route('consultations.submit') }}" method="POST" id="modalConsultationForm">
                         @csrf
                         <div class="row g-3 mb-3">
@@ -1411,6 +1413,52 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Global Live Toast Notifications Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
+        <div id="liveFeedbackToast" class="toast align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i class="bi bi-check-circle-fill fs-5" id="liveFeedbackIcon"></i>
+                    <div>
+                        <div class="fw-bold" id="liveFeedbackTitle">Request Submitted!</div>
+                        <small id="liveFeedbackMessage">Thank you! Your growth audit request has been received.</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+
+        @if(session('success'))
+            <div class="toast show align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <div>
+                            <div class="fw-bold">Success!</div>
+                            <small>{{ session('success') }}</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="toast show align-items-center text-bg-danger border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <div>
+                            <div class="fw-bold">Please check your entries</div>
+                            <small>{{ $errors->first() }}</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Sticky Floating Theme Mode Toggle (Bottom Right beside scrollbar) -->
@@ -1651,6 +1699,156 @@
                     }
                 });
             });
+
+            // 7. Consultation Forms AJAX Submission & Instant Feedback
+            function setupAjaxConsultationForm(formId, alertContainerId, submitBtnId, isModal) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+
+                const submitBtn = document.getElementById(submitBtnId);
+                const originalBtnHtml = submitBtn ? submitBtn.innerHTML : 'Submit';
+                const alertContainer = document.getElementById(alertContainerId);
+
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    // Clear previous alerts and errors
+                    if (alertContainer) alertContainer.innerHTML = '';
+                    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                    // Button loading state
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Sending request...';
+                    }
+
+                    const formData = new FormData(form);
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalBtnHtml;
+                            }
+
+                            const clientName = (data.data && data.data.name) ? data.data.name : (formData.get('name') || 'there');
+                            const clientEmail = formData.get('email') || 'your email';
+
+                            if (isModal) {
+                                const modalBody = form.closest('.modal-body');
+                                if (modalBody) {
+                                    modalBody.innerHTML = `
+                                        <div class="text-center py-4 px-2">
+                                            <div class="rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-3" style="width: 76px; height: 76px;">
+                                                <i class="bi bi-check-circle-fill" style="font-size: 2.5rem;"></i>
+                                            </div>
+                                            <h4 class="fw-bold text-dark mb-2">Growth Audit Request Received!</h4>
+                                            <p class="text-secondary mb-4" style="max-width: 480px; margin: 0 auto; line-height: 1.6;">
+                                                Thank you, <strong>${clientName}</strong>! Our solutions engineering team has received your technical discovery details and will reach out to <strong>${clientEmail}</strong> within 24 business hours.
+                                            </p>
+                                            <div class="card bg-body-tertiary border-0 rounded-3 p-3 mb-4 mx-auto text-start" style="max-width: 440px;">
+                                                <div class="small text-muted mb-1 fw-semibold">Next steps:</div>
+                                                <div class="small text-secondary d-flex align-items-center gap-2 mb-1">
+                                                    <i class="bi bi-check2 text-success"></i> Full GA4, tags, and tracking data review
+                                                </div>
+                                                <div class="small text-secondary d-flex align-items-center gap-2">
+                                                    <i class="bi bi-check2 text-success"></i> 1-on-1 strategy session with senior solutions architect
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary px-4 py-2 fw-semibold" data-bs-dismiss="modal">
+                                                Done &bull; Back to Website
+                                            </button>
+                                        </div>
+                                    `;
+                                }
+                            } else {
+                                const asideCard = form.closest('.card-content');
+                                if (asideCard) {
+                                    asideCard.innerHTML = `
+                                        <div class="text-center py-4 px-2">
+                                            <div class="rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                                <i class="bi bi-check-circle-fill" style="font-size: 2rem;"></i>
+                                            </div>
+                                            <h4 class="fw-bold mb-2">Request Received!</h4>
+                                            <p class="text-secondary small mb-3">
+                                                Thank you, <strong>${clientName}</strong>! We've received your growth audit details and will contact you shortly.
+                                            </p>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.reload()">
+                                                Submit Another
+                                            </button>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            // Show top toast notification
+                            const toastEl = document.getElementById('liveFeedbackToast');
+                            if (toastEl && window.bootstrap) {
+                                toastEl.className = 'toast align-items-center text-bg-success border-0 shadow-lg';
+                                const iconEl = document.getElementById('liveFeedbackIcon');
+                                if (iconEl) iconEl.className = 'bi bi-check-circle-fill fs-5';
+                                const titleEl = document.getElementById('liveFeedbackTitle');
+                                if (titleEl) titleEl.textContent = 'Audit Request Received!';
+                                const msgEl = document.getElementById('liveFeedbackMessage');
+                                if (msgEl) msgEl.textContent = `Thank you, ${clientName}! We will reach out within 24 business hours.`;
+                                const toast = new bootstrap.Toast(toastEl, { delay: 6000 });
+                                toast.show();
+                            }
+                        } else {
+                            if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalBtnHtml;
+                            }
+
+                            let errorHtml = '<div class="alert alert-danger py-2 px-3 small border-0 shadow-sm mb-3"><div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i>Please fix the following:</div><ul class="mb-0 ps-3">';
+                            if (data.errors) {
+                                for (const [field, messages] of Object.entries(data.errors)) {
+                                    messages.forEach(msg => {
+                                        errorHtml += `<li>${msg}</li>`;
+                                    });
+                                    const fieldEl = form.querySelector(`[name="${field}"]`);
+                                    if (fieldEl) fieldEl.classList.add('is-invalid');
+                                }
+                            } else {
+                                errorHtml += `<li>${data.message || 'An error occurred. Please check your entries.'}</li>`;
+                            }
+                            errorHtml += '</ul></div>';
+
+                            if (alertContainer) {
+                                alertContainer.innerHTML = errorHtml;
+                            }
+                        }
+                    } catch (err) {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnHtml;
+                        }
+
+                        if (alertContainer) {
+                            alertContainer.innerHTML = `
+                                <div class="alert alert-danger py-2 px-3 small border-0 shadow-sm mb-3">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    Network error. Please try again or email us directly at <strong>chat@mahishika.com</strong>.
+                                </div>
+                            `;
+                        }
+                    }
+                });
+            }
+
+            setupAjaxConsultationForm('modalConsultationForm', 'modalFormAlertContainer', 'modalSubmitBtn', true);
+            setupAjaxConsultationForm('asideGrowthAuditForm', 'asideFormAlertContainer', 'asideSubmitBtn', false);
         });
     </script>
 </body>

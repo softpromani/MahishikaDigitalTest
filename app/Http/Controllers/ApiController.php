@@ -117,13 +117,13 @@ class ApiController extends Controller
             'help_topics.*' => 'string|max:50',
             'budget' => 'nullable|string|max:50',
             'timeline' => 'nullable|string|max:50',
-            'message' => 'required|string|min:10|max:3000',
+            'message' => 'required|string|min:3|max:3000',
         ], [
             'name.required' => 'Please provide your full name.',
             'email.required' => 'A valid work email address is required.',
             'email.email' => 'Please provide a valid email address format.',
             'message.required' => 'Please describe your project or consultation request.',
-            'message.min' => 'Please provide at least 10 characters describing your project.',
+            'message.min' => 'Please provide at least 3 characters describing your project.',
         ]);
 
         if ($validator->fails()) {
