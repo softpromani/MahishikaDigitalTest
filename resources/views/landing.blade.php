@@ -319,11 +319,41 @@
                         <span>Industries</span>
                     </a>
                 </li>
+
+                <!-- About Accordion Item -->
                 <li class="mobile-menu-item">
-                    <a href="#about" class="mobile-menu-trigger text-decoration-none">
-                        <span>About</span>
-                    </a>
+                    <button type="button" class="mobile-menu-trigger" aria-expanded="false" aria-controls="mobile-sub-about">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-people text-primary"></i>
+                            <span class="fw-bold">About</span>
+                        </span>
+                        <i class="bi bi-chevron-down chevron-icon" aria-hidden="true"></i>
+                    </button>
+                    <div class="mobile-submenu-collapse" id="mobile-sub-about">
+                        <ul class="mobile-sublink-list">
+                            @if(isset($aboutCategory) && $aboutCategory && $aboutCategory->subCategories->isNotEmpty())
+                                @foreach($aboutCategory->subCategories as $sub)
+                                    <li>
+                                        <a href="{{ $sub->url }}" class="mobile-sublink">
+                                            <i class="bi {{ $sub->icon ?? 'bi-arrow-right-short' }} mobile-sublink__icon"></i>
+                                            <span>{{ $sub->title }}</span>
+                                            @if($sub->badge)
+                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill ms-auto" style="font-size: 0.65rem;">{{ $sub->badge }}</span>
+                                            @endif
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @endif
+                            <li>
+                                <a href="#about" class="mobile-sublink text-primary fw-semibold">
+                                    <i class="bi bi-arrow-right mobile-sublink__icon"></i>
+                                    <span>All about Mahishika &rarr;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
+
                 <li class="mobile-menu-item">
                     <a href="#insights" class="mobile-menu-trigger text-decoration-none">
                         <span>Blog</span>
@@ -1495,19 +1525,50 @@
                 tab.addEventListener('click', switchTab);
             });
 
-            // 2. Mobile Drawer Accordion
+            // 2. Mobile Drawer & Accordion
             const mobileBtn = document.getElementById('mobileMenuBtn');
             const mobileClose = document.getElementById('mobileCloseBtn');
             const mobileDrawer = document.getElementById('mobileDrawer');
+            const menuBackdrop = document.getElementById('megaMenuBackdrop');
 
             mobileBtn?.addEventListener('click', () => {
                 mobileDrawer?.classList.add('is-active');
+                menuBackdrop?.classList.add('is-active');
                 document.body.style.overflow = 'hidden';
             });
 
-            mobileClose?.addEventListener('click', () => {
+            const closeDrawer = () => {
                 mobileDrawer?.classList.remove('is-active');
+                menuBackdrop?.classList.remove('is-active');
                 document.body.style.overflow = '';
+            };
+
+            mobileClose?.addEventListener('click', closeDrawer);
+            menuBackdrop?.addEventListener('click', closeDrawer);
+
+            // Mobile Accordion Toggle (Services, About, etc.)
+            const mobileAccordionBtns = document.querySelectorAll('.mobile-drawer__body button.mobile-menu-trigger');
+            mobileAccordionBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const targetId = btn.getAttribute('aria-controls');
+                    const targetCollapse = document.getElementById(targetId);
+                    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+                    if (isExpanded) {
+                        btn.setAttribute('aria-expanded', 'false');
+                        targetCollapse?.classList.remove('is-open');
+                    } else {
+                        btn.setAttribute('aria-expanded', 'true');
+                        targetCollapse?.classList.add('is-open');
+                    }
+                });
+            });
+
+            // Close mobile drawer when clicking any link inside it
+            document.querySelectorAll('.mobile-drawer a').forEach(link => {
+                link.addEventListener('click', closeDrawer);
             });
 
             // 3. FAQ Accordion Toggle

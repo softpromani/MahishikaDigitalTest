@@ -885,11 +885,13 @@
 .mobile-submenu-collapse {
     max-height: 0;
     overflow: hidden;
-    transition: max-height var(--transition-slow);
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
 }
 
 .mobile-submenu-collapse.is-open {
-    max-height: 1200px;
+    max-height: 2500px;
+    opacity: 1;
 }
 
 .mobile-sublink-list {
