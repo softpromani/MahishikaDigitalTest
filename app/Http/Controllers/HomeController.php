@@ -41,12 +41,12 @@ class HomeController extends Controller
             $serviceVerticals = collect([$servicesCategory]);
         }
 
-        $featuredCaseStudies = PortfolioArticle::query()
+        $portfolioArticles = PortfolioArticle::query()
             ->where('is_active', true)
-            ->where('is_featured', true)
             ->orderBy('sort_order', 'asc')
-            ->limit(4)
             ->get();
+
+        $featuredCaseStudies = $portfolioArticles->where('is_featured', true)->take(4);
 
         $allServices = $servicesCategory ? $servicesCategory->subCategories : collect();
         $allIndustries = $industriesCategory ? $industriesCategory->subCategories : collect();
@@ -68,6 +68,7 @@ class HomeController extends Controller
             'aboutCategory',
             'allServices',
             'allIndustries',
+            'portfolioArticles',
             'featuredCaseStudies',
             'stats'
         ));

@@ -216,23 +216,27 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Excerpt</label>
-                        <textarea name="excerpt" class="form-control" rows="2" required>{{ $item->excerpt }}</textarea>
+                        <label class="form-label fw-semibold">Technologies / Subtitle (Excerpt) <span class="text-danger">*</span></label>
+                        <input type="text" name="excerpt" class="form-control" value="{{ $item->excerpt }}" placeholder="e.g. Shopify Plus • GA4 • Meta CAPI" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">The Problem Statement (Optional)</label>
+                        <textarea name="content" class="form-control" rows="2" placeholder="e.g. Browser privacy blocks caused 40% of conversions to drop...">{{ $item->content }}</textarea>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Metric Value</label>
-                            <input type="text" name="metric" class="form-control" value="{{ $item->metric }}" placeholder="e.g. +312%">
+                            <input type="text" name="metric" class="form-control" value="{{ $item->metric }}" placeholder="e.g. +42% or 99.99%">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Metric Label</label>
-                            <input type="text" name="metric_label" class="form-control" value="{{ $item->metric_label }}" placeholder="e.g. Conversion Lift">
+                            <input type="text" name="metric_label" class="form-control" value="{{ $item->metric_label }}" placeholder="e.g. Verified ROAS">
                         </div>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Image URL</label>
-                            <input type="url" name="image_url" class="form-control" value="{{ $item->image_url }}">
+                            <label class="form-label fw-semibold">Image URL or Local Asset</label>
+                            <input type="text" name="image_url" class="form-control" value="{{ $item->image_url }}" placeholder="e.g. /assets/images/portfolio-retail.jpg or https://...">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Link URL</label>
@@ -340,23 +344,27 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Excerpt <span class="text-danger">*</span></label>
-                    <textarea name="excerpt" class="form-control" rows="2" placeholder="One or two sentences describing technical outcome" required></textarea>
+                    <label class="form-label fw-semibold">Technologies / Subtitle (Excerpt) <span class="text-danger">*</span></label>
+                    <input type="text" name="excerpt" class="form-control" placeholder="e.g. Shopify Plus • GA4 • Meta CAPI" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">The Problem Statement (Optional)</label>
+                    <textarea name="content" class="form-control" rows="2" placeholder="e.g. Browser privacy blocks caused 40% of Shopify conversions to drop from ad platforms."></textarea>
                 </div>
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Metric Value</label>
-                        <input type="text" name="metric" class="form-control" placeholder="e.g. 99.999% or +312%">
+                        <input type="text" name="metric" class="form-control" placeholder="e.g. +42% or 99.99%">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Metric Label</label>
-                        <input type="text" name="metric_label" class="form-control" placeholder="e.g. Uptime SLA or Conversion">
+                        <input type="text" name="metric_label" class="form-control" placeholder="e.g. Verified ROAS or Data Match">
                     </div>
                 </div>
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold">Image URL</label>
-                        <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/...">
+                        <label class="form-label fw-semibold">Image URL or Local Asset</label>
+                        <input type="text" name="image_url" class="form-control" placeholder="e.g. /assets/images/portfolio-retail.jpg or https://...">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Link URL <span class="text-danger">*</span></label>

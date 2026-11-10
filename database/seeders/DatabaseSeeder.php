@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed the application's database with matching frontend and backend structure.
      */
     public function run(): void
     {
@@ -35,7 +35,8 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-        // Category 1: Services
+
+        // Category 1: Services (Parent Capabilities / Test Requirement)
         $services = Category::create([
             'name' => 'Services',
             'slug' => 'services',
@@ -51,7 +52,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Cloud Architecture & DevOps',
                 'slug' => 'cloud-architecture-devops',
                 'description' => 'Multi-cloud Kubernetes, zero-downtime CI/CD pipelines, and FinOps cost optimization.',
-                'url' => '#services-cloud',
+                'url' => '#tech-hub',
                 'icon' => 'bi-cloud-check',
                 'badge' => 'Popular',
                 'sort_order' => 1,
@@ -61,7 +62,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Custom Web & Full-Stack Apps',
                 'slug' => 'custom-web-fullstack-apps',
                 'description' => 'High-performance enterprise web apps built with modern reactive architectures.',
-                'url' => '#services-web',
+                'url' => '#tech-web-dev',
                 'icon' => 'bi-code-slash',
                 'badge' => 'Core',
                 'sort_order' => 2,
@@ -71,7 +72,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Mobile & Cross-Platform Apps',
                 'slug' => 'mobile-cross-platform-apps',
                 'description' => 'Fluid iOS, Android, and Flutter experiences with 60fps animations and offline sync.',
-                'url' => '#services-mobile',
+                'url' => '#tech-mobile-apps',
                 'icon' => 'bi-phone',
                 'badge' => null,
                 'sort_order' => 3,
@@ -81,7 +82,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'AI Engineering & Intelligent Agents',
                 'slug' => 'ai-engineering-intelligent-agents',
                 'description' => 'Custom LLM agents, RAG knowledge retrieval, and predictive analytics pipelines.',
-                'url' => '#services-ai',
+                'url' => '#tech-custom-software',
                 'icon' => 'bi-cpu',
                 'badge' => 'New',
                 'sort_order' => 4,
@@ -91,7 +92,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Product UI/UX & Design Systems',
                 'slug' => 'product-design-systems',
                 'description' => 'Human-centered user research, accessible Figma systems, and atomic design tokens.',
-                'url' => '#services-design',
+                'url' => '#design-hub',
                 'icon' => 'bi-palette',
                 'badge' => null,
                 'sort_order' => 5,
@@ -101,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 'title' => 'Cybersecurity & DevSecOps',
                 'slug' => 'cybersecurity-devsecops',
                 'description' => 'Zero-trust security architecture, penetration audits, and SOC2/HIPAA compliance.',
-                'url' => '#services-security',
+                'url' => '#tech-hosting',
                 'icon' => 'bi-shield-check',
                 'badge' => 'Enterprise',
                 'sort_order' => 6,
@@ -109,25 +110,7 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $services->portfolioArticles()->createMany([
-            [
-                'title' => 'FinTech Scale: 5M+ Daily Transactions with 99.999% SLA',
-                'slug' => 'fintech-scale-5m-daily-transactions',
-                'type' => 'case_study',
-                'client_name' => 'Apex Digital Bank',
-                'excerpt' => 'Architected a distributed event-driven microservices core handling $2.8B monthly volume with sub-50ms latency.',
-                'tag' => 'FinTech Cloud',
-                'metric' => '99.999%',
-                'metric_label' => 'Uptime SLA',
-                'image_url' => '/assets/images/tech-case.jpg',
-                'link_url' => '#work-apex',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Zeplin Mega Menu Vertical 1: Tech (Default Active)
+        // Category 2: Tech (Mega Menu Vertical 1)
         $tech = Category::create([
             'name' => 'Tech',
             'slug' => 'tech',
@@ -201,25 +184,25 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $tech->portfolioArticles()->createMany([
-            [
-                'title' => '[Client]: checkout rebuilt and mobile load time cut in half',
-                'slug' => 'client-checkout-rebuilt-load-time-cut-in-half',
-                'type' => 'case_study',
-                'client_name' => 'Scale Retail',
-                'excerpt' => 'Re-architected checkout flow and headless infrastructure, cutting mobile load time in half and boosting conversion by 38%.',
-                'tag' => 'E-Commerce',
-                'metric' => '-50%',
-                'metric_label' => 'Load Time',
-                'image_url' => '/assets/images/tech-case.jpg',
-                'link_url' => '#work-checkout',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
+        // Featured Portfolio Case Study 2: CloudScale (Technology & SaaS)
+        $tech->portfolioArticles()->create([
+            'title' => 'CloudScale: Single revenue source of truth for $12M ARR billing',
+            'slug' => 'cloudscale-single-revenue-source-truth',
+            'type' => 'case_study',
+            'client_name' => 'CloudScale',
+            'tag' => 'Technology & SaaS',
+            'excerpt' => 'Stripe • BigQuery • Salesforce',
+            'content' => 'Decoupled subscription events led to recurring 15% revenue discrepancies.',
+            'metric' => '99.99%',
+            'metric_label' => 'Data Match • 3.4x deployment speed',
+            'image_url' => '/assets/images/portfolio-saas.jpg',
+            'link_url' => '#portfolio',
+            'is_featured' => true,
+            'sort_order' => 2,
+            'is_active' => true,
         ]);
 
-        // Zeplin Mega Menu Vertical 2: Design
+        // Category 3: Design (Mega Menu Vertical 2)
         $design = Category::create([
             'name' => 'Design',
             'slug' => 'design',
@@ -293,25 +276,7 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $design->portfolioArticles()->createMany([
-            [
-                'title' => 'Fintech Core: Design system scaled to 40+ engineering squads',
-                'slug' => 'fintech-core-design-system-scale',
-                'type' => 'case_study',
-                'client_name' => 'Apex Global',
-                'excerpt' => 'Unified multi-platform Figma design system with 200+ accessible components cutting frontend build cycles by 45%.',
-                'tag' => 'Design Systems',
-                'metric' => '45%',
-                'metric_label' => 'Faster Dev Cycles',
-                'image_url' => '/assets/images/design-case.jpg',
-                'link_url' => '#work-design-system',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Zeplin Mega Menu Vertical 3: Video
+        // Category 4: Video (Mega Menu Vertical 3)
         $video = Category::create([
             'name' => 'Video',
             'slug' => 'video',
@@ -375,25 +340,7 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $video->portfolioArticles()->createMany([
-            [
-                'title' => 'AI SaaS Platform: 3D product launch film driving 100k+ views',
-                'slug' => 'ai-saas-launch-3d-film',
-                'type' => 'case_study',
-                'client_name' => 'Cortex AI',
-                'excerpt' => 'Produced full 3D interactive launch campaign generating 12,000 signups in first 48 hours.',
-                'tag' => '3D Animation',
-                'metric' => '12K+',
-                'metric_label' => 'Signups in 48h',
-                'image_url' => '/assets/images/video-case.jpg',
-                'link_url' => '#work-cortex',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Zeplin Mega Menu Vertical 4: Marketing
+        // Category 5: Marketing (Mega Menu Vertical 4)
         $marketing = Category::create([
             'name' => 'Marketing',
             'slug' => 'marketing',
@@ -467,32 +414,32 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $marketing->portfolioArticles()->createMany([
-            [
-                'title' => 'Vanguard Analytics: Server-side tracking setup delivering 100% data accuracy',
-                'slug' => 'vanguard-analytics-tracking-accuracy',
-                'type' => 'case_study',
-                'client_name' => 'Vanguard Freight',
-                'excerpt' => 'Migrated GA4 and CAPI server-side, eliminating data loss and unlocking +24% ad ROAS.',
-                'tag' => 'Analytics',
-                'metric' => '+24%',
-                'metric_label' => 'Ad ROAS Lift',
-                'image_url' => '/assets/images/tech-case.jpg',
-                'link_url' => '#work-vanguard-analytics',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
+        // Featured Portfolio Case Study 1: Nordic Glow (Retail & E-Commerce)
+        $marketing->portfolioArticles()->create([
+            'title' => 'Nordic Glow: +42% ROAS through server-side conversion tracking',
+            'slug' => 'nordic-glow-roas-server-side-tracking',
+            'type' => 'case_study',
+            'client_name' => 'Nordic Glow',
+            'tag' => 'Retail & E-Commerce',
+            'excerpt' => 'Shopify Plus • GA4 • Meta CAPI',
+            'content' => 'Browser privacy blocks caused 40% of Shopify conversions to drop from ad platforms.',
+            'metric' => '+42%',
+            'metric_label' => 'Verified ROAS (0.8s checkout)',
+            'image_url' => '/assets/images/portfolio-retail.jpg',
+            'link_url' => '#portfolio',
+            'is_featured' => true,
+            'sort_order' => 1,
+            'is_active' => true,
         ]);
 
-        // Category 2: Industries
+        // Category 6: Industries (Navbar & Landing Section)
         $industries = Category::create([
             'name' => 'Industries',
             'slug' => 'industries',
             'description' => 'Deep domain expertise across regulated and high-velocity sectors.',
             'icon' => 'bi-buildings',
             'badge' => 'Sectors',
-            'sort_order' => 2,
+            'sort_order' => 6,
             'is_active' => true,
         ]);
 
@@ -559,191 +506,14 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $industries->portfolioArticles()->createMany([
-            [
-                'title' => 'HealthPulse: Telehealth Platform Serving 2.4M Patients',
-                'slug' => 'healthpulse-telehealth-platform',
-                'type' => 'case_study',
-                'client_name' => 'HealthPulse Global',
-                'excerpt' => 'End-to-end encrypted video consultations, real-time vital telemetry, and automated clinical transcription.',
-                'tag' => 'HealthTech',
-                'metric' => '2.4M+',
-                'metric_label' => 'Active Patients',
-                'image_url' => '/assets/images/tech-case.jpg',
-                'link_url' => '#work-healthpulse',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Category 3: Work
-        $work = Category::create([
-            'name' => 'Work',
-            'slug' => 'work',
-            'description' => 'A curated selection of mission-critical platforms we have designed and engineered.',
-            'icon' => 'bi-briefcase',
-            'badge' => 'Case Studies',
-            'sort_order' => 3,
-            'is_active' => true,
-        ]);
-
-        $work->subCategories()->createMany([
-            [
-                'title' => 'Enterprise Case Studies',
-                'slug' => 'enterprise-case-studies',
-                'description' => 'Deep dive into system architectures, performance benchmarks, and measurable ROI.',
-                'url' => '#work-cases',
-                'icon' => 'bi-journal-code',
-                'badge' => 'Featured',
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Client Roster & Partnerships',
-                'slug' => 'client-roster-partnerships',
-                'description' => 'Trusted by market leaders, venture-backed scaleups, and visionary institutions.',
-                'url' => '#work-clients',
-                'icon' => 'bi-star',
-                'badge' => null,
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Open Source & Developer Labs',
-                'slug' => 'opensource-developer-labs',
-                'description' => 'Production libraries, CLI tooling, and web standards our engineers contribute to.',
-                'url' => '#work-oss',
-                'icon' => 'bi-github',
-                'badge' => 'OSS',
-                'sort_order' => 3,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Design Systems & Tokens',
-                'slug' => 'design-systems-tokens',
-                'description' => 'Unified multi-platform design tokens ensuring pixel-accurate brand consistency.',
-                'url' => '#work-design-systems',
-                'icon' => 'bi-brush',
-                'badge' => null,
-                'sort_order' => 4,
-                'is_active' => true,
-            ],
-        ]);
-
-        $work->portfolioArticles()->createMany([
-            [
-                'title' => 'Aura Commerce: +312% Mobile Conversion Lift',
-                'slug' => 'aura-commerce-replatforming',
-                'type' => 'case_study',
-                'client_name' => 'Aura Luxury Retail',
-                'excerpt' => 'Migrated legacy monolith to headless Edge-rendered storefront with 0.8s time-to-interactive.',
-                'tag' => 'E-Commerce',
-                'metric' => '+312%',
-                'metric_label' => 'Mobile Conversion',
-                'image_url' => '/assets/images/marketing-case.jpg',
-                'link_url' => '#work-aura',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Vanguard Logistics: Automated Fleet Dispatch Engine',
-                'slug' => 'vanguard-logistics-fleet-dispatch',
-                'type' => 'case_study',
-                'client_name' => 'Vanguard Freight',
-                'excerpt' => 'AI route optimization cutting deadhead mileage by 38% across 14,000 commercial vehicles.',
-                'tag' => 'Logistics AI',
-                'metric' => '-38%',
-                'metric_label' => 'Fuel Consumption',
-                'image_url' => '/assets/images/video-case.jpg',
-                'link_url' => '#work-vanguard',
-                'is_featured' => true,
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Category 4: Approach
-        $approach = Category::create([
-            'name' => 'Approach',
-            'slug' => 'approach',
-            'description' => 'Our disciplined engineering mindset and battle-tested delivery methodology.',
-            'icon' => 'bi-compass',
-            'badge' => 'Process',
-            'sort_order' => 4,
-            'is_active' => true,
-        ]);
-
-        $approach->subCategories()->createMany([
-            [
-                'title' => 'Architecture-First Engineering',
-                'slug' => 'architecture-first-engineering',
-                'description' => 'Modularity, clean domain boundaries, and zero-compromise scalability from day one.',
-                'url' => '#approach-architecture',
-                'icon' => 'bi-diagram-2',
-                'badge' => 'Philosophy',
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Agile 2-Week Sprint Cadence',
-                'slug' => 'agile-sprint-cadence',
-                'description' => 'Rapid iterative shipping, automated test gates, and continuous business alignment.',
-                'url' => '#approach-agile',
-                'icon' => 'bi-stopwatch',
-                'badge' => null,
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Human-Centered UX & Usability',
-                'slug' => 'human-centered-ux',
-                'description' => 'Rigorous user research, accessibility testing (WCAG 2.1 AA), and interactive prototypes.',
-                'url' => '#approach-ux',
-                'icon' => 'bi-eye',
-                'badge' => null,
-                'sort_order' => 3,
-                'is_active' => true,
-            ],
-            [
-                'title' => 'Observability & SRE Reliability',
-                'slug' => 'observability-sre-reliability',
-                'description' => 'End-to-end tracing, automated canary rollouts, and 24/7 incident response SLAs.',
-                'url' => '#approach-sre',
-                'icon' => 'bi-speedometer2',
-                'badge' => '99.99%',
-                'sort_order' => 4,
-                'is_active' => true,
-            ],
-        ]);
-
-        $approach->portfolioArticles()->createMany([
-            [
-                'title' => 'How We Ship Production Code in Week 2: The Mahishika Playbook',
-                'slug' => 'how-we-ship-production-code-week-2',
-                'type' => 'article',
-                'client_name' => 'Engineering Handbook',
-                'excerpt' => 'Our opinionated scaffolding, trunk-based development, and ephemeral preview environments.',
-                'tag' => 'Methodology',
-                'metric' => '14 Days',
-                'metric_label' => 'First Production Deploy',
-                'image_url' => '/assets/images/portfolio-saas.jpg',
-                'link_url' => '#article-playbook',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Category 5: About
+        // Category 7: About (Navbar & Landing Section)
         $about = Category::create([
             'name' => 'About',
             'slug' => 'about',
             'description' => 'Who we are, what drives us, and our vision for digital craftsmanship.',
             'icon' => 'bi-people',
             'badge' => 'Company',
-            'sort_order' => 5,
+            'sort_order' => 7,
             'is_active' => true,
         ]);
 
@@ -790,34 +560,17 @@ class DatabaseSeeder extends Seeder
             ],
         ]);
 
-        $about->portfolioArticles()->createMany([
-            [
-                'title' => 'Life at Mahishika: Why Senior Engineers Choose Craft Over Bureaucracy',
-                'slug' => 'life-at-mahishika-culture',
-                'type' => 'article',
-                'client_name' => 'Culture Spotlight',
-                'excerpt' => 'Flat hierarchy, zero meetings on Thursdays, and a quarterly \$5k innovation allowance.',
-                'tag' => 'Culture',
-                'metric' => '4.9 / 5',
-                'metric_label' => 'Glassdoor Rating',
-                'image_url' => '/assets/images/portfolio-retail.jpg',
-                'link_url' => '#article-culture',
-                'is_featured' => true,
-                'sort_order' => 1,
-                'is_active' => true,
-            ],
-        ]);
-
-        // Sample initial consultations for admin demonstration
+        // Sample Consultations Matching Figma Design
         Consultation::create([
             'name' => 'Elena Rostova',
             'email' => 'elena@vanguardfintech.com',
             'phone' => '+1 (555) 234-5678',
             'company' => 'Vanguard Financial Technologies',
-            'service_interest' => 'Cloud Architecture & DevOps',
+            'service_interest' => 'Not sure yet',
+            'help_topics' => ['Tech', 'Marketing'],
             'budget' => '$50,000 - $100,000',
             'timeline' => 'Immediate (Within 1 month)',
-            'message' => 'Looking to modernize our transaction processing backend to handle 10x peak trading volume before Q3.',
+            'message' => 'Looking to modernize our transaction processing backend and set up server-side conversion tracking.',
             'status' => 'new',
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -828,10 +581,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'marcus@biopulsehealth.io',
             'phone' => '+1 (555) 876-5432',
             'company' => 'BioPulse Health',
-            'service_interest' => 'AI Engineering & Intelligent Agents',
+            'service_interest' => 'Not sure yet',
+            'help_topics' => ['Design', 'Tech'],
             'budget' => '$100,000+',
             'timeline' => '1-3 months',
-            'message' => 'We need an enterprise HIPAA-compliant clinical decision support agent with custom RAG over our medical records.',
+            'message' => 'We need an enterprise clinical decision support design system and patient portal architecture.',
             'status' => 'contacted',
             'ip_address' => '127.0.0.1',
             'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',

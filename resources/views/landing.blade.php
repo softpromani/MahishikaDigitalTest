@@ -282,28 +282,18 @@
                 </li>
 
                 <li class="mobile-menu-item">
+                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
                     <a href="#industries" class="mobile-menu-trigger text-decoration-none">
                         <span>Industries</span>
                     </a>
                 </li>
                 <li class="mobile-menu-item">
-                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
-                        <span>Work</span>
-                    </a>
-                </li>
-                <li class="mobile-menu-item">
-                    <a href="#process" class="mobile-menu-trigger text-decoration-none">
-                        <span>Approach</span>
-                    </a>
-                </li>
-                <li class="mobile-menu-item">
                     <a href="#about" class="mobile-menu-trigger text-decoration-none">
                         <span>About</span>
-                    </a>
-                </li>
-                <li class="mobile-menu-item">
-                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
-                        <span>Portfolio</span>
                     </a>
                 </li>
                 <li class="mobile-menu-item">
@@ -746,7 +736,7 @@
                            ========================================================================== -->
                         <div class="process-section" id="process">
                             <h2 class="marketing-section-h2">How an analytics engagement runs.</h2>
-                            <p class="marketing-section-sub">Our 4-D Growth Framework, applied to measurement.</p>
+                            <p class="marketing-section-sub">Our 4-D Growth Framework &amp; Approach, applied to measurement.</p>
 
                             <div class="process-timeline-list">
                                 <!-- Step 1 -->
@@ -815,62 +805,58 @@
                            ========================================================================== -->
                         <div class="portfolio-section" id="portfolio">
                             <h2 class="marketing-section-h2">Data that finally matched the bank account.</h2>
-                            <p class="marketing-section-sub">Real client outcomes delivered with precision measurement and modern infrastructure.</p>
+                            <p class="marketing-section-sub">Real client work and outcomes delivered with precision measurement and modern infrastructure.</p>
 
                             <div class="zeplin-portfolio-grid">
-                                <!-- Card 1: Retail & E-Commerce -->
-                                <div class="zeplin-portfolio-card">
-                                    <div class="zeplin-portfolio-thumb">
-                                        <img src="{{ asset('assets/images/portfolio-retail.jpg') }}" alt="Nordic Glow E-commerce Performance" class="w-100 h-100 object-fit-cover">
-                                        <span class="portfolio-thumb-tag">Retail &amp; E-Commerce</span>
-                                    </div>
-                                    <div class="portfolio-cat-row">
-                                        <span class="portfolio-cat-text">Shopify Plus &bull; GA4 &bull; Meta CAPI</span>
-                                        <div class="portfolio-tri-dots">
-                                            <span class="dot dot-amber"></span>
-                                            <span class="dot dot-cyan"></span>
-                                            <span class="dot dot-green"></span>
+                                @forelse($portfolioArticles as $case)
+                                    @php
+                                        $cardImg = $case->image_url ?? asset('assets/images/portfolio-retail.jpg');
+                                        if (str_starts_with($cardImg, '/')) {
+                                            $cardImg = asset(ltrim($cardImg, '/'));
+                                        }
+                                        $resultColorClass = ($loop->iteration % 2 === 1) ? 'text-success' : 'text-primary';
+                                        $fallbackTag = $case->category ? $case->category->name : 'Case Study';
+                                    @endphp
+                                    <div class="zeplin-portfolio-card">
+                                        <div class="zeplin-portfolio-thumb">
+                                            <img src="{{ $cardImg }}" alt="{{ $case->title }}" class="w-100 h-100 object-fit-cover" onerror="this.src='{{ asset('assets/images/portfolio-retail.jpg') }}'">
+                                            <span class="portfolio-thumb-tag">{{ $case->tag ?? $fallbackTag }}</span>
+                                        </div>
+                                        <div class="portfolio-cat-row">
+                                            <span class="portfolio-cat-text">{{ $case->excerpt ?? ($case->client_name ?? 'Featured Case Study') }}</span>
+                                            <div class="portfolio-tri-dots">
+                                                <span class="dot dot-amber"></span>
+                                                <span class="dot dot-cyan"></span>
+                                                <span class="dot dot-green"></span>
+                                            </div>
+                                        </div>
+                                        <h4>{{ $case->title }}</h4>
+                                        <div class="problem-result-block">
+                                            @if($case->content)
+                                                <div>
+                                                    <span class="meta-label">The problem</span>
+                                                    <span class="text-secondary">{{ $case->content }}</span>
+                                                </div>
+                                            @endif
+                                            @if($case->metric)
+                                                <div>
+                                                    <span class="meta-label">The result</span>
+                                                    <div class="result-val {{ $resultColorClass }}">
+                                                        {{ $case->metric }}
+                                                        @if($case->metric_label)
+                                                            <span class="fs-6 fw-normal text-muted">{{ $case->metric_label }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
-                                    <h4>Nordic Glow: +42% ROAS through server-side conversion tracking</h4>
-                                    <div class="problem-result-block">
-                                        <div>
-                                            <span class="meta-label">The problem</span>
-                                            <span class="text-secondary">Browser privacy blocks caused 40% of Shopify conversions to drop from ad platforms.</span>
-                                        </div>
-                                        <div>
-                                            <span class="meta-label">The result</span>
-                                            <div class="result-val text-success">+42% <span class="fs-6 fw-normal text-muted">Verified ROAS (0.8s checkout)</span></div>
-                                        </div>
+                                @empty
+                                    <!-- Fallback if database has no articles yet -->
+                                    <div class="col-12 py-5 text-center text-muted">
+                                        <p>No portfolio case studies available at the moment.</p>
                                     </div>
-                                </div>
-
-                                <!-- Card 2: Technology & SaaS -->
-                                <div class="zeplin-portfolio-card">
-                                    <div class="zeplin-portfolio-thumb">
-                                        <img src="{{ asset('assets/images/portfolio-saas.jpg') }}" alt="CloudScale Data Platform" class="w-100 h-100 object-fit-cover">
-                                        <span class="portfolio-thumb-tag">Technology &amp; SaaS</span>
-                                    </div>
-                                    <div class="portfolio-cat-row">
-                                        <span class="portfolio-cat-text">Stripe &bull; BigQuery &bull; Salesforce</span>
-                                        <div class="portfolio-tri-dots">
-                                            <span class="dot dot-amber"></span>
-                                            <span class="dot dot-cyan"></span>
-                                            <span class="dot dot-green"></span>
-                                        </div>
-                                    </div>
-                                    <h4>CloudScale: Single revenue source of truth for $12M ARR billing</h4>
-                                    <div class="problem-result-block">
-                                        <div>
-                                            <span class="meta-label">The problem</span>
-                                            <span class="text-secondary">Decoupled subscription events led to recurring 15% revenue discrepancies.</span>
-                                        </div>
-                                        <div>
-                                            <span class="meta-label">The result</span>
-                                            <div class="result-val text-primary">99.99% <span class="fs-6 fw-normal text-muted">Data Match &bull; 3.4x deployment speed</span></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforelse
                             </div>
 
                             <!-- Testimonial Dark Card -->
