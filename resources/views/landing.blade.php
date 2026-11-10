@@ -54,6 +54,15 @@
 
                         <!-- Zeplin 3-Column Floating Mega Menu -->
                         <div class="mega-menu-panel--zeplin" id="megaMenuZeplin" role="region" aria-labelledby="servicesTrigger" aria-hidden="true">
+                            <!-- Quick Filter / Search inside Mega Menu (Bonus Item) -->
+                            <div class="mega-zeplin-search-bar border-bottom px-4 py-2 bg-body-tertiary d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1 me-3">
+                                    <i class="bi bi-search text-muted" aria-hidden="true"></i>
+                                    <input type="search" class="form-control form-control-sm border-0 bg-transparent shadow-none" id="megaPanelSearchInput" placeholder="Quick filter services or case studies in this menu..." aria-label="Search within mega menu" autocomplete="off">
+                                </div>
+                                <span class="badge bg-secondary-subtle text-secondary small border" style="font-size: 0.65rem;">ESC to close</span>
+                            </div>
+
                             <div class="mega-zeplin-body">
                                 <!-- Column 1: Verticals Sidebar (Design, Video, Tech, Marketing) -->
                                 <div class="mega-zeplin-sidebar">
@@ -189,17 +198,22 @@
                         </div>
                     </li>
 
-                    <!-- 2. Portfolio -->
-                    <li class="mega-menu-item" role="none">
-                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem">Portfolio</a>
-                    </li>
-
-                    <!-- 3. Industries -->
+                    <!-- 2. Industries -->
                     <li class="mega-menu-item" role="none">
                         <a href="#industries" class="mega-menu-trigger" role="menuitem">Industries</a>
                     </li>
 
-                    <!-- 4. About (with hover dropdown showing subcategories) -->
+                    <!-- 3. Work -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#portfolio" class="mega-menu-trigger" role="menuitem" title="Work & Case Studies">Work</a>
+                    </li>
+
+                    <!-- 4. Approach -->
+                    <li class="mega-menu-item" role="none">
+                        <a href="#process" class="mega-menu-trigger" role="menuitem" title="Our 4-Step Engineering Approach">Approach</a>
+                    </li>
+
+                    <!-- 5. About (with hover dropdown showing subcategories) -->
                     <li class="mega-menu-item about-nav-item" role="none">
                         <a href="#about" class="mega-menu-trigger d-inline-flex align-items-center gap-1" role="menuitem" id="aboutTrigger">
                             <span>About</span>
@@ -240,12 +254,12 @@
                         @endif
                     </li>
 
-                    <!-- 5. Blog -->
+                    <!-- 6. Blog -->
                     <li class="mega-menu-item" role="none">
                         <a href="#insights" class="mega-menu-trigger" role="menuitem">Blog</a>
                     </li>
 
-                    <!-- 6. Contact -->
+                    <!-- 7. Contact -->
                     <li class="mega-menu-item" role="none">
                         <a href="#contact" class="mega-menu-trigger" role="menuitem" data-bs-toggle="modal" data-bs-target="#consultationModal">Contact</a>
                     </li>
@@ -253,10 +267,17 @@
             </nav>
 
             <!-- Header Actions -->
-            <div class="header-actions">
-                <!-- Primary CTA Button (from Figma) -->
+            <div class="header-actions d-flex align-items-center gap-2">
+                <!-- Search Button (Bonus Item 2) -->
+                <button type="button" class="btn btn-sm btn-light border d-none d-md-inline-flex align-items-center gap-2 rounded-pill px-3 py-1 bg-body-tertiary" id="searchToggleBtn" aria-label="Search site and services" aria-expanded="false" aria-controls="searchOverlay" title="Search capabilities (Ctrl+K)">
+                    <i class="bi bi-search text-muted"></i>
+                    <span class="text-secondary small">Search...</span>
+                    <kbd class="bg-body-secondary text-muted border px-1 py-0 rounded" style="font-size: 0.65rem;">⌘K</kbd>
+                </button>
+
+                <!-- Primary CTA Button (from Task Brief Section 2: "and a 'Book a Consultation' CTA button") -->
                 <a href="#growth-audit" class="btn-zeplin-primary d-none d-sm-inline-flex" data-bs-toggle="modal" data-bs-target="#consultationModal">
-                    Book a growth audit
+                    Book a Consultation
                 </a>
 
                 <!-- Mobile Hamburger Button (Strictly shown only on tablet / mobile) -->
@@ -264,6 +285,21 @@
                     <i class="bi bi-list fs-4"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- Live Search Overlay (Bonus Item 2) -->
+        <div class="search-overlay" id="searchOverlay" role="search" aria-label="Site and services search">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search search-icon" aria-hidden="true"></i>
+                    <input type="search" class="search-input" id="megaSearchInput" placeholder="Search capabilities, industries, or case studies..." aria-label="Search query" autocomplete="off">
+                    <button type="button" class="search-close-btn" id="searchCloseBtn" aria-label="Close search">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="search-results-list" id="searchResultsList" role="region" aria-live="polite"></div>
+            </div>
+        </div>
         </div>
     </header>
 
@@ -310,13 +346,18 @@
                 </li>
 
                 <li class="mobile-menu-item">
-                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
-                        <span>Portfolio</span>
+                    <a href="#industries" class="mobile-menu-trigger text-decoration-none">
+                        <span>Industries</span>
                     </a>
                 </li>
                 <li class="mobile-menu-item">
-                    <a href="#industries" class="mobile-menu-trigger text-decoration-none">
-                        <span>Industries</span>
+                    <a href="#portfolio" class="mobile-menu-trigger text-decoration-none">
+                        <span>Work</span>
+                    </a>
+                </li>
+                <li class="mobile-menu-item">
+                    <a href="#process" class="mobile-menu-trigger text-decoration-none">
+                        <span>Approach</span>
                     </a>
                 </li>
 
@@ -1445,7 +1486,7 @@
             </div>
         @endif
 
-        @if($errors->any())
+        @if(isset($errors) && $errors->any())
             <div class="toast show align-items-center text-bg-danger border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body d-flex align-items-center gap-2">
@@ -1472,11 +1513,20 @@
     <!-- Custom Script for Zeplin Mega Menu & Interactive Elements -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // GTM dataLayer Initialization & Helper
+            window.dataLayer = window.dataLayer || [];
+            function pushDataLayer(eventData) {
+                window.dataLayer.push({
+                    timestamp: new Date().toISOString(),
+                    ...eventData
+                });
+            }
+
             // 1. Zeplin Mega Menu Trigger & Vertical Tabs
             const servicesTrigger = document.getElementById('servicesTrigger');
             const megaMenuZeplin = document.getElementById('megaMenuZeplin');
             const megaMenuBackdrop = document.getElementById('megaMenuBackdrop');
-            const verticalTabs = document.querySelectorAll('.mega-vertical-tab');
+            const verticalTabs = Array.from(document.querySelectorAll('.mega-vertical-tab'));
             const servicesItem = servicesTrigger?.closest('.mega-menu-item');
 
             function openZeplinMegaMenu() {
@@ -1484,6 +1534,7 @@
                 megaMenuBackdrop?.classList.add('is-active');
                 servicesTrigger?.setAttribute('aria-expanded', 'true');
                 servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                pushDataLayer({ event: 'mega_menu_toggle', state: 'open', category: 'Services' });
             }
 
             function closeZeplinMegaMenu() {
@@ -1491,6 +1542,7 @@
                 megaMenuBackdrop?.classList.remove('is-active');
                 servicesTrigger?.setAttribute('aria-expanded', 'false');
                 servicesTrigger?.querySelector('.chevron-icon')?.classList.replace('bi-chevron-up', 'bi-chevron-down');
+                pushDataLayer({ event: 'mega_menu_toggle', state: 'closed', category: 'Services' });
             }
 
             servicesTrigger?.addEventListener('click', (e) => {
@@ -1503,8 +1555,39 @@
                 }
             });
 
+            // Keyboard navigation for Services Trigger (WCAG 2.1 AA)
+            servicesTrigger?.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openZeplinMegaMenu();
+                    const activeTab = document.querySelector('.mega-vertical-tab.is-active') || verticalTabs[0];
+                    activeTab?.focus();
+                } else if (e.key === 'Escape') {
+                    closeZeplinMegaMenu();
+                }
+            });
+
+            // Top-level Menubar Keyboard Navigation (Arrow Left / Right)
+            const topMenuTriggers = Array.from(document.querySelectorAll('.desktop-nav .mega-menu-trigger'));
+            topMenuTriggers.forEach((trigger, idx) => {
+                trigger.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        const nextIdx = (idx + 1) % topMenuTriggers.length;
+                        topMenuTriggers[nextIdx]?.focus();
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const prevIdx = (idx - 1 + topMenuTriggers.length) % topMenuTriggers.length;
+                        topMenuTriggers[prevIdx]?.focus();
+                    }
+                });
+            });
+
             // Backdrop click closes
-            megaMenuBackdrop?.addEventListener('click', closeZeplinMegaMenu);
+            megaMenuBackdrop?.addEventListener('click', () => {
+                closeZeplinMegaMenu();
+                closeSearch();
+            });
 
             // Hover with smooth delay
             let menuTimeout;
@@ -1538,11 +1621,17 @@
 
             // Close on Escape key
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeZeplinMegaMenu();
+                if (e.key === 'Escape') {
+                    if (megaMenuZeplin?.classList.contains('is-open')) {
+                        closeZeplinMegaMenu();
+                        servicesTrigger?.focus();
+                    }
+                    closeSearch();
+                }
             });
 
-            // Interactive Tab Switching inside Mega Menu on hover/click
-            verticalTabs.forEach(tab => {
+            // Interactive Tab Switching inside Mega Menu on hover/click & Keyboard
+            verticalTabs.forEach((tab, tabIdx) => {
                 const switchTab = () => {
                     verticalTabs.forEach(t => {
                         t.classList.remove('is-active');
@@ -1571,6 +1660,271 @@
 
                 tab.addEventListener('mouseenter', switchTab);
                 tab.addEventListener('click', switchTab);
+
+                // Keyboard navigation across vertical tabs (ArrowUp / ArrowDown / ArrowRight / Escape)
+                tab.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextIdx = (tabIdx + 1) % verticalTabs.length;
+                        verticalTabs[nextIdx]?.focus();
+                        verticalTabs[nextIdx]?.click();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevIdx = (tabIdx - 1 + verticalTabs.length) % verticalTabs.length;
+                        verticalTabs[prevIdx]?.focus();
+                        verticalTabs[prevIdx]?.click();
+                    } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+                        e.preventDefault();
+                        const activePanel = document.querySelector('.mega-tab-content-panel.is-active');
+                        const firstLink = activePanel?.querySelector('a.mega-service-item-card, a');
+                        firstLink?.focus();
+                    } else if (e.key === 'Escape') {
+                        closeZeplinMegaMenu();
+                        servicesTrigger?.focus();
+                    }
+                });
+            });
+
+            // ArrowLeft from inside active panel back to active vertical tab
+            document.querySelectorAll('.mega-tab-content-panel a').forEach(link => {
+                link.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        const activeTab = document.querySelector('.mega-vertical-tab.is-active');
+                        activeTab?.focus();
+                    } else if (e.key === 'Escape') {
+                        closeZeplinMegaMenu();
+                        servicesTrigger?.focus();
+                    }
+                });
+            });
+
+            // Track all mega menu link clicks via GTM
+            document.querySelectorAll('.mega-menu-panel--zeplin a, .about-dropdown-menu a, .mobile-drawer a').forEach(link => {
+                link.addEventListener('click', () => {
+                    const title = link.querySelector('h4, .about-item-title, span')?.textContent.trim() || link.textContent.trim();
+                    pushDataLayer({
+                        event: 'mega_menu_click',
+                        item_title: title,
+                        target_url: link.getAttribute('href')
+                    });
+                });
+            });
+
+            // 1.5 Live Search Overlay & Keyboard Shortcuts (Bonus Item 2)
+            const searchToggleBtn = document.getElementById('searchToggleBtn');
+            const searchOverlay = document.getElementById('searchOverlay');
+            const searchInput = document.getElementById('megaSearchInput');
+            const searchCloseBtn = document.getElementById('searchCloseBtn');
+            const searchResultsList = document.getElementById('searchResultsList');
+            let searchDebounce = null;
+
+            function openSearch() {
+                closeZeplinMegaMenu();
+                searchOverlay?.classList.add('is-active');
+                searchToggleBtn?.setAttribute('aria-expanded', 'true');
+                megaMenuBackdrop?.classList.add('is-active');
+                setTimeout(() => searchInput?.focus(), 80);
+                pushDataLayer({ event: 'search_overlay_open' });
+            }
+
+            function closeSearch() {
+                searchOverlay?.classList.remove('is-active');
+                searchToggleBtn?.setAttribute('aria-expanded', 'false');
+                megaMenuBackdrop?.classList.remove('is-active');
+                if (searchResultsList) {
+                    searchResultsList.innerHTML = '';
+                    searchResultsList.classList.remove('has-results');
+                }
+                if (searchInput) searchInput.value = '';
+            }
+
+            searchToggleBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (searchOverlay?.classList.contains('is-active')) {
+                    closeSearch();
+                } else {
+                    openSearch();
+                }
+            });
+
+            searchCloseBtn?.addEventListener('click', closeSearch);
+
+            // Global Ctrl+K / Cmd+K shortcut
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    if (searchOverlay?.classList.contains('is-active')) {
+                        closeSearch();
+                    } else {
+                        openSearch();
+                    }
+                }
+            });
+
+            // Real-time search query with 200ms debounce
+            searchInput?.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                clearTimeout(searchDebounce);
+
+                if (query.length < 2) {
+                    if (searchResultsList) {
+                        searchResultsList.innerHTML = '';
+                        searchResultsList.classList.remove('has-results');
+                    }
+                    return;
+                }
+
+                searchDebounce = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                        if (!res.ok) throw new Error('Search failed');
+                        const data = await res.json();
+                        renderSearchResults(data, query);
+                        pushDataLayer({ event: 'search_query', search_term: query, results_count: data.total || 0 });
+                    } catch (err) {
+                        // Fallback client-side search
+                        renderClientSideResults(query);
+                    }
+                }, 200);
+            });
+
+            function highlightText(text, q) {
+                if (!q || !text) return text || '';
+                const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark class="bg-warning-subtle text-dark fw-bold">$1</mark>');
+            }
+
+            function renderSearchResults(data, query) {
+                if (!searchResultsList) return;
+                const { categories = [], sub_categories = [], articles = [] } = data.results || {};
+                const total = data.total || 0;
+
+                if (total === 0) {
+                    searchResultsList.innerHTML = `
+                        <div class="p-3 text-center text-muted small">
+                            <i class="bi bi-search me-1"></i> No matching services or case studies found for "<strong>${escapeHtml(query)}</strong>".
+                        </div>
+                    `;
+                    searchResultsList.classList.add('has-results');
+                    return;
+                }
+
+                let html = '';
+                sub_categories.forEach(sub => {
+                    html += `
+                        <a href="${escapeHtml(sub.url)}" class="search-result-item">
+                            <div class="search-result-item__main">
+                                <i class="bi ${escapeHtml(sub.icon || 'bi-link-45deg')} search-result-item__icon text-primary"></i>
+                                <div>
+                                    <div class="search-result-item__title">${highlightText(sub.title, query)}</div>
+                                    <div class="search-result-item__desc text-muted small">${escapeHtml(sub.description || '')}</div>
+                                </div>
+                            </div>
+                            <span class="search-result-item__tag badge bg-body-secondary text-secondary">${escapeHtml(sub.category?.name || 'Service')}</span>
+                        </a>
+                    `;
+                });
+
+                articles.forEach(art => {
+                    html += `
+                        <a href="${escapeHtml(art.link_url || '#portfolio')}" class="search-result-item">
+                            <div class="search-result-item__main">
+                                <i class="bi bi-briefcase search-result-item__icon text-info"></i>
+                                <div>
+                                    <div class="search-result-item__title">${highlightText(art.title, query)}</div>
+                                    <div class="search-result-item__desc text-muted small">${escapeHtml(art.excerpt || '')}</div>
+                                </div>
+                            </div>
+                            <span class="search-result-item__tag badge bg-primary-subtle text-primary">${escapeHtml(art.metric || 'Case Study')}</span>
+                        </a>
+                    `;
+                });
+
+                searchResultsList.innerHTML = html;
+                searchResultsList.classList.add('has-results');
+            }
+
+            function renderClientSideResults(query) {
+                if (!searchResultsList) return;
+                const q = query.toLowerCase();
+                const matched = [];
+
+                document.querySelectorAll('.mega-service-item-card, .featured-case-box').forEach(el => {
+                    const text = el.textContent || '';
+                    if (text.toLowerCase().includes(q)) {
+                        const title = el.querySelector('h4, span')?.textContent.trim() || 'Service';
+                        const link = el.getAttribute('href') || '#services';
+                        matched.push({ title, link });
+                    }
+                });
+
+                if (matched.length === 0) {
+                    searchResultsList.innerHTML = `<div class="p-3 text-center text-muted small">No matches found for "${escapeHtml(query)}".</div>`;
+                } else {
+                    searchResultsList.innerHTML = matched.map(m => `
+                        <a href="${escapeHtml(m.link)}" class="search-result-item">
+                            <div class="search-result-item__main">
+                                <i class="bi bi-check2-circle text-primary me-2"></i>
+                                <span class="search-result-item__title">${highlightText(m.title, query)}</span>
+                            </div>
+                            <span class="badge bg-body-secondary text-secondary">Service</span>
+                        </a>
+                    `).join('');
+                }
+                searchResultsList.classList.add('has-results');
+            }
+
+            function escapeHtml(str) {
+                return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            // Keyboard navigation in search input & results
+            searchInput?.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const firstResult = searchResultsList?.querySelector('.search-result-item');
+                    firstResult?.focus();
+                } else if (e.key === 'Escape') {
+                    closeSearch();
+                    searchToggleBtn?.focus();
+                }
+            });
+
+            searchResultsList?.addEventListener('keydown', (e) => {
+                const items = Array.from(searchResultsList.querySelectorAll('.search-result-item'));
+                const cur = items.indexOf(document.activeElement);
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const next = (cur + 1) % items.length;
+                    items[next]?.focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (cur <= 0) {
+                        searchInput?.focus();
+                    } else {
+                        items[cur - 1]?.focus();
+                    }
+                } else if (e.key === 'Escape') {
+                    closeSearch();
+                    searchToggleBtn?.focus();
+                }
+            });
+
+            // Quick filter input inside mega menu panel (Bonus Item 2)
+            const megaPanelSearchInput = document.getElementById('megaPanelSearchInput');
+            megaPanelSearchInput?.addEventListener('input', (e) => {
+                const q = e.target.value.toLowerCase().trim();
+                const cards = document.querySelectorAll('.mega-service-item-card');
+                cards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    if (!q || text.includes(q)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
 
             // 2. Mobile Drawer & Accordion
@@ -1656,6 +2010,10 @@
                 if (themeIcon) {
                     themeIcon.className = t === 'dark' ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars';
                 }
+                pushDataLayer({
+                    event: 'theme_toggle',
+                    theme: t
+                });
             }
 
             // 5. Sticky In-Page Nav Active Indicator on Scroll
@@ -1744,6 +2102,15 @@
 
                             const clientName = (data.data && data.data.name) ? data.data.name : (formData.get('name') || 'there');
                             const clientEmail = formData.get('email') || 'your email';
+
+                            pushDataLayer({
+                                event: 'form_submit',
+                                form_name: isModal ? 'consultation_modal' : 'consultation_aside',
+                                client_name: clientName,
+                                client_email: clientEmail,
+                                service: formData.get('service_interest') || 'Analytics & Tracking',
+                                budget: formData.get('budget') || 'Standard'
+                            });
 
                             if (isModal) {
                                 const modalBody = form.closest('.modal-body');
