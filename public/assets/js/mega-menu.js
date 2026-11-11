@@ -399,9 +399,19 @@ export class MegaMenu {
             return;
         }
 
+        // Construct dynamic search URL respecting /public/ or subfolder hosting
+        const path = window.location.pathname;
+        const publicPrefix = path.includes('/public') ? path.substring(0, path.indexOf('/public') + 7) : '';
+        const searchUrl = `${window.location.origin}${publicPrefix}/api/search?q=${encodeURIComponent(query)}`;
+
         // Try API search first; fallback to client-side DOM filter
         try {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(searchUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 this.renderSearchResults(data, query);
@@ -415,19 +425,54 @@ export class MegaMenu {
     }
 
     performClientSearch(query) {
-        const q = query.toLowerCase();
+        const q = query.toLowerCase().trim();
         const results = [];
+        const seen = new Set();
 
-        // Scan all mega menu sublinks
-        document.querySelectorAll('.mega-sublink, .featured-card').forEach(link => {
-            const title = link.querySelector('.mega-sublink__title, .featured-card__title')?.textContent || '';
-            const desc = link.querySelector('.mega-sublink__desc, .featured-card__excerpt')?.textContent || '';
-            if (title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) {
+        // 1. Scan all mega menu service items
+        document.querySelectorAll('.mega-service-item, .mega-sublink').forEach(link => {
+            const title = link.querySelector('.item-title, .mega-sublink__title')?.textContent.trim() || '';
+            const desc = link.querySelector('.item-desc, .mega-sublink__desc')?.textContent.trim() || '';
+            const url = link.getAttribute('href') || '#';
+            if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) && !seen.has(url)) {
+                seen.add(url);
                 results.push({
                     title,
                     desc,
-                    url: link.getAttribute('href') || '#',
-                    tag: link.classList.contains('featured-card') ? 'Case Study' : 'Service',
+                    url,
+                    tag: 'Service',
+                });
+            }
+        });
+
+        // 2. Scan About subcategories
+        document.querySelectorAll('.about-dropdown-item').forEach(link => {
+            const title = link.querySelector('.about-item-title')?.textContent.trim() || '';
+            const desc = link.querySelector('.about-item-sub')?.textContent.trim() || '';
+            const url = link.getAttribute('href') || '#about';
+            if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) && !seen.has(url)) {
+                seen.add(url);
+                results.push({
+                    title,
+                    desc,
+                    url,
+                    tag: 'About',
+                });
+            }
+        });
+
+        // 3. Scan case studies & portfolio cards
+        document.querySelectorAll('.zeplin-portfolio-card, .featured-card').forEach(card => {
+            const title = card.querySelector('.portfolio-card-title, .featured-card__title')?.textContent.trim() || '';
+            const desc = card.querySelector('.portfolio-cat-text, .featured-card__excerpt')?.textContent.trim() || '';
+            const tag = card.querySelector('.portfolio-thumb-tag, .featured-card__tag')?.textContent.trim() || 'Case Study';
+            if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q) || tag.toLowerCase().includes(q)) && !seen.has(title)) {
+                seen.add(title);
+                results.push({
+                    title,
+                    desc,
+                    url: '#portfolio',
+                    tag: tag,
                 });
             }
         });

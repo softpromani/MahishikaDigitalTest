@@ -50,3 +50,4 @@ $_SERVER['VERCEL'] = '1';
 
 // Forward request to Laravel public entrypoint
 require __DIR__ . '/../public/index.php';
+

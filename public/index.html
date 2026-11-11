@@ -2132,6 +2132,21 @@
             const searchResultsList = document.getElementById('searchResultsList');
             let searchDebounce = null;
 
+            // Dynamically construct search endpoint respecting subfolder /public/ hosting (e.g. Hostinger, subdomains)
+            const searchApiEndpoint = "./api/search";
+
+            function buildSearchUrl(query) {
+                // If route helper evaluated to a valid URL
+                if (searchApiEndpoint && !searchApiEndpoint.includes('{{')) {
+                    const sep = searchApiEndpoint.includes('?') ? '&' : '?';
+                    return `${searchApiEndpoint}${sep}q=${encodeURIComponent(query)}`;
+                }
+                // Fallback detecting if hosted under /public or subfolder
+                const path = window.location.pathname;
+                const publicPrefix = path.includes('/public') ? path.substring(0, path.indexOf('/public') + 7) : '';
+                return `${window.location.origin}${publicPrefix}/api/search?q=${encodeURIComponent(query)}`;
+            }
+
             function openSearch() {
                 closeZeplinMegaMenu();
                 searchOverlay?.classList.add('is-active');
@@ -2189,14 +2204,20 @@
                 }
 
                 searchDebounce = setTimeout(async () => {
+                    const targetUrl = buildSearchUrl(query);
                     try {
-                        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                        if (!res.ok) throw new Error('Search failed');
+                        const res = await fetch(targetUrl, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         const data = await res.json();
                         renderSearchResults(data, query);
                         pushDataLayer({ event: 'search_query', search_term: query, results_count: data.total || 0 });
                     } catch (err) {
-                        // Fallback client-side search
+                        // Fallback client-side DOM search
                         renderClientSideResults(query);
                     }
                 }, 200);
@@ -2260,28 +2281,95 @@
 
             function renderClientSideResults(query) {
                 if (!searchResultsList) return;
-                const q = query.toLowerCase();
+                const q = query.toLowerCase().trim();
                 const matched = [];
+                const seenUrls = new Set();
 
-                document.querySelectorAll('.mega-service-item-card, .featured-case-box').forEach(el => {
-                    const text = el.textContent || '';
-                    if (text.toLowerCase().includes(q)) {
-                        const title = el.querySelector('h4, span')?.textContent.trim() || 'Service';
-                        const link = el.getAttribute('href') || '#services';
-                        matched.push({ title, link });
+                // 1. Search mega menu service items
+                document.querySelectorAll('.mega-service-item').forEach(el => {
+                    const title = el.querySelector('.item-title')?.textContent.trim() || '';
+                    const desc = el.querySelector('.item-desc')?.textContent.trim() || '';
+                    const url = el.getAttribute('href') || '#';
+                    if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) && !seenUrls.has(url)) {
+                        seenUrls.add(url);
+                        matched.push({
+                            title,
+                            desc,
+                            url,
+                            icon: 'bi-grid-fill',
+                            tag: 'Service'
+                        });
+                    }
+                });
+
+                // 2. Search About company subcategories
+                document.querySelectorAll('.about-dropdown-item').forEach(el => {
+                    const title = el.querySelector('.about-item-title')?.textContent.trim() || '';
+                    const desc = el.querySelector('.about-item-sub')?.textContent.trim() || '';
+                    const url = el.getAttribute('href') || '#about';
+                    if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) && !seenUrls.has(url)) {
+                        seenUrls.add(url);
+                        matched.push({
+                            title,
+                            desc,
+                            url,
+                            icon: 'bi-building',
+                            tag: 'About'
+                        });
+                    }
+                });
+
+                // 3. Search Portfolio / Case studies
+                document.querySelectorAll('.zeplin-portfolio-card').forEach(el => {
+                    const title = el.querySelector('.portfolio-card-title')?.textContent.trim() || '';
+                    const desc = el.querySelector('.portfolio-cat-text')?.textContent.trim() || '';
+                    const tag = el.querySelector('.portfolio-thumb-tag')?.textContent.trim() || 'Case Study';
+                    const url = '#portfolio';
+                    if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q) || tag.toLowerCase().includes(q)) && !seenUrls.has(title)) {
+                        seenUrls.add(title);
+                        matched.push({
+                            title,
+                            desc,
+                            url,
+                            icon: 'bi-briefcase-fill',
+                            tag: tag
+                        });
+                    }
+                });
+
+                // 4. Search solution cards & capabilities
+                document.querySelectorAll('.solution-service-card, .where-start-card').forEach(el => {
+                    const title = el.querySelector('h4')?.textContent.trim() || '';
+                    const desc = el.querySelector('.card-subtext, .start-desc')?.textContent.trim() || '';
+                    if ((title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) && !seenUrls.has(title)) {
+                        seenUrls.add(title);
+                        matched.push({
+                            title,
+                            desc,
+                            url: '#what-we-build',
+                            icon: 'bi-check2-circle',
+                            tag: 'Capability'
+                        });
                     }
                 });
 
                 if (matched.length === 0) {
-                    searchResultsList.innerHTML = `<div class="p-3 text-center text-muted small">No matches found for "${escapeHtml(query)}".</div>`;
+                    searchResultsList.innerHTML = `
+                        <div class="p-3 text-center text-muted small">
+                            <i class="bi bi-search me-1"></i> No matching services or case studies found for "<strong>${escapeHtml(query)}</strong>".
+                        </div>
+                    `;
                 } else {
                     searchResultsList.innerHTML = matched.map(m => `
-                        <a href="${escapeHtml(m.link)}" class="search-result-item">
+                        <a href="${escapeHtml(m.url)}" class="search-result-item">
                             <div class="search-result-item__main">
-                                <i class="bi bi-check2-circle text-primary me-2"></i>
-                                <span class="search-result-item__title">${highlightText(m.title, query)}</span>
+                                <i class="bi ${escapeHtml(m.icon)} search-result-item__icon text-primary"></i>
+                                <div>
+                                    <div class="search-result-item__title">${highlightText(m.title, query)}</div>
+                                    ${m.desc ? `<div class="search-result-item__desc text-muted small">${escapeHtml(m.desc)}</div>` : ''}
+                                </div>
                             </div>
-                            <span class="badge bg-body-secondary text-secondary">Service</span>
+                            <span class="search-result-item__tag badge bg-body-secondary text-secondary">${escapeHtml(m.tag)}</span>
                         </a>
                     `).join('');
                 }
